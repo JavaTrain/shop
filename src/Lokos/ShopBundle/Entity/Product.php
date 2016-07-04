@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Product
  *
  * @ORM\Table(name="product", indexes={@ORM\Index(name="fk_product_category_idx", columns={"category_id"}), @ORM\Index(name="fk_product_brand1_idx", columns={"brand_id"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Lokos\ShopBundle\Repositories\ProductRepository")
  */
 class Product
 {
@@ -84,20 +84,13 @@ class Product
      */
     private $option;
 
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="Order", mappedBy="product")
-     */
+//    /**
+//     * @var \Doctrine\Common\Collections\Collection
+//     *
+//     * @ORM\ManyToMany(targetEntity="Order", mappedBy="product")
+//     */
+//    private $order;
 
-    /**
-     * @var string
-     *
-     * @ORM\ManyToOne(targetEntity="News", inversedBy="channels")
-     * @ORM\JoinColumn(name="news_id", referencedColumnName="id")
-     */
-    private $order;
-    
     /**
      * Constructor
      */

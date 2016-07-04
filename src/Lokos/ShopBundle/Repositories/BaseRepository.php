@@ -8,8 +8,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base Repository
- *
- * @package    Mindk\PublishBundle\Repositories
  */
 abstract class BaseRepository extends EntityRepository
 {
@@ -58,6 +56,7 @@ abstract class BaseRepository extends EntityRepository
      */
     public function getList($limit = 0, $offset = 0, $order = null, $sort = 'asc')
     {
+
         if (!empty($limit)) {
             $this->query
                 ->setMaxResults($limit);
@@ -90,7 +89,6 @@ abstract class BaseRepository extends EntityRepository
                 }
             }
         }
-
         return $this->query
             ->getQuery()
             ->getResult();

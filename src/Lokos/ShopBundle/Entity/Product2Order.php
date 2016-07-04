@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Order
  *
  * @ORM\Table(name="`product2order`")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Lokos\ShopBundle\Repositories\ProductRepository")
  */
 class Product2Order
 {
@@ -40,7 +40,7 @@ class Product2Order
     /**
      * @var string
      *
-     * @ORM\Column(name="quontity", type="iteger", nullable=false)
+     * @ORM\Column(name="quontity", type="integer", nullable=false)
      */
     private $quontity;
 

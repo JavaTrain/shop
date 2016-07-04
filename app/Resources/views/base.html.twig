@@ -1,17 +1,124 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="UTF-8" />
+        {% block head_meta %}
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        {% endblock head_meta %}
+
         <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}
-            {% stylesheets '@bootstrap_css' %}
-                <link rel="stylesheet" type="text/css" media="screen" href="{{ asset_url }}"/>
+
+        {% block styles %}
+            {% stylesheets
+            '@bootstrap_css'
+            '@LokosShopBundle/Resources/public/css/style.css'
+            '@LokosShopBundle/Resources/public/css/slider.css'
+            %}
+            <link href="{{ asset_url }}" type="text/css" rel="stylesheet"/>
             {% endstylesheets %}
-        {% endblock %}
+
+        {% endblock styles %}
+
+        {% block head_styles %}{% endblock head_styles %}
+
+        {% block head_scripts %}
+            {% javascripts
+            '@LokosShopBundle/Resources/public/js/jquery-1.7.2.min.js'
+            '@LokosShopBundle/Resources/public/js/move-top.js'
+            '@LokosShopBundle/Resources/public/js/easing.js'
+            '@LokosShopBundle/Resources/public/js/startstop-slider.js'
+            %}
+            <script src="{{ asset_url }}"></script>
+            {% endjavascripts %}
+        {% endblock head_scripts %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
         <div class="container">
+            {% block nav %}
+                {# header #}
+                {#<header class="tm-header">#}
+                    {#<div class="uk-container uk-container-center">#}
+                        {#<div class="uk-grid uk-grid-small uk-flex-bottom">#}
+                            {#<div class="uk-width-8-10">#}
+                                {#<div class="uk-grid uk-grid-small uk-flex-bottom">#}
+                                    {#<div class="uk-width-4-10">#}
+                                        {#<!-- Logo Start -->#}
+                                        {#<strong class="tm-header-logo">#}
+                                            {#<a href="{{ path('lokos_shop_homepage') }}">#}
+                                                {#<img src="/bundles/mindkpublish/img/logo.png" title="365publish.com" alt="365publish.com">#}
+                                            {#</a>#}
+                                        {#</strong>#}
+                                        {#<!-- Logo End -->#}
+                                    {#</div>#}
+                                    {#<div class="uk-width-6-10">#}
+                                        {#<ul class="uk-list tm-header-top-nav">#}
+                                            {#<li><a href="http://www.portal.365publish.com/#!produkter/kr7wa">{{ 'header.products'|trans }}</a></li>#}
+                                            {#<li><a href="http://www.portal.365publish.com/#!pr-skolen/yrvxo">{{ 'header.school'|trans }}</a></li>#}
+                                            {#<li><a href="{{ url('mindk_publish_releases') }}">{{ 'header.releases'|trans }}</a></li>#}
+                                            {#{% if app.user is not null and is_granted('ROLE_DEMO_PUBLISHER') %}#}
+                                                {#<li><a href="{{ url('mindk_publish_my_releases') }}">{{ 'header.my_page'|trans }}</a></li>#}
+                                            {#{% elseif app.user is not null and is_granted('ROLE_JOURNALIST') %}#}
+                                                {#<li><a href="{{ url('mindk_publish_my_search') }}">{{ 'header.my_page'|trans }}</a></li>#}
+                                            {#{% elseif app.user is not null and is_granted('ROLE_ADMIN') %}#}
+                                                {#<li><a href="{{ url('mindk_publish_admin_user') }}">{{ 'header.admin_page'|trans }}</a></li>#}
+                                            {#{% endif %}#}
+                                        {#</ul>#}
+                                    {#</div>#}
+                                {#</div>#}
+                                {#<div class="tm-btn-drop" data-uk-dropdown="{mode:'click'}">#}
+                                    {#<div class="tm-btn-drop-nav uk-icon-"></div>#}
+                                    {#<ul class="uk-list uk-dropdown">#}
+                                        {#<li><a href="http://www.portal.365publish.com/#!produkter/kr7wa">{{ 'header.products'|trans }}</a></li>#}
+                                        {#<li><a href="http://www.portal.365publish.com/#!pr-skolen/yrvxo">{{ 'header.school'|trans }}</a></li>#}
+                                        {#<li><a href="{{ url('mindk_publish_releases') }}">{{ 'header.releases'|trans }}</a></li>#}
+                                        {#{% if app.user is not null and is_granted('ROLE_DEMO_PUBLISHER') %}#}
+                                            {#<li><a href="{{ url('mindk_publish_my_releases') }}">{{ 'header.my_page'|trans }}</a></li>#}
+                                        {#{% elseif app.user is not null and is_granted('ROLE_JOURNALIST') %}#}
+                                            {#<li><a href="{{ url('mindk_publish_my_search') }}">{{ 'header.my_page'|trans }}</a></li>#}
+                                        {#{% elseif app.user is not null and is_granted('ROLE_ADMIN') %}#}
+                                            {#<li><a href="{{ url('mindk_publish_admin_user') }}">{{ 'header.admin_page'|trans }}</a></li>#}
+                                        {#{% endif %}#}
+                                    {#</ul>#}
+                                {#</div>#}
+                            {#</div>#}
+                            {#<div class="uk-width-2-10">#}
+                                {#<ul class="uk-list tm-header-nav-link">#}
+                                    {#<li><a href="http://www.portal.365publish.com/#!om-oss/r8c32">{{ 'header.about'|trans }}</a></li>#}
+                                    {#<li><a href="http://www.portal.365publish.com/#!kontakt/cphez">{{ 'header.contact'|trans }}</a></li>#}
+                                {#</ul>#}
+                                {#<div class="tm-header-login"></div>#}
+                                {#<div class="uk-flex uk-flex-middle uk-flex-space-between tm-header-box">#}
+                                    {#{% if app.user is not null and is_granted('IS_AUTHENTICATED_REMEMBERED') %}#}
+                                        {#<a class="tm-button-login" href="{{ path('fos_user_security_logout') }}">{{ 'button.logout'|trans }}</a>#}
+                                    {#{% else %}#}
+                                        {#<a class="tm-button-login" href="{{ path('fos_user_security_login') }}">{{ 'button.login'|trans }}</a>#}
+                                    {#{% endif %}#}
+                                    {#<ul class="tm-header-social-nav">#}
+                                        {#<li>#}
+                                            {#<a target="_blank" href="https://nb-no.facebook.com/365publish">#}
+                                                {#<img src="/bundles/mindkpublish/img/icons/icon-facebook.png" width="25" height="25" title="Facebook" alt="Facebook">#}
+                                            {#</a>#}
+                                        {#</li>#}
+                                        {#<li>#}
+                                            {#<a target="_blank" href="https://www.linkedin.com/company/365publish-com-as">#}
+                                                {#<img src="/bundles/mindkpublish/img/icons/icon-ln.png" width="25" height="25" title="Linked In" alt="Linked In">#}
+                                            {#</a>#}
+                                        {#</li>#}
+                                        {#<li>#}
+                                            {#<a target="_blank" href="https://twitter.com/365publish">#}
+                                                {#<img src="/bundles/mindkpublish/img/icons/icon-twitter.png" width="25" height="25" title="Twitter" alt="Twitter">#}
+                                            {#</a>#}
+                                        {#</li>#}
+                                    {#</ul>#}
+                                {#</div>#}
+                            {#</div>#}
+                        {#</div>#}
+                    {#</div>#}
+                {#</header>#}
+                {# header end #}
+            {% endblock nav %}
+            <!-- Navbar End -->
             {% block body %}{% endblock %}
         </div>
         {% block javascripts %}

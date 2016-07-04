@@ -16,7 +16,13 @@ class ProductController extends BaseController
 
     public function indexAction(Request $request)
     {
-        $this->getListData($request, 'repName');
+        $categories = $this->getDoctrine()->getRepository('LokosShopBundle:Product')->getCategories();
+        
+//        $data = $this->getListData($request, 'LokosShopBundle:Product');
+        $data = array(
+            'categories' => $categories,
+        );
+        return $this->render('product/index.html.twig', $data);
     }
 
 }

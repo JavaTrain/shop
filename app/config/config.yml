@@ -2,11 +2,22 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
+    - { resource: menu.yml }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
+
+# FosUser
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: FOS\UserBundle\Model\User
+#    registration:
+#        form:
+#            type: app_user_registration
+#            validation_groups: [Default, edit]
 
 framework:
     #esi:             ~
@@ -36,6 +47,16 @@ framework:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
+    globals:
+        maxPageCount: 5
+        limitList:
+            - 10
+            - 20
+            - 50
+            - 100
+            - 200
+            - 500
+        defaultLimit: "%default_limit%"
 
 # Doctrine Configuration
 doctrine:

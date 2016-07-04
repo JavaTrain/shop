@@ -1,0 +1,37 @@
+lokos_shop:
+  main_menu:
+    options:
+    items:
+#     MENU
+      -
+        title: home
+        route: lokos_shop_homepage
+        permission: ROLE_USER
+        all_routes:
+          - lokos_shop_homepage
+      -
+        title: about
+        route: lokos_shop_homepage
+        permission: ROLE_USER
+        all_routes:
+          - lokos_shop_homepage
+      -
+        title: delivery
+        route: lokos_shop_homepage
+        permission: ROLE_USER
+        all_routes:
+          - lokos_shop_homepage
+
+  dropdown_menu:
+    options:
+    items:
+      -
+        title: profile
+        icon: uk-icon-user
+        route: lokos_shop_homepage
+        permission: ROLE_USER
+      -
+        title: help
+        icon: uk-icon-edit
+        route: lokos_shop_homepage
+        permission: ROLE_USER

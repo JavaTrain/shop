@@ -1,0 +1,14 @@
+{% extends 'MindkPublishBundle:Menu:main.html.twig' %}
+
+{% block list %}
+    {% if item.hasChildren and options.depth is not same as(0) and item.displayChildren %}
+        {{ block('children') }}
+    {% endif %}
+{% endblock %}
+
+{% block label %}
+    {% if item.labelAttributes is not empty %}
+        <i {{ knp_menu.attributes(item.labelAttributes) }}></i>
+    {% endif %}
+    {{ parent() }}
+{% endblock %}
