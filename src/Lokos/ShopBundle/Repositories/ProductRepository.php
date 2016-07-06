@@ -19,6 +19,14 @@ class ProductRepository extends BaseRepository
     {
         parent::buildQuery();
 
+        $this->query->select(array('tbl'));
+        if (!empty($params['categoryId'])) {
+            $this->query
+                ->andWhere('tbl.category = :category')
+                ->setParameter(':category', $params['categoryId']);
+        }
+
+
         return $this;
     }
 
@@ -27,16 +35,6 @@ class ProductRepository extends BaseRepository
      */
     public function remove(ContainerInterface $container, $id)
     {
-    }
-
-    /**
-     * @return array
-     */
-    public function getCategories()
-    {
-        return $this->getEntityManager()
-            ->getRepository('LokosShopBundle:Category')
-            ->findAll();
     }
 
 }

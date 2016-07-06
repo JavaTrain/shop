@@ -1,3 +1,14 @@
 lokos_shop_homepage:
     path:     /
-    defaults: { _controller:LokosShopBundle:Product:index }
+    defaults: { _controller: LokosShopBundle:Product:index }
+lokos_shop_overview:
+    path: /categories/{id}
+    defaults: { _controller: LokosShopBundle:Product:overview }
+    requirements:
+        id: \d+
+
+lokos_shop_add_to_cart:
+    path: /cart/{id}/add
+    defaults: { _controller: LokosShopBundle:Cart:addToCart }
+    requirements:
+        id: \d+

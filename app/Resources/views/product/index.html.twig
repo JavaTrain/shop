@@ -52,7 +52,7 @@
                                 event.stopPropagation();
                             });
                         }
-                    }
+                    };
 
                     $(function() {
 
@@ -92,7 +92,7 @@
                         <ul>
                             <h3>Categories</h3>
                             {% for category in categories %}
-                                <li><a href="#">{{ category.name }}</a></li>
+                                <li><a href="{{ path('lokos_shop_overview', {'id':category.id}) }}">{{ category.name }}</a></li>
                             {% endfor %}
                         </ul>
                     </div>

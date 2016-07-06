@@ -16,13 +16,32 @@ class ProductController extends BaseController
 
     public function indexAction(Request $request)
     {
-        $categories = $this->getDoctrine()->getRepository('LokosShopBundle:Product')->getCategories();
-        
-//        $data = $this->getListData($request, 'LokosShopBundle:Product');
         $data = array(
-            'categories' => $categories,
+            'categories' => $this->getDoctrine()->getRepository('LokosShopBundle:Category')->findAll(),
         );
+
         return $this->render('product/index.html.twig', $data);
+    }
+
+    /**
+     * @param Request $request
+     * @param         $id
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function overviewAction(Request $request, $id)
+    {
+        $data = $this->getListData(
+            $request,
+            'LokosShopBundle:Product',
+            array('categoryId' => $id),
+            'id',
+            'desc'
+            );
+
+        $data['categories'] = $this->getDoctrine()->getRepository('LokosShopBundle:Category')->findAll();
+
+        return $this->render('product/overview.html.twig', $data);
     }
 
 }
