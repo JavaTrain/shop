@@ -2,6 +2,7 @@
 
 namespace Lokos\ShopBundle\Controller;
 
+use Lokos\ShopBundle\Entity\Product;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -13,21 +14,50 @@ use Symfony\Component\HttpFoundation\Request;
 
 class CartController extends BaseController
 {
+    /**
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function indexAction(Request $request)
+    {
+        $session = $request->getSession();
+        $cart    = $session->get('cart', array());
+        $data    = $this->getListData(
+            $request,
+            'LokosShopBundle:Product',
+            array('products' => array_keys($cart)),
+            'id'
+        );
+        $data['cart'] = $cart;
+        
+        return $this->render('cart/index.html.twig', $data);
+    }
 
     /**
      * @param Request $request
-     * @param         $id
      *
      * @return string
      */
-    public function addToCartAction(Request $request, $id)
+    public function addToCartAction(Request $request)
     {
-        $session   = $request->getSession();
-        $cart      = $session->get('cart', array());
-        $cart[$id] = $request->get('count', 1);
-        $session->set('cart', $cart);
+        $data = array();
+        $id   = (int)abs($request->get('itemId', 0));
+        if ($id) {
+            $session   = $request->getSession();
+            $cart      = $session->get('cart', array());
+            if (!empty($cart[$id]) && $request->get('addButton', false)) {
+                $cart[$id] = ($cart[$id] + 1);
+            } else {
+                $cart[$id] = (int)abs($request->get('itemCount', 1));
+            }
+            $session->set('cart', $cart);
+        }
+        if (!empty($cart)) {
+            $data = $this->getDoctrine()->getRepository('LokosShopBundle:Product')->getCartCountAndPrice($cart);
+        }
 
-        return $this->jsonResponse('Ok');
+        return $this->jsonResponse($data);
     }
 
 }

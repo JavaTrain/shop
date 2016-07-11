@@ -8,7 +8,9 @@ lokos_shop_overview:
         id: \d+
 
 lokos_shop_add_to_cart:
-    path: /cart/{id}/add
+    path: /cart/add/
     defaults: { _controller: LokosShopBundle:Cart:addToCart }
-    requirements:
-        id: \d+
+
+lokos_shop_cart:
+    path: /cart/
+    defaults: { _controller: LokosShopBundle:Cart:index }

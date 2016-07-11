@@ -25,7 +25,7 @@
                     <a href="index.html"><img src="/bundles/lokosshop/images/logo.png" alt="" /></a>
                 </div>
                 <div class="cart">
-                    <p>Welcome to our Online Store! <span>Cart:</span><div id="dd" class="wrapper-dropdown-2"> 0 item(s) - $0.00
+                    <p>Welcome to our Online Store! <span>Cart:</span><div id="dd" class="wrapper-dropdown-2"> <span class="cart-items-count">0</span> item(s) - $<span class="cart-items-price">0.00</span>
                         <ul class="dropdown">
                             <li>you have no items in your Shopping cart</li>
                         </ul></div></p>
@@ -104,7 +104,7 @@
                                     <p><span class="rupees">${{ item.price }}</span></p>
                                 </div>
                                 <div class="add-cart">
-                                    <h4><a class="add-to-cart" data-item-id="{{ item.id }}" href="preview.html">Add to Cart</a></h4>
+                                    <h4><a class="add-to-cart" data-item-id="{{ item.id }}" href="#">Add to Cart</a></h4>
                                 </div>
                                 <div class="clear"></div>
                             </div>
@@ -173,9 +173,27 @@
     </div>
     <script type="text/javascript">
         $(document).ready(function() {
-            $().UItoTop({ easingType: 'easeOutQuart' });
+//            $().UItoTop({ easingType: 'easeOutQuart' });
 
         });
+
+        $('.add-to-cart').click(function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            $.ajax({
+                url: '{{ path('lokos_shop_add_to_cart') }}',
+                type: 'post',
+                data: {itemId:$(this).attr('data-item-id'), addButton:true},
+                success: function(resp){
+                    if (resp) {
+                        $('.cart-items-count').text(resp.sum);
+                        $('.cart-items-price').text(resp.price);
+                    }
+                }
+            });
+        });
+
+
     </script>
     <a href="#" id="toTop"><span id="toTopHover"> </span></a>
 {% endblock %}

@@ -2,14 +2,6 @@
 {% extends '::base.html.twig' %}
 
 {% block body %}
-    {#{% for product in items %}#}
-        {#<div class="col-sm-3">#}
-            {#<div class="panel panel-default">#}
-                {#<div class="panel-heading">{{ product.name }}</div>#}
-                {#<div class="panel-body"></div>#}
-            {#</div>#}
-        {#</div>#}
-    {#{% endfor %}#}
     <div class="wrap">
         {{ knp_menu_render('LokosShopBundle:Builder:mainMenu', {'currentClass': 'active', 'template': 'LokosShopBundle:Menu:main.html.twig'}) }}
         <div class="header">
@@ -33,7 +25,7 @@
                     <a href="index.html"><img src="/bundles/lokosshop/images/logo.png" alt="" /></a>
                 </div>
                 <div class="cart">
-                    <p>Welcome to our Online Store! <span>Cart:</span><div id="dd" class="wrapper-dropdown-2"> 0 item(s) - $0.00
+                    <p>Welcome to our Online Store! <span>Cart:</span><div id="dd" class="wrapper-dropdown-2"> {{ cart.sum }} item(s) - ${{ cart.price }}
                         <ul class="dropdown">
                             <li>you have no items in your Shopping cart</li>
                         </ul></div></p>
