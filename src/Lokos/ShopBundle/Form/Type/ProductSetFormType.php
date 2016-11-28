@@ -5,7 +5,6 @@ namespace Lokos\ShopBundle\Form\Type;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Lokos\ShopBundle\Entity\OptionValue;
-use Lokos\ShopBundle\Entity\ProductSet;
 use Lokos\ShopBundle\Form\EventListener\AddCategoryFieldSubscriber;
 use Lokos\ShopBundle\Form\EventListener\AddOptionFieldSubscriber;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -17,7 +16,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class ProductFormType extends AbstractType
+class ProductSetFormType extends AbstractType
 {
 //    /**
 //     * @var EntityManager
@@ -38,7 +37,7 @@ class ProductFormType extends AbstractType
         $resolver->setDefaults(
             array(
                 'translation_domain' => 'general',
-                'data_class'         => 'Lokos\ShopBundle\Entity\Product',
+                'data_class'         => 'Lokos\ShopBundle\Entity\ProductSet',
             )
         );
     }
@@ -48,42 +47,21 @@ class ProductFormType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventSubscriber(new AddCategoryFieldSubscriber('options'));
+//        $builder->addEventSubscriber(new AddCategoryFieldSubscriber('options'));
 //        $builder->addEventSubscriber(new AddOptionFieldSubscriber('options'));
-//        var_dump($options);die;
         $builder
             ->add(
                 'name',
                 TextType::class,
                 array(
-                    'label'      => 'product.name_title',
+                    'label' => 'product.name_title',
                 )
             )
             ->add(
-                'description',
-                null,
-                array(
-                    'label' => 'product.description',
-                )
-            )
-            ->add('price',
-                  null,
-                  array(
-                      'label' => 'product.price',
-                  )
-            )
-            ->add('quantity',
-                  null,
-                  array(
-                      'label' => 'product.quantity',
-                  )
-            )
-            ->add('category')
-            ->add(
-                'productSets',
+                'product2Options',
                 CollectionType::class,
                 array(
-                    'entry_type'   => ProductSetFormType::class,
+                    'entry_type'   => Product2OptionFormType::class,
                     'prototype'    => true,
                     'allow_add'    => true,
                     'allow_delete' => true,
@@ -99,6 +77,6 @@ class ProductFormType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'lokos_shop_product';
+        return 'lokos_shop_product_set';
     }
 }

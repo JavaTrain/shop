@@ -32,17 +32,18 @@
         </div>
 
         <div class="wrap">
-            {% for opt in form.option %}
-                <input type="hidden" class="cnt" name="cnt" value="{{ opt|length }}"/>
+            {% for productSet in form.productSets %}
+                <input type="hidden" class="cnt" value="{{ productSet|length }}"/>
                 <div class="tm-panel-border">
-                    {{ form_widget(opt.name) }}
-                    <div id="options" class="uk-margin-large-bottom" data-prototype="{{ form_widget(opt.optionValues.vars.prototype)|e }}">
-                        {% for val in opt.optionValues %}
-                            <div>
-                                <span class="delete-location-btn uk-close uk-close-alt">X</span>
-                                {{ form_widget(val) }}
-                            </div>
-                        {% endfor %}
+                    {#{{ dump(productSet) }}#}
+                    {{ form_widget(productSet.name) }}
+                    <div id="options" class="uk-margin-large-bottom" data-prototype="{{ form_widget(productSet.product2Options.vars.prototype)|e }}">
+                        {#{% for val in opt.optionValues %}#}
+                            {#<div>#}
+                                {#<span class="delete-location-btn uk-close uk-close-alt">X</span>#}
+                                {#{{ form_widget(val) }}#}
+                            {#</div>#}
+                        {#{% endfor %}#}
                     </div>
                 </div>
                 <div>
@@ -50,9 +51,32 @@
                 </div>
             {% endfor %}
             <div class="uk-form-row ">
-                <a class="uk-button uk-button-success" href="#" id="addOptionValue"><i class="uk-icon-plus"></i> {{ 'button.add_option_value'|trans() }}</a>
+                <a class="button button-success" href="#" id="addProductSet"><i class="uk-icon-plus"></i> {{ 'button.add_product_set'|trans() }}</a>
             </div>
         </div>
+
+        {#<div class="wrap">#}
+            {#{% for opt in form.option %}#}
+                {#<input type="hidden" class="cnt" name="cnt" value="{{ opt|length }}"/>#}
+                {#<div class="tm-panel-border">#}
+                    {#{{ form_widget(opt.name) }}#}
+                    {#<div id="options" class="uk-margin-large-bottom" data-prototype="{{ form_widget(opt.optionValues.vars.prototype)|e }}">#}
+                        {#{% for val in opt.optionValues %}#}
+                            {#<div>#}
+                                {#<span class="delete-location-btn uk-close uk-close-alt">X</span>#}
+                                {#{{ form_widget(val) }}#}
+                            {#</div>#}
+                        {#{% endfor %}#}
+                    {#</div>#}
+                {#</div>#}
+                {#<div>#}
+                    {#{{ form_widget(opt.optionValues) }}#}
+                {#</div>#}
+            {#{% endfor %}#}
+            {#<div class="uk-form-row ">#}
+                {#<a class="uk-button uk-button-success" href="#" id="addOptionValue"><i class="uk-icon-plus"></i> {{ 'button.add_option_value'|trans() }}</a>#}
+            {#</div>#}
+        {#</div>#}
 
 
         <button class="uk-button uk-button-primary uk-align-right" type="submit">
@@ -89,6 +113,29 @@
 //            });
             });
             $('.delete-location-btn').on('click', delLink);
+
+
+
+            $('#addProductSet').click(function (e) {
+                e.preventDefault();
+                valuesCount = $(e.target).closest('.wrap').find('input.cnt').val()*1;
+                var optionList = $(e.target).closest('.wrap').find('#options'),
+                    newWidget = optionList.attr('data-prototype');
+
+                newWidget = newWidget.replace(/__name__/g, valuesCount);
+                valuesCount++;
+                console.log(newWidget);
+                var newDiv = $(newWidget).prepend("<span class='delete-location-btn uk-close uk-close-alt'>X</span>");
+                console.log(newWidget);
+                newDiv.addClass('tm-panel-border');
+                newDiv.appendTo(optionList);
+                $(optionList).find('.delete-location-btn').click(delLink);
+//            $.each($('.ajax-form'), function () {
+//                AjaxForm.init(this)
+//                if (!is_array($data) && !($data instanceof \Traversable && $data instanceof \ArrayAccess)) {
+//            });
+            });
+
         });
 
 //        $.each($('.ajax-form'), function () { AjaxForm.init(this) });

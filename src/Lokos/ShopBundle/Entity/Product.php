@@ -79,22 +79,19 @@ class Product
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="Option", inversedBy="product")
-     * @ORM\JoinTable(name="product2option",
-     *   joinColumns={
-     *     @ORM\JoinColumn(name="product_id", referencedColumnName="id")
-     *   },
-     *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="option_id", referencedColumnName="id")
-     *   }
-     * )
+     * @ORM\OneToMany(targetEntity="Product2Option", mappedBy="product")
      */
-    private $options;
+    private $product2options;
 
     /**
      * @ORM\OneToMany(targetEntity="OptionValue", mappedBy="product")
      */
     private $optionValues;
+
+    /**
+     * @ORM\OneToMany(targetEntity="ProductSet", mappedBy="product")
+     */
+    private $productSets;
 
     private $cartPrice;
 
@@ -103,9 +100,10 @@ class Product
      */
     public function __construct()
     {
-        $this->attribute = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->options = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->optionValues = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->attribute       = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->product2options = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->optionValues    = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->productSets     = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
 
@@ -304,9 +302,9 @@ class Product
      *
      * @return Product
      */
-    public function addOption(\Lokos\ShopBundle\Entity\Option $option)
+    public function addProduct2options(\Lokos\ShopBundle\Entity\Option $option)
     {
-        $this->options[] = $option;
+        $this->product2options[] = $option;
 
         return $this;
     }
@@ -316,9 +314,9 @@ class Product
      *
      * @param \Lokos\ShopBundle\Entity\Option $option
      */
-    public function removeOption(\Lokos\ShopBundle\Entity\Option $option)
+    public function removeProduct2options(\Lokos\ShopBundle\Entity\Option $option)
     {
-        $this->options->removeElement($option);
+        $this->product2options->removeElement($option);
     }
 
     /**
@@ -326,14 +324,9 @@ class Product
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getOptions()
+    public function getProduct2options()
     {
-        return $this->options;
-    }
-
-    public function getOption()
-    {
-        return $this->options;
+        return $this->product2options;
     }
 
     /**
@@ -375,4 +368,54 @@ class Product
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getProductSets()
+    {
+        return $this->productSets;
+    }
+
+//    /**
+//     * @param $productSets
+//     *
+//     * @return $this
+//     */
+//    public function setProductSets($productSets)
+//    {
+//        $this->productSets = $productSets;
+//
+//        return $this;
+//    }
+
+    /**
+     * @param ProductSet $productSet
+     *
+     * @return $this
+     */
+    public function addProductSets(\Lokos\ShopBundle\Entity\ProductSet $productSet)
+    {
+        $this->productSets[] = $productSet;
+
+        return $this;
+    }
+
+    /**
+     * @param ProductSet $productSet
+     */
+    public function removeProductSet(\Lokos\ShopBundle\Entity\ProductSet $productSet)
+    {
+        $this->productSets->removeElement($productSet);
+    }
+
+    /**
+     * @return mixed
+     */
+    function __toString()
+    {
+        return $this->getName();
+    }
+
+
 }

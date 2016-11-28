@@ -2,16 +2,14 @@
 
 namespace Lokos\ShopBundle\Form\Type;
 
-use Lokos\ShopBundle\Entity\OptionValue;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class OptionFormType extends AbstractType
+class Product2OptionFormType extends AbstractType
 {
     /**
      * {@inheritDoc}
@@ -21,7 +19,7 @@ class OptionFormType extends AbstractType
         $resolver->setDefaults(
             array(
                 'translation_domain' => 'general',
-                'data_class'         => 'Lokos\ShopBundle\Entity\Option',
+                'data_class'         => 'Lokos\ShopBundle\Entity\Product2Option',
             )
         );
     }
@@ -32,26 +30,20 @@ class OptionFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add(
-                'name',
-                TextType::class,
-                array(
-                    'label'      => 'option.name_title',
-                )
-            )
-//            ->add('description')
+            ->add('option')
 //            ->add(
-//                'optionValues',
+//                'option',
 //                CollectionType::class,
 //                array(
-//                    'entry_type'   => OptionValueFormType::class,
+//                    'entry_type'   => OptionFormType::class,
 //                    'prototype'    => true,
 //                    'allow_add'    => true,
 //                    'allow_delete' => true,
 //                    'required'     => false
 //                )
 //            )
-            ;
+//            ->add('product')
+        ;
     }
 
     /**
@@ -59,6 +51,6 @@ class OptionFormType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'lokos_shop_option';
+        return 'lokos_product_2_option';
     }
 }

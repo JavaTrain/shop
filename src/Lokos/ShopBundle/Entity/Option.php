@@ -50,12 +50,12 @@ class Option
      */
     private $category;
 
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="Product", mappedBy="options")
-     */
-    private $product;
+//    /**
+//     * @var \Doctrine\Common\Collections\Collection
+//     *
+//     * @ORM\ManyToOne(targetEntity="Product2Option", inversedBy="product2Options")
+//     */
+//    private $product2Option;
 
     /**
      * @ORM\OneToMany(targetEntity="OptionValue", mappedBy="option")
@@ -67,8 +67,7 @@ class Option
      */
     public function __construct()
     {
-        $this->category = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->product = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->category     = new \Doctrine\Common\Collections\ArrayCollection();
         $this->optionValues = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
@@ -166,37 +165,33 @@ class Option
     }
 
     /**
-     * Add product
+     * @param Product2Option $product2Option
      *
-     * @param \Lokos\ShopBundle\Entity\Product $product
-     *
-     * @return Option
+     * @return $this
      */
-    public function addProduct(\Lokos\ShopBundle\Entity\Product $product)
+    public function setProduct2Option(\Lokos\ShopBundle\Entity\Product2Option $product2Option)
     {
-        $this->product[] = $product;
+        $this->product2Option = $product2Option;
 
         return $this;
     }
 
-    /**
-     * Remove product
-     *
-     * @param \Lokos\ShopBundle\Entity\Product $product
-     */
-    public function removeProduct(\Lokos\ShopBundle\Entity\Product $product)
-    {
-        $this->product->removeElement($product);
-    }
+//    /**
+//     * Remove product
+//     *
+//     * @param \Lokos\ShopBundle\Entity\Product $product
+//     */
+//    public function removeProduct(\Lokos\ShopBundle\Entity\Product $product)
+//    {
+//        $this->product->removeElement($product);
+//    }
 
     /**
-     * Get product
-     *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getProduct()
+    public function getProduct2Option()
     {
-        return $this->product;
+        return $this->product2Option;
     }
 
     /**

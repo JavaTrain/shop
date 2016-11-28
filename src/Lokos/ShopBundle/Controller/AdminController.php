@@ -172,6 +172,7 @@ class AdminController extends BaseController
             $title = $this->translate('product.edit_title', array(':product' => $product->getName()));
         }
 
+//        var_dump($product->getProductSets()[0]->getProduct2Options()[0]->getOption()->getName());die;
         $form = $this->createForm(ProductFormType::class, $product);
 
         if ($request->isMethod('POST')) {

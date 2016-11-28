@@ -63,9 +63,9 @@ class AddCategoryFieldSubscriber implements EventSubscriberInterface
 //var_dump($data);die;
         $accessor = PropertyAccess::createPropertyAccessor();
 
-        $options    = $accessor->getValue($data, 'options'/*$this->propertyPathToCity*/);
+        $options    = $accessor->getValue($data, 'product2options'/*$this->propertyPathToCity*/);
 //        var_dump($options[0]->getCategory()[0]);die;
-        $category = ($options[0]) ? $options[0]->getCategory()[0] : null;
+        $category = ($options[0]) ? $options[0]->getOption()->getCategory() : null;
 
         $this->addCategoryForm($form, $category);
     }
