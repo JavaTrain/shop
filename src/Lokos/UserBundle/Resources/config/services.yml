@@ -1,0 +1,4 @@
+services:
+#    lokos_user.example:
+#        class: Lokos\UserBundle\Example
+#        arguments: ["@service_id", "plain_value", %parameter%]

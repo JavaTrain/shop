@@ -1,0 +1,57 @@
+{% extends 'LokosShopBundle::admin.layout.html.twig' %}
+{% trans_default_domain 'general' %}
+
+{% block content %}
+    <form class="ajax-form" method="post" enctype="multipart/form-data" novalidate="novalidate">
+        <div class="uk-grid uk-margin-bottom">
+            <div class="uk-width-5-10">
+                <h1>{{ title }}</h1>
+            </div>
+            <div class="uk-width-5-10">
+                <button class="uk-button uk-button-primary uk-align-right" type="submit">
+                    <i class="uk-icon-check"></i>
+                    {{ 'button.save'|trans }}
+                </button>
+            </div>
+        </div>
+        <div class="uk-margin-bottom">
+            <label class="uk-form-label" for="{{ form.name.vars.id }}">{{ form.name.vars.label|trans }}</label>
+            {{ form_widget(form.name) }}
+        </div>
+        <div id="mediaLinks" class="uk-margin-large-bottom" data-prototype="{{ form_widget(form.optionValues.vars.prototype)|e }}">
+            {% for optionVlue in form.optionValues %}
+                <div class="tm-panel-border">
+                    <span class="delete-location-btn uk-close uk-close-alt">X</span>
+                    {{ form_widget(optionVlue) }}
+                </div>
+            {% endfor %}
+            <div class="uk-form-row ">
+                <a class="uk-button uk-button-success" href="#" id="addLink"><i class="uk-icon-plus"></i> {{ 'button.add_link'|trans() }}</a>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        var delLink = function (e) {
+            var links = $('#mediaLinks');
+            $(e.target).parent('div').remove();
+//            saveField(links);
+        };
+        $('#addLink').click(function (e) {
+            var medialinksCount = '{{ form.optionValues|length }}';
+            e.preventDefault();
+            var linkList = $('#mediaLinks'),
+                    newWidget = linkList.attr('data-prototype');
+            newWidget = newWidget.replace(/__name__/g, medialinksCount);
+            medialinksCount++;
+            var newDiv = $(newWidget).prepend("<span class='delete-location-btn uk-close uk-close-alt'></span>");
+            newDiv.addClass('tm-panel-border');
+            newDiv.appendTo(linkList);
+            $(linkList).find('.delete-location-btn').click(delLink);
+//            $.each($('.ajax-form'), function () {
+//                AjaxForm.init(this)
+//            });
+        });
+        $('.delete-location-btn').on('click', delLink);
+    </script>
+{% endblock content  %}

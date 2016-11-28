@@ -22,6 +22,8 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
             new Knp\Bundle\MenuBundle\KnpMenuBundle(),
+            new Lokos\UserBundle\LokosUserBundle(),
+            new Lokos\AdminBundle\LokosAdminBundle(),
         ];
        
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

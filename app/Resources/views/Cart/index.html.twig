@@ -1,0 +1,170 @@
+{% trans_default_domain 'general' %}
+{% extends '::base.html.twig' %}
+
+{% block page_script %}
+    {% javascripts
+    '@LokosShopBundle/Resources/public/js/easyResponsiveTabs.js'
+    '@LokosShopBundle/Resources/public/js/slides.min.jquery.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+
+{% endblock page_script %}
+
+{% block content %}
+    <div class="wrap">
+        <div class="main">
+            <div class="content">
+                <div class="section group">
+                    <div class="cont-desc span_1_of_2">
+                        <div class="product-details">
+                            <div class="grid images_3_of_2">
+                                <div id="container">
+                                    <div id="products_example">
+                                        <div id="products">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                {% if cartItems %}
+                                <table id="cart_table" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Options</th>
+                                            <th>Quantity</th>
+                                            <th>Price</th>
+                                            <th>Remove</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="4">Total:</td>
+                                            <td class="total-price"></td>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        {% for key, item in cartItems %}
+                                            <tr class="item" data-cart-item="{{ key }}" data-item="{{ item.product.id }}" data-item-price="{{ item.product.price }}">
+                                                <td>{{ item.product.name }}</td>
+                                                <td class="options">
+                                                    {% if item.product.options is not empty %}
+                                                        {% for option in item.product.options %}
+                                                            {{ option.name }}:
+                                                            <select name="{{ option.id }}" onchange="updateCart(this)">
+                                                                {% for value in option.optionValues %}
+                                                                    <option data-option-price="{{ value.price }}" {% if attribute(item.options, option.id) == value.id %} selected {% endif %} value="{{ value.id }}">{{ value.value }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        {% endfor %}
+                                                    {% endif %}
+                                                </td>
+                                                <td class="quantity"><input class="items-quantity" name="quantity" value="{{ item.quantity }}" onchange="updateCart(this)"/></td>
+                                                <td class="price">{{ item.product.cartPrice }}</td>
+                                                <td><span class="delete-item" onclick="updateCart(this)">X</span></td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                {% else %}
+                                    <h1>Cart is empty</h1>
+                                {% endif %}
+                                </div>
+                            <div class="clear"></div>
+                        </div>
+                        <a href="{{ path('lokos_shop_order') }}">Make an order</a>
+                    </div>
+                    <div class="rightsidebar span_3_of_1">
+
+                        {{ block('categories') }}
+
+                        <div class="community-poll">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {#{{ block('footer') }}#}
+    <script type="text/javascript">
+//        $(document).ready(function() {
+//            $().UItoTop({ easingType: 'easeOutQuart' });
+//
+//        });
+        var cartPrice = function(){
+            var table = $('#cart_table');
+            table.find('tbody tr').each(function () {
+                var price = parseFloat($(this).attr('data-item-price')),
+                    quantity = parseInt($(this).find('.quantity input').val()),
+                    optionsPrice = 0;
+                $(this).find('.options select').each(function(){
+                    optionsPrice += (parseFloat($(this).find('option:selected').attr('data-option-price')) || 0);
+                });
+                $(this).find('.price').text((price+optionsPrice)*quantity);
+            });
+        };
+        var totalCartPrice = function(){
+            var table = $('#cart_table'),
+                price = 0,
+                priceItem,
+                quantity;
+            table.find('tbody tr').each(function () {
+                priceItem = parseFloat($(this).find('.price').text());
+                quantity = parseInt($(this).find('.quantity input').val());
+                price += priceItem * quantity;
+            });
+            table.find('tfoot .total-price').text(price);
+            $('.cart-items-price').text(price)
+        };
+        var totalCartCount = function(){
+            var table = $('#cart_table'),
+                count = 0;
+            table.find('tbody tr').each(function () {
+                count += parseInt($(this).find('.quantity input').val());
+            });
+            $('.cart-items-count').text(count)
+        };
+
+        function updateCart(el) {
+            var tr = $(el).closest('tr'),
+                options = {},
+                cartItem = {},
+                action = 'edit',
+                cartId,
+                obj;
+            tr.find('.options select').each(function () {
+                options[$(this).attr('name')] = $(this).find('option:selected').val();
+            });
+            cartId = tr.attr('data-cart-item');
+            if($(el).hasClass('delete-item')){
+                action = 'delete';
+            }else{
+                cartItem['id'] = tr.attr('data-item');
+                cartItem['quantity'] = tr.find('.quantity input').val();
+                cartItem['options'] = options;
+                obj = JSON.stringify(cartItem);
+            }
+            $.ajax({
+                url: '{{ path('lokos_shop_cart_edit') }}',
+                type: 'post',
+                data: { item: obj, cartId: cartId, action:action },
+                success: function(resp) {
+                    if (resp) {
+                        if(action == 'delete' && resp == 'Ok'){
+                            tr.remove();
+                        }
+                        cartPrice();
+                        totalCartPrice();
+                        totalCartCount();
+                    }
+                }
+            });
+        }
+        totalCartPrice();
+        totalCartCount();
+    </script>
+    <a href="#" id="toTop"><span id="toTopHover"> </span></a>
+{% endblock %}

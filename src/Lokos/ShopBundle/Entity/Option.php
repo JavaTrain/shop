@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Option
  *
- * @ORM\Table(name="`option`", indexes={@ORM\Index(name="fk_option_atribute1_idx", columns={"atribute_id"})})
+ * @ORM\Table(name="`option`")
  * @ORM\Entity
  */
 class Option
@@ -24,55 +24,52 @@ class Option
     /**
      * @var string
      *
-     * @ORM\Column(name="value", type="string", length=45, nullable=false)
+     * @ORM\Column(name="name", type="string", length=45, nullable=false)
      */
-    private $value;
-
-//    /**
-//     * @var string
-//     *
-//     * @ORM\Column(name="name", type="string", length=45, nullable=false)
-//     */
-//    private $name;
+    private $name;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="description", type="string", length=255, nullable=true)
+     * @ORM\Column(name="description", type="text", length=16777215, nullable=false)
      */
     private $description;
 
     /**
-     * @var \Atribute
+     * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToOne(targetEntity="Atribute")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="atribute_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToMany(targetEntity="Category", inversedBy="option")
+     * @ORM\JoinTable(name="option2category",
+     *   joinColumns={
+     *     @ORM\JoinColumn(name="option_id", referencedColumnName="id")
+     *   },
+     *   inverseJoinColumns={
+     *     @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     *   }
+     * )
      */
-    private $atribute;
+    private $category;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="Order", mappedBy="option")
-     */
-    private $order;
-
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="Product", mappedBy="option")
+     * @ORM\ManyToMany(targetEntity="Product", mappedBy="options")
      */
     private $product;
+
+    /**
+     * @ORM\OneToMany(targetEntity="OptionValue", mappedBy="option")
+     */
+    private $optionValues;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->order = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->category = new \Doctrine\Common\Collections\ArrayCollection();
         $this->product = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->optionValues = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
 
@@ -87,52 +84,28 @@ class Option
     }
 
     /**
-     * Set value
+     * Set name
      *
-     * @param string $value
+     * @param string $name
      *
      * @return Option
      */
-    public function setValue($value)
+    public function setName($name)
     {
-        $this->value = $value;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get value
+     * Get name
      *
      * @return string
      */
-    public function getValue()
+    public function getName()
     {
-        return $this->value;
+        return $this->name;
     }
-
-//    /**
-//     * Set name
-//     *
-//     * @param string $name
-//     *
-//     * @return Option
-//     */
-//    public function setName($name)
-//    {
-//        $this->name = $name;
-//
-//        return $this;
-//    }
-//
-//    /**
-//     * Get name
-//     *
-//     * @return string
-//     */
-//    public function getName()
-//    {
-//        return $this->name;
-//    }
 
     /**
      * Set description
@@ -159,61 +132,37 @@ class Option
     }
 
     /**
-     * Set atribute
+     * Add category
      *
-     * @param \Lokos\ShopBundle\Entity\Atribute $atribute
+     * @param \Lokos\ShopBundle\Entity\Category $category
      *
      * @return Option
      */
-    public function setAtribute(\Lokos\ShopBundle\Entity\Atribute $atribute = null)
+    public function addCategory(\Lokos\ShopBundle\Entity\Category $category)
     {
-        $this->atribute = $atribute;
+        $this->category[] = $category;
 
         return $this;
     }
 
     /**
-     * Get atribute
+     * Remove category
      *
-     * @return \Lokos\ShopBundle\Entity\Atribute
+     * @param \Lokos\ShopBundle\Entity\Category $category
      */
-    public function getAtribute()
+    public function removeCategory(\Lokos\ShopBundle\Entity\Category $category)
     {
-        return $this->atribute;
+        $this->category->removeElement($category);
     }
 
     /**
-     * Add order
-     *
-     * @param \Lokos\ShopBundle\Entity\Order $order
-     *
-     * @return Option
-     */
-    public function addOrder(\Lokos\ShopBundle\Entity\Order $order)
-    {
-        $this->order[] = $order;
-
-        return $this;
-    }
-
-    /**
-     * Remove order
-     *
-     * @param \Lokos\ShopBundle\Entity\Order $order
-     */
-    public function removeOrder(\Lokos\ShopBundle\Entity\Order $order)
-    {
-        $this->order->removeElement($order);
-    }
-
-    /**
-     * Get order
+     * Get category
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getOrder()
+    public function getCategory()
     {
-        return $this->order;
+        return $this->category;
     }
 
     /**
@@ -249,4 +198,34 @@ class Option
     {
         return $this->product;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getOptionValues()
+    {
+        return $this->optionValues;
+    }
+
+    /**
+     * @param $optionValues
+     *
+     * @return $this
+     */
+    public function setOptionValues($optionValues)
+    {
+        $this->optionValues = $optionValues;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    function __toString()
+    {
+        return $this->getName();
+    }
+
+
 }

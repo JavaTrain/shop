@@ -1,0 +1,7 @@
+{% extends '::base.html.twig' %}
+
+{% block content %}
+    {% for category in categories %}
+        <h3>{{ category.name }}</h3>
+    {% endfor %}
+{% endblock %}

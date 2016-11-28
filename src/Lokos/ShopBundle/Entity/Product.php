@@ -43,6 +43,13 @@ class Product
     private $price;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="quantity", type="integer", nullable=true)
+     */
+    private $quantity;
+
+    /**
      * @var \Category
      *
      * @ORM\ManyToOne(targetEntity="Category")
@@ -65,9 +72,9 @@ class Product
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="Atribute", mappedBy="product")
+     * @ORM\ManyToMany(targetEntity="Attribute", mappedBy="product")
      */
-    private $atribute;
+    private $attribute;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -82,23 +89,23 @@ class Product
      *   }
      * )
      */
-    private $option;
+    private $options;
 
-//    /**
-//     * @var \Doctrine\Common\Collections\Collection
-//     *
-//     * @ORM\ManyToMany(targetEntity="Order", mappedBy="product")
-//     */
-//    private $order;
+    /**
+     * @ORM\OneToMany(targetEntity="OptionValue", mappedBy="product")
+     */
+    private $optionValues;
+
+    private $cartPrice;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->atribute = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->option = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->order = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->attribute = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->options = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->optionValues = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
 
@@ -185,6 +192,30 @@ class Product
     }
 
     /**
+     * Set quantity
+     *
+     * @param integer $quantity
+     *
+     * @return Product
+     */
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
+
+        return $this;
+    }
+
+    /**
+     * Get quantity
+     *
+     * @return integer
+     */
+    public function getQuantity()
+    {
+        return $this->quantity;
+    }
+
+    /**
      * Set category
      *
      * @param \Lokos\ShopBundle\Entity\Category $category
@@ -233,37 +264,37 @@ class Product
     }
 
     /**
-     * Add atribute
+     * Add attribute
      *
-     * @param \Lokos\ShopBundle\Entity\Atribute $atribute
+     * @param \Lokos\ShopBundle\Entity\Attribute $attribute
      *
      * @return Product
      */
-    public function addAtribute(\Lokos\ShopBundle\Entity\Atribute $atribute)
+    public function addAttribute(\Lokos\ShopBundle\Entity\Attribute $attribute)
     {
-        $this->atribute[] = $atribute;
+        $this->attribute[] = $attribute;
 
         return $this;
     }
 
     /**
-     * Remove atribute
+     * Remove attribute
      *
-     * @param \Lokos\ShopBundle\Entity\Atribute $atribute
+     * @param \Lokos\ShopBundle\Entity\Attribute $attribute
      */
-    public function removeAtribute(\Lokos\ShopBundle\Entity\Atribute $atribute)
+    public function removeAttribute(\Lokos\ShopBundle\Entity\Attribute $attribute)
     {
-        $this->atribute->removeElement($atribute);
+        $this->attribute->removeElement($attribute);
     }
 
     /**
-     * Get atribute
+     * Get attribute
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getAtribute()
+    public function getAttribute()
     {
-        return $this->atribute;
+        return $this->attribute;
     }
 
     /**
@@ -275,7 +306,7 @@ class Product
      */
     public function addOption(\Lokos\ShopBundle\Entity\Option $option)
     {
-        $this->option[] = $option;
+        $this->options[] = $option;
 
         return $this;
     }
@@ -287,7 +318,7 @@ class Product
      */
     public function removeOption(\Lokos\ShopBundle\Entity\Option $option)
     {
-        $this->option->removeElement($option);
+        $this->options->removeElement($option);
     }
 
     /**
@@ -295,42 +326,53 @@ class Product
      *
      * @return \Doctrine\Common\Collections\Collection
      */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
     public function getOption()
     {
-        return $this->option;
+        return $this->options;
     }
 
     /**
-     * Add order
-     *
-     * @param \Lokos\ShopBundle\Entity\Order $order
-     *
-     * @return Product
+     * @return mixed
      */
-    public function addOrder(\Lokos\ShopBundle\Entity\Order $order)
+    public function getOptionValues()
     {
-        $this->order[] = $order;
+        return $this->optionValues;
+    }
 
+    /**
+     * @param $optionValues
+     *
+     * @return $this
+     */
+    public function setOptionValues($optionValues)
+    {
+        $this->optionValues = $optionValues;
+        
         return $this;
     }
 
     /**
-     * Remove order
-     *
-     * @param \Lokos\ShopBundle\Entity\Order $order
+     * @return mixed
      */
-    public function removeOrder(\Lokos\ShopBundle\Entity\Order $order)
+    public function getCartPrice()
     {
-        $this->order->removeElement($order);
+        return $this->cartPrice;
     }
 
     /**
-     * Get order
+     * @param $cartPrice
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return $this
      */
-    public function getOrder()
+    public function setCartPrice($cartPrice)
     {
-        return $this->order;
+        $this->cartPrice = $cartPrice;
+
+        return $this;
     }
 }

@@ -1,0 +1,23 @@
+{% extends 'LokosShopBundle::admin.layout.html.twig' %}
+{% trans_default_domain 'general' %}
+
+{% block content %}
+    <form class="ajax-form" method="post" enctype="multipart/form-data" novalidate="novalidate">
+        <div class="uk-grid uk-margin-bottom">
+            <div class="uk-width-5-10">
+                <h1>{{ title }}</h1>
+            </div>
+            <div class="uk-width-5-10">
+                <button class="uk-button uk-button-primary uk-align-right" type="submit">
+                    <i class="uk-icon-check"></i>
+                    {{ 'button.save'|trans }}
+                </button>
+            </div>
+        </div>
+        <div class="uk-grid">
+            <div class="uk-width-1-1 uk-form uk-grid-margin uk-form-horizontal">
+                {{ form_rest(form) }}
+            </div>
+        </div>
+    </form>
+{% endblock content  %}

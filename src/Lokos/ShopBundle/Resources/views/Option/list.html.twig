@@ -1,0 +1,18 @@
+{% trans_default_domain 'general' %}
+{% extends 'LokosShopBundle::admin.layout.html.twig' %}
+
+
+{% block content %}
+    <div>
+        <div>
+            <a href="{{ path('lokos_shop_admin_option_form', {id:'new'}) }}">Add option</a>
+        </div>
+        <ul>
+            {% for option in options %}
+                <li><a href="{{ path('lokos_shop_admin_option_form', {id:option.id}) }}">{{ option.name }}</a></li>
+            {%  else %}
+                <li><h2>Nothing found</h2></li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock content  %}

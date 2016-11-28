@@ -2,7 +2,9 @@
 
 namespace Lokos\ShopBundle\Controller;
 
+use Lokos\ShopBundle\Entity\Product;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Created by PhpStorm.
@@ -21,17 +23,14 @@ class ProductController extends BaseController
      */
     public function indexAction(Request $request)
     {
-        $cart      = $request->getSession()->get('cart', array());
-        $data = array(
+        $cartItems = $this->get('lokos.shop.cart_repository')
+                          ->getCartItems($request->getSession()->get('cart', array()));
+        $data      = array(
             'categories' => $this->getDoctrine()->getRepository('LokosShopBundle:Category')->findAll(),
+            'cartResume' => $this->get('lokos.shop.cart_repository')->getCartItemsCountAndPrice($cartItems),
         );
-        if ($cart) {
-            $data['cart'] = $this->getDoctrine()->getRepository('LokosShopBundle:Product')->getCartCountAndPrice($cart);
-        } else {
-            $data['cart'] = array('sum' => '0', 'price' => '0.00');
-        }
 
-        return $this->render('product/index.html.twig', $data);
+        return $this->render('Product/index.html.twig', $data);
     }
 
     /**
@@ -50,9 +49,62 @@ class ProductController extends BaseController
             'desc'
             );
 
-        $data['categories'] = $this->getDoctrine()->getRepository('LokosShopBundle:Category')->findAll();
+        $data['categories'] = $this->getDoctrine()
+                                   ->getRepository('LokosShopBundle:Category')
+                                   ->findAll();
+        $cartItems          = $this->get('lokos.shop.cart_repository')
+                                   ->getCartItems($request->getSession()->get('cart', array()));
+        $data['cartResume'] = $this->get('lokos.shop.cart_repository')
+                                   ->getCartItemsCountAndPrice($cartItems);
+        $data['catId'] = $id;
 
-        return $this->render('product/overview.html.twig', $data);
+        return $this->render('Product/overview.html.twig', $data);
+    }
+
+    /**
+     * @param Request $request
+     * @param         $catId
+     * @param         $itemId
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function detailAction(Request $request, $catId, $itemId)
+    {
+        $item = $this->getDoctrine()
+                     ->getRepository('LokosShopBundle:Product')
+                     ->reset()
+                     ->buildQuery(array('withOptions' => $itemId))
+                     ->getSingle();
+        $withOptions = true;
+        if (!$item) {
+            $item = $this->getDoctrine()
+                         ->getRepository('LokosShopBundle:Product')
+                         ->reset()
+                         ->buildQuery(array('id' => $itemId))
+                         ->getSingle();
+            $withOptions = false;
+        }
+        if (!$item) {
+            throw new NotFoundHttpException('Item "'.$itemId.'" not found');
+        }
+
+        $cartItems = $this->get('lokos.shop.cart_repository')
+                          ->getCartItems($request->getSession()->get('cart', array()));
+
+        $data = array(
+            'item'        => $item,
+            'cartResume'  => $this->get('lokos.shop.cart_repository')->getCartItemsCountAndPrice($cartItems),
+            'categories'  => $this->getDoctrine()->getRepository('LokosShopBundle:Category')->findAll(),
+            'withOptions' => $withOptions,
+        );
+
+        if ($request->isMethod('POST')) {
+            $response = $this->render('Product/detail_block.html.twig', $data);
+        } else {
+            $response = $this->render('Product/detail.html.twig', $data);
+        }
+
+        return $response;
     }
 
 }

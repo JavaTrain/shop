@@ -1,0 +1,175 @@
+{% trans_default_domain 'general' %}
+{% extends '::base.html.twig' %}
+
+{#{% block head_styles %}#}
+    {#{% stylesheets#}
+    {#'@LokosShopBundle/Resources/public/css/easy-responsive-tabs.css'#}
+    {#'@LokosShopBundle/Resources/public/css/global.css'#}
+    {#%}#}
+    {#{% endstylesheets %}#}
+
+    {#<link href="{{ asset_url }}" type="text/css" rel="stylesheet"/>#}
+{#{% endblock head_styles %}#}
+
+{% block page_script %}
+    {% javascripts
+    '@LokosShopBundle/Resources/public/js/easyResponsiveTabs.js'
+    '@LokosShopBundle/Resources/public/js/slides.min.jquery.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+
+{% endblock page_script %}
+
+{% block content %}
+    <div class="wrap">
+        <div class="main">
+            <div class="content">
+                <div class="content_top">
+                    <div class="back-links">
+                        <p><a href="index.html">Home</a> >>>> <a href="#">Electronics</a></p>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                <div class="section group">
+                    <div class="cont-desc span_1_of_2">
+                        <div class="product-details">
+                            <div class="grid images_3_of_2">
+                                <div id="container">
+                                    <div id="products_example">
+                                        <div id="products">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% include 'LokosShopBundle:Product:detail_block.html.twig' %}
+                            <div class="clear"></div>
+                        </div>
+                        <div class="product_desc">
+                            <div id="horizontalTab">
+                                <ul class="resp-tabs-list">
+                                    <li>Product Details</li>
+                                    <li>product Tags</li>
+                                    <li>Product Reviews</li>
+                                    <div class="clear"></div>
+                                </ul>
+                                <div class="resp-tabs-container">
+                                    <div class="product-desc">
+                                        <p>Lorem Ipsum is simply dummy text of the <span>printing and typesetting industry</span>. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+                                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, <span>when an unknown printer took a galley of type and scrambled</span> it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.<span> It has survived not only five centuries</span>, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+                                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>					</div>
+
+                                    <div class="product-tags">
+                                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+                                        <h4>Add Your Tags:</h4>
+                                        <div class="input-box">
+                                            <input type="text" value="">
+                                        </div>
+                                        <div class="button"><span><a href="#">Add Tags</a></span></div>
+                                    </div>
+
+                                    <div class="review">
+                                        <h4>Lorem ipsum Review by <a href="#">Finibus Bonorum</a></h4>
+                                        <ul>
+                                            <li>Price :<a href="#"><img src="/bundles/lokosshop/images/price-rating.png" alt="" /></a></li>
+                                            <li>Value :<a href="#"><img src="/bundles/lokosshop/images/value-rating.png" alt="" /></a></li>
+                                            <li>Quality :<a href="#"><img src="/bundles/lokosshop/images/quality-rating.png" alt="" /></a></li>
+                                        </ul>
+                                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+                                        <div class="your-review">
+                                            <h3>How Do You Rate This Product?</h3>
+                                            <p>Write Your Own Review?</p>
+                                            <form>
+                                                <div>
+                                                    <span><label>Nickname<span class="red">*</span></label></span>
+                                                    <span><input type="text" value=""></span>
+                                                </div>
+                                                <div><span><label>Summary of Your Review<span class="red">*</span></label></span>
+                                                    <span><input type="text" value=""></span>
+                                                </div>
+                                                <div>
+                                                    <span><label>Review<span class="red">*</span></label></span>
+                                                    <span><textarea> </textarea></span>
+                                                </div>
+                                                <div>
+                                                    <span><input type="submit" value="SUBMIT REVIEW"></span>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="content_bottom">
+                            <div class="heading">
+                                <h3>Related Products</h3>
+                            </div>
+                            <div class="see">
+                                <p><a href="#">See all Products</a></p>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                        <div class="section group">
+                        </div>
+                    </div>
+                    <div class="rightsidebar span_3_of_1">
+
+                        {{ block('categories') }}
+
+                        <div class="community-poll">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {#{{ block('footer') }}#}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $().UItoTop({ easingType: 'easeOutQuart' });
+
+        });
+
+        $('.add-item-to-cart').click(function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            var options = $('.item-options-block').find('select[data-item-option-id]');
+            var optionsitem = {};
+            var cartItem = {};
+            var optionNotChoosen = false;
+            options.each(function(){
+                var optionId = $(this).val();
+                if (!optionId) {
+                    alert('Choose an option '+ this.name);
+                    optionNotChoosen = true;
+                    return;
+                }
+                optionNotChoosen = false;
+                optionsitem[$(this).attr('data-item-option-id')] = $(this).val();
+            });
+            if (optionNotChoosen) {
+                return;
+            }
+
+            cartItem['id'] = $(this).attr('data-item-id');
+            cartItem['quantity'] = $('[data-item-quantity]').val();
+            cartItem['options'] = optionsitem;
+            console.dir(cartItem);
+            var obj = JSON.stringify(cartItem);
+            $.ajax({
+                url: '{{ path('lokos_shop_add_to_cart') }}',
+                type: 'post',
+                data: { item: obj },
+                success: function(resp) {
+                    if (resp) {
+                        $('.cart-items-count').text(resp.total_quantity);
+                        $('.cart-items-price').text(resp.total_price);
+                    }
+                }
+            });
+        });
+    </script>
+    <a href="#" id="toTop"><span id="toTopHover"> </span></a>
+{% endblock %}

@@ -2,10 +2,16 @@ lokos_shop_homepage:
     path:     /
     defaults: { _controller: LokosShopBundle:Product:index }
 lokos_shop_overview:
-    path: /categories/{id}
+    path: /categories/{id}/items/
     defaults: { _controller: LokosShopBundle:Product:overview }
     requirements:
         id: \d+
+lokos_shop_item_detail:
+    path: /categories/{catId}/items/{itemId}
+    defaults: { _controller: LokosShopBundle:Product:detail }
+    requirements:
+      catId: \d+
+      itemId: \d+
 
 lokos_shop_add_to_cart:
     path: /cart/add/
@@ -14,3 +20,15 @@ lokos_shop_add_to_cart:
 lokos_shop_cart:
     path: /cart/
     defaults: { _controller: LokosShopBundle:Cart:index }
+
+lokos_shop_cart_edit:
+    path: /cart/edit/
+    defaults: { _controller: LokosShopBundle:Cart:edit }
+
+lokos_shop_order:
+    path: /order/
+    defaults: { _controller: LokosShopBundle:Order:index }
+
+lokos_shop_admin_routes:
+    prefix: /admin/
+    resource: "@LokosShopBundle/Resources/config/routing/admin.yml"

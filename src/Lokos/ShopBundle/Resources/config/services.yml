@@ -1,3 +1,21 @@
 parameters:
+  lokos.shop.cart_repository.class: Lokos\ShopBundle\Repositories\CartRepository
+  lokos.shop.generic_repository.class: Lokos\ShopBundle\Repositories\GenericRepository
 
 services:
+  lokos.shop.cart_repository:
+    class: %lokos.shop.cart_repository.class%
+    arguments:
+      - '@doctrine.orm.entity_manager'
+
+  lokos.shop.product_form_type:
+    class: Lokos\ShopBundle\Form\Type\ProductFormType
+    arguments:
+      - '@doctrine.orm.entity_manager'
+    tags: [{ name: form.type }]
+
+
+#  lokos_form_optio_value_type:
+#    class: Lokos\ShopBundle\Form\Type\OptionValue
+#    tags:
+#       -  { name: form.type }

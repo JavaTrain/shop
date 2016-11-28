@@ -1,0 +1,100 @@
+<?php
+
+namespace Lokos\ShopBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * AttributeValue
+ *
+ * @ORM\Table(name="attribute_value", indexes={@ORM\Index(name="fk_atribute_detail_atribute1_idx", columns={"attribute_id"})})
+ * @ORM\Entity
+ */
+class AttributeValue
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="value", type="string", length=45, nullable=false)
+     */
+    private $value;
+
+    /**
+     * @var \Attribute
+     *
+     * @ORM\ManyToOne(targetEntity="Attribute")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="attribute_id", referencedColumnName="id")
+     * })
+     */
+    private $attribute;
+
+
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set value
+     *
+     * @param string $value
+     *
+     * @return AttributeValue
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+
+        return $this;
+    }
+
+    /**
+     * Get value
+     *
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * Set attribute
+     *
+     * @param \Lokos\ShopBundle\Entity\Attribute $attribute
+     *
+     * @return AttributeValue
+     */
+    public function setAttribute(\Lokos\ShopBundle\Entity\Attribute $attribute = null)
+    {
+        $this->attribute = $attribute;
+
+        return $this;
+    }
+
+    /**
+     * Get attribute
+     *
+     * @return \Lokos\ShopBundle\Entity\Attribute
+     */
+    public function getAttribute()
+    {
+        return $this->attribute;
+    }
+}

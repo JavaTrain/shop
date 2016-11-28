@@ -1,0 +1,25 @@
+{% trans_default_domain 'general' %}
+{% extends '::base.html.twig' %}
+
+{% block page_title %}Order{% endblock page_title %}
+
+{% block content %}
+    <form class="ajax-form uk-form uk-form-horizontal" method="post" enctype="multipart/form-data" novalidate="novalidate">
+        <div class="uk-grid">
+            <div class="uk-width-1-2">
+                {{ form_rest(form) }}
+            </div>
+        </div>
+
+        <button class="uk-button uk-button-primary uk-align-right" type="submit">
+            <i class="uk-icon-check"></i>
+            {{ 'button.save'|trans }}
+        </button>
+    </form>
+{% endblock content  %}
+
+{% block bottom_script %}
+    <script>
+//        $.each($('.ajax-form'), function () { AjaxForm.init(this) });
+    </script>
+{% endblock bottom_script %}

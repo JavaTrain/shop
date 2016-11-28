@@ -7,6 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Order
  *
+ * @ORM\HasLifecycleCallbacks()
+ *
  * @ORM\Table(name="`order`")
  * @ORM\Entity
  */
@@ -50,57 +52,12 @@ class Order
     private $phone;
 
     /**
-     * @var float
-     *
-     * @ORM\Column(name="sum", type="float", precision=10, scale=0, nullable=false)
-     */
-    private $sum;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="comment", type="text", length=65535, nullable=true)
      */
     private $comment;
 
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="Option", inversedBy="order")
-     * @ORM\JoinTable(name="order2option",
-     *   joinColumns={
-     *     @ORM\JoinColumn(name="order_id", referencedColumnName="id")
-     *   },
-     *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="option_id", referencedColumnName="id")
-     *   }
-     * )
-     */
-    private $option;
-
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="Product", inversedBy="order")
-     * @ORM\JoinTable(name="product2order",
-     *   joinColumns={
-     *     @ORM\JoinColumn(name="order_id", referencedColumnName="id")
-     *   },
-     *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="product_id", referencedColumnName="id")
-     *   }
-     * )
-     */
-    private $product;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->option = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->product = new \Doctrine\Common\Collections\ArrayCollection();
-    }
 
 
     /**
@@ -210,30 +167,6 @@ class Order
     }
 
     /**
-     * Set sum
-     *
-     * @param float $sum
-     *
-     * @return Order
-     */
-    public function setSum($sum)
-    {
-        $this->sum = $sum;
-
-        return $this;
-    }
-
-    /**
-     * Get sum
-     *
-     * @return float
-     */
-    public function getSum()
-    {
-        return $this->sum;
-    }
-
-    /**
      * Set comment
      *
      * @param string $comment
@@ -258,70 +191,11 @@ class Order
     }
 
     /**
-     * Add option
-     *
-     * @param \Lokos\ShopBundle\Entity\Option $option
-     *
-     * @return Order
+     * @ORM\PrePersist
      */
-    public function addOption(\Lokos\ShopBundle\Entity\Option $option)
+    public function setTagValue()
     {
-        $this->option[] = $option;
-
-        return $this;
-    }
-
-    /**
-     * Remove option
-     *
-     * @param \Lokos\ShopBundle\Entity\Option $option
-     */
-    public function removeOption(\Lokos\ShopBundle\Entity\Option $option)
-    {
-        $this->option->removeElement($option);
-    }
-
-    /**
-     * Get option
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getOption()
-    {
-        return $this->option;
-    }
-
-    /**
-     * Add product
-     *
-     * @param \Lokos\ShopBundle\Entity\Product $product
-     *
-     * @return Order
-     */
-    public function addProduct(\Lokos\ShopBundle\Entity\Product $product)
-    {
-        $this->product[] = $product;
-
-        return $this;
-    }
-
-    /**
-     * Remove product
-     *
-     * @param \Lokos\ShopBundle\Entity\Product $product
-     */
-    public function removeProduct(\Lokos\ShopBundle\Entity\Product $product)
-    {
-        $this->product->removeElement($product);
-    }
-
-    /**
-     * Get product
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getProduct()
-    {
-        return $this->product;
+        $key = md5(microtime().rand(1, 1000));
+        $this->setTag($key);
     }
 }

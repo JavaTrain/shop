@@ -101,6 +101,7 @@ abstract class BaseRepository extends EntityRepository
      */
     public function getSingle()
     {
+//        print_r($this->query->getQuery()->getSQL());var_dump($this->query->getQuery()->getParameters());die;
         return $this->query
             ->getQuery()
             ->getOneOrNullResult();

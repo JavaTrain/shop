@@ -1,0 +1,7 @@
+#lokos_admin_homepage:
+#    path:     /
+#    defaults: { _controller: LokosAdminBundle:Default:index }
+#
+#lokos_admin_categories:
+#    path:     /categories
+#    defaults: { _controller: LokosAdminBundle:Category:index }

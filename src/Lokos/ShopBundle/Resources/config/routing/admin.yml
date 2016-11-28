@@ -1,0 +1,36 @@
+lokos_shop_index:
+    path:     /
+    defaults: { _controller: LokosShopBundle:Admin:index }
+
+lokos_shop_admin_categories:
+    path:     /categories/
+    defaults: { _controller: LokosShopBundle:Admin:categories }
+lokos_shop_admin_category_form:
+    path:     /categories/{id}/
+    defaults:
+        _controller: LokosShopBundle:Admin:editCategories
+        id: new
+    requirements:
+        id: \d+|new
+
+lokos_shop_admin_options:
+    path:     /options/
+    defaults: { _controller: LokosShopBundle:Admin:options }
+lokos_shop_admin_option_form:
+    path:     /options/{id}/
+    defaults:
+        _controller: LokosShopBundle:Admin:editOption
+        id: new
+    requirements:
+        id: \d+|new
+
+lokos_shop_admin_products:
+    path:     /products/
+    defaults: { _controller: LokosShopBundle:Admin:products }
+lokos_shop_admin_product_form:
+    path:     /products/{id}/
+    defaults:
+        _controller: LokosShopBundle:Admin:editProduct
+        id: new
+    requirements:
+        id: \d+|new

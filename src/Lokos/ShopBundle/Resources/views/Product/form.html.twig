@@ -1,0 +1,96 @@
+{% trans_default_domain 'general' %}
+{% extends 'LokosShopBundle::admin.layout.html.twig' %}
+
+{% block page_title %}Order{% endblock page_title %}
+
+{% block content %}
+    <form class="ajax-form uk-form uk-form-horizontal" method="post" enctype="multipart/form-data" novalidate="novalidate">
+        <div class="uk-margin-bottom">
+            <label class="uk-form-label" for="{{ form.name.vars.id }}">{{ form.name.vars.label|trans }}</label>
+            {{ form_widget(form.name) }}
+        </div>
+
+        <div class="uk-margin-bottom">
+            <label class="uk-form-label" for="{{ form.description.vars.id }}">{{ form.description.vars.label|trans }}</label>
+            {{ form_widget(form.description) }}
+        </div>
+
+        <div class="uk-margin-bottom">
+            <label class="uk-form-label" for="{{ form.price.vars.id }}">{{ form.price.vars.label|trans }}</label>
+            {{ form_widget(form.price) }}
+        </div>
+
+
+        <div class="uk-margin-bottom">
+            <label class="uk-form-label" for="{{ form.quantity.vars.id }}">{{ form.quantity.vars.label|trans }}</label>
+            {{ form_widget(form.quantity) }}
+        </div>
+
+        <div class="uk-margin-bottom">
+            <label class="uk-form-label" for="{{ form.category.vars.id }}">{{ form.category.vars.label|trans }}</label>
+            {{ form_widget(form.category) }}
+        </div>
+
+        <div class="wrap">
+            {% for opt in form.option %}
+                <input type="hidden" class="cnt" name="cnt" value="{{ opt|length }}"/>
+                <div class="tm-panel-border">
+                    {{ form_widget(opt.name) }}
+                    <div id="options" class="uk-margin-large-bottom" data-prototype="{{ form_widget(opt.optionValues.vars.prototype)|e }}">
+                        {% for val in opt.optionValues %}
+                            <div>
+                                <span class="delete-location-btn uk-close uk-close-alt">X</span>
+                                {{ form_widget(val) }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div>
+                    {#{{ form_widget(opt.optionValues) }}#}
+                </div>
+            {% endfor %}
+            <div class="uk-form-row ">
+                <a class="uk-button uk-button-success" href="#" id="addOptionValue"><i class="uk-icon-plus"></i> {{ 'button.add_option_value'|trans() }}</a>
+            </div>
+        </div>
+
+
+        <button class="uk-button uk-button-primary uk-align-right" type="submit">
+            <i class="uk-icon-check"></i>
+            {{ 'button.save'|trans }}
+        </button>
+    </form>
+{% endblock content  %}
+
+{% block bottom_script %}
+    <script>
+        $(document).ready(function(){
+            var delLink = function (e) {
+//                var links = $('#options');
+                $(e.target).parent('div').remove();
+//            saveField(links);
+            };
+            var valuesCount;
+            $('#addOptionValue').click(function (e) {
+                e.preventDefault();
+                valuesCount = $(e.target).closest('.wrap').find('input.cnt').val()*1;
+                var optionList = $('#options'),
+                    newWidget = optionList.attr('data-prototype');
+                newWidget = newWidget.replace(/__name__/g, valuesCount);
+                valuesCount++;
+                console.log(newWidget);
+                var newDiv = $(newWidget).prepend("<span class='delete-location-btn uk-close uk-close-alt'>X</span>");
+                console.log(newWidget);
+                newDiv.addClass('tm-panel-border');
+                newDiv.appendTo(optionList);
+                $(optionList).find('.delete-location-btn').click(delLink);
+//            $.each($('.ajax-form'), function () {
+//                AjaxForm.init(this)
+//            });
+            });
+            $('.delete-location-btn').on('click', delLink);
+        });
+
+//        $.each($('.ajax-form'), function () { AjaxForm.init(this) });
+    </script>
+{% endblock bottom_script %}

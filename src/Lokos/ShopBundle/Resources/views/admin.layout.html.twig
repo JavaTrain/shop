@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% block head_scripts %}
+        {% javascripts
+        '@LokosShopBundle/Resources/public/js/jquery-1.7.2.min.js'
+        '@LokosShopBundle/Resources/public/js/move-top.js'
+        '@LokosShopBundle/Resources/public/js/easing.js'
+        '@LokosShopBundle/Resources/public/js/startstop-slider.js'
+        %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+    {% endblock head_scripts %}
+</head>
+<body>
+<ul>
+    <li><a href="{{ url('lokos_shop_admin_categories') }}">Categories</a></li>
+    <li><a href="{{ url('lokos_shop_admin_options') }}">Options</a></li>
+    <li><a href="{{ url('lokos_shop_admin_products') }}">Products</a></li>
+</ul>
+
+
+{% block content %}
+{% endblock content  %}
+
+{% block bottom_script %}
+{% endblock bottom_script %}
+</body>
+</html>
