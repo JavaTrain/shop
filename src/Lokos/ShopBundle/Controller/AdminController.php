@@ -93,11 +93,11 @@ class AdminController extends BaseController
      */
     public function optionsAction()
     {
-        $options = $this->getDoctrine()
-                        ->getRepository('LokosShopBundle:Option')
-                        ->findAll();
+        $categories = $this->getDoctrine()
+                        ->getRepository('LokosShopBundle:Category')
+                        ->findAll(array(), array('name' => 'ASC'));
 
-        return $this->render('LokosShopBundle:Option:list.html.twig', ['options' => $options]);
+        return $this->render('LokosShopBundle:Option:list.html.twig', ['categories' => $categories]);
     }
 
     public function editOptionAction(Request $request)
@@ -111,7 +111,7 @@ class AdminController extends BaseController
             $option = new Option();
             $title  = $this->translate('option.add_new_title');
         } else {
-            $title = $this->translate('option.edit_title', array(':category' => $option->getName()));
+            $title = $this->translate('option.edit_title', array(':option' => $option->getName()));
         }
 
         $form = $this->createForm(OptionFormType::class, $option);

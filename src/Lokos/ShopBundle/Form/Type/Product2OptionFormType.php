@@ -6,12 +6,14 @@ use Doctrine\ORM\EntityRepository;
 //use FOS\UserBundle\Event\FormEvent;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class Product2OptionFormType extends AbstractType
@@ -52,18 +54,17 @@ class Product2OptionFormType extends AbstractType
                     },
                 )
             )
-//            ->add(
-//                'option',
-//                CollectionType::class,
-//                array(
-//                    'entry_type'   => OptionFormType::class,
-//                    'prototype'    => true,
-//                    'allow_add'    => true,
-//                    'allow_delete' => true,
-//                    'required'     => false
-//                )
-//            )
-//            ->add('product')
+            ->add(
+                'optionValue',
+                ChoiceType::class,
+                array(
+                    'choices'  => array(
+                        'Maybe' => null,
+                        'Yes' => true,
+                        'No' => false,
+                    ),
+                )
+            )
         ;
     }
 

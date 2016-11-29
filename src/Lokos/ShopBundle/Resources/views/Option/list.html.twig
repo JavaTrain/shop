@@ -8,9 +8,12 @@
             <a href="{{ path('lokos_shop_admin_option_form', {id:'new'}) }}">Add option</a>
         </div>
         <ul>
-            {% for option in options %}
-                <li><a href="{{ path('lokos_shop_admin_option_form', {id:option.id}) }}">{{ option.name }}</a></li>
-            {%  else %}
+            {% for category in categories %}
+                    <h3>{{ category.name }}</h3>
+                    {% for option in category.option %}
+                        <li><a href="{{ path('lokos_shop_admin_option_form', {id:option.id}) }}">{{ option.name }}</a></li>
+                    {% endfor %}
+            {% else %}
                 <li><h2>Nothing found</h2></li>
             {% endfor %}
         </ul>

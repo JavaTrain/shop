@@ -3,6 +3,7 @@
 namespace Lokos\ShopBundle\Form\Type;
 
 use Lokos\ShopBundle\Entity\OptionValue;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -37,6 +38,13 @@ class OptionFormType extends AbstractType
                 TextType::class,
                 array(
                     'label'      => 'option.name_title',
+                )
+            )
+            ->add(
+                'category',
+                EntityType::class,
+                array(
+                    'class' => 'LokosShopBundle:Category'
                 )
             )
 //            ->add('description')

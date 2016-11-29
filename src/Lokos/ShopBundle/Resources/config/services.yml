@@ -8,12 +8,15 @@ services:
     arguments:
       - '@doctrine.orm.entity_manager'
 
-  lokos.shop.product_form_type:
+  .product_form_type:
     class: Lokos\ShopBundle\Form\Type\ProductFormType
     arguments:
       - '@doctrine.orm.entity_manager'
     tags: [{ name: form.type }]
 
+  lokos.shop.extended_collection_type:
+    class: Lokos\ShopBundle\Form\Fields\ExtendedCollectionType
+    tags: [{ name: form.type, alias: channel }]
 
 #  lokos_form_optio_value_type:
 #    class: Lokos\ShopBundle\Form\Type\OptionValue

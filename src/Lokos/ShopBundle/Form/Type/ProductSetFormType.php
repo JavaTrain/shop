@@ -13,6 +13,8 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -47,6 +49,12 @@ class ProductSetFormType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+//        var_dump($options);die;
+//        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+//            $product = $event->getData();
+//            var_dump($event);die;
+//        });
+
 //        $builder->addEventSubscriber(new AddCategoryFieldSubscriber('options'));
 //        $builder->addEventSubscriber(new AddOptionFieldSubscriber('options'));
         $builder
@@ -68,7 +76,6 @@ class ProductSetFormType extends AbstractType
                     'required'     => false
                 )
             )
-
             ;
     }
 

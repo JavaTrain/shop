@@ -45,7 +45,7 @@ class OptionValue
     /**
      * @var \Option
      *
-     * @ORM\ManyToOne(targetEntity="Option", inversedBy="optionValues")
+     * @ORM\OneToOne(targetEntity="Option", inversedBy="optionValues")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="option_id", referencedColumnName="id")
      * })
@@ -68,6 +68,16 @@ class OptionValue
      * @ORM\ManyToMany(targetEntity="OrderDetail", mappedBy="optionValue")
      */
     private $orderDetail;
+
+    /**
+     * @var
+     *
+     * @ORM\OneToOne(targetEntity="Product2Option", inversedBy="optionValue")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="product_2_option_id", referencedColumnName="id")
+     * })
+     */
+    private $product2Option;
 
     /**
      * Constructor
@@ -241,4 +251,26 @@ class OptionValue
     {
         return $this->orderDetail;
     }
+
+    /**
+     * @return \Product
+     */
+    public function getProduct2Option()
+    {
+        return $this->product2Option;
+    }
+
+    /**
+     * @param $product2Option
+     *
+     * @return $this
+     */
+    public function setProduct2Option($product2Option)
+    {
+        $this->product2Option = $product2Option;
+
+        return $this;
+    }
+
+
 }

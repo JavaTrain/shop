@@ -18,17 +18,21 @@
             <label class="uk-form-label" for="{{ form.name.vars.id }}">{{ form.name.vars.label|trans }}</label>
             {{ form_widget(form.name) }}
         </div>
-        <div id="mediaLinks" class="uk-margin-large-bottom" data-prototype="{{ form_widget(form.optionValues.vars.prototype)|e }}">
-            {% for optionVlue in form.optionValues %}
-                <div class="tm-panel-border">
-                    <span class="delete-location-btn uk-close uk-close-alt">X</span>
-                    {{ form_widget(optionVlue) }}
-                </div>
-            {% endfor %}
-            <div class="uk-form-row ">
-                <a class="uk-button uk-button-success" href="#" id="addLink"><i class="uk-icon-plus"></i> {{ 'button.add_link'|trans() }}</a>
-            </div>
+        <div class="uk-margin-bottom">
+            <label class="uk-form-label" for="{{ form.name.vars.id }}">{{ form.name.vars.label|trans }}</label>
+            {{ form_widget(form.category) }}
         </div>
+        {#<div id="mediaLinks" class="uk-margin-large-bottom" data-prototype="{{ form_widget(form.optionValues.vars.prototype)|e }}">#}
+            {#{% for optionVlue in form.optionValues %}#}
+                {#<div class="tm-panel-border">#}
+                    {#<span class="delete-location-btn uk-close uk-close-alt">X</span>#}
+                    {#{{ form_widget(optionVlue) }}#}
+                {#</div>#}
+            {#{% endfor %}#}
+            {#<div class="uk-form-row ">#}
+                {#<a class="uk-button uk-button-success" href="#" id="addLink"><i class="uk-icon-plus"></i> {{ 'button.add_link'|trans() }}</a>#}
+            {#</div>#}
+        {#</div>#}
     </form>
 
     <script>
@@ -38,7 +42,7 @@
 //            saveField(links);
         };
         $('#addLink').click(function (e) {
-            var medialinksCount = '{{ form.optionValues|length }}';
+            {#var medialinksCount = '{{ form.optionValues|length }}';#}
             e.preventDefault();
             var linkList = $('#mediaLinks'),
                     newWidget = linkList.attr('data-prototype');

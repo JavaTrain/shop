@@ -33,6 +33,7 @@
 
         <div id="productSets" data-prototype="{{ form_widget(form.productSets.vars.prototype)|e }}">
             <input type="hidden" class="cnt" value="{{ form.productSets|length }}"/>
+            {#{{ dump(form.productSets) }}#}
             {% for productSet in form.productSets %}
                 <div class="tm-panel-border">
                     <span class='delete-btn'>X</span>
@@ -43,36 +44,23 @@
                     <div id="product2Options" data-prototype="{{ form_widget(productSet.product2Options.vars.prototype)|e }}">
                         <input type="hidden" class="cnt" value="{{ productSet.product2Options|length }}"/>
                         <div class="tm-panel-border">
-                            {{ form_widget(productSet.product2Options) }}
+                            {#{{ form_widget(productSet.product2Options) }}#}
                             {% for product2Option in  productSet.product2Options %}
                                 <div id="option">
-                                    {{ form_widget(product2Option) }}
-                                    {#{{ dump(product2Option.option) }}#}
+                                    {{ form_widget(product2Option.option) }}
+                                    <div id="optionValues">
+                                        {{ form_widget(product2Option.optionValue) }}
+                                    </div>
+                                    <br>
                                 </div>
                             {% endfor %}
-
-                            <div id="optionValue">
-
-                            </div>
-
-
                         </div>
                     </div>
-                    {#{{ dump(productSet) }}#}
-                    {#<div id="optionValues" data-prototype="{{ form_widget(productSet.product2Options.option.optionValues.vars.prototype)|e }}">#}
-                        {#<input type="hidden" class="cnt" value="{{ productSet.product2Options.option.optionValues|length }}"/>#}
-                        {#<div class="tm-panel-border">#}
-
-                        {#</div>#}
-                    {#</div>#}
-                    <div class="uk-form-row ">
+                    <div class="uk-form-row">
                         <a class="addProduct2Options button button-success" href="#"><i class="uk-icon-plus"></i> {{ 'button.add_product_2_options'|trans }}</a>
                     </div>
                 </div>
             {% endfor %}
-            {#<div class="uk-form-row ">#}
-                {#<a class="button button-success" href="#" id="addProductOptionValues"><i class="uk-icon-plus"></i> {{ 'button.add_product_2_options'|trans }}</a>#}
-            {#</div>#}
         </div>
         <br>
         <br>
@@ -100,8 +88,9 @@
 //                var links = $('#options');
                 $(e.target).parent('div').remove();
 //            saveField(links);
-            },
-              valuesCount;
+            };
+            var valuesCount;
+
             $('.delete-btn').click(function(e){
                 delLink(e);
             });
@@ -142,6 +131,23 @@
 //            });
             });
             $('.addProduct2Options').click(function (e) {
+                e.preventDefault();
+                valuesCount = parseInt($(e.target).parent().siblings('#product2Options').find('input.cnt').val());
+                var product2OptionList = $(e.target).parent().siblings('#product2Options'),
+                    newWidget = product2OptionList.attr('data-prototype');
+                newWidget = newWidget.replace(/__name__/g, valuesCount);
+                valuesCount++;
+                var newDiv = $(newWidget).prepend("<span class='delete-btn'>X</span>");
+                newDiv.addClass('tm-panel-border');
+                newDiv.appendTo(product2OptionList);
+                $(product2OptionList).find('.delete-btn').click(delLink);
+//            $.each($('.ajax-form'), function () {
+//                AjaxForm.init(this)
+//                if (!is_array($data) && !($data instanceof \Traversable && $data instanceof \ArrayAccess)) {
+//            });
+            });
+
+            $('.addOptionValues').click(function (e) {
                 e.preventDefault();
                 valuesCount = parseInt($(e.target).parent().siblings('#product2Options').find('input.cnt').val());
                 var product2OptionList = $(e.target).parent().siblings('#product2Options'),

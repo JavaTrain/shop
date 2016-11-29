@@ -52,6 +52,11 @@ class Product2Option
     private $productSet;
 
     /**
+     * @ORM\OneToMany(targetEntity="OptionValue", mappedBy="product2Option", cascade={"persist", "remove", "detach"})
+     */
+    private $optionValue;
+
+    /**
      * Get id
      *
      * @return integer
@@ -120,5 +125,62 @@ class Product2Option
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getOptionValue()
+    {
+        return $this->optionValue;
+    }
+
+    /**
+     * @param $optionValue
+     *
+     * @return $this
+     */
+    public function setOptioValue($optionValue)
+    {
+        $this->optionValue = $optionValue;
+
+        return $this;
+    }
+
+//    /**
+//     * @param $optionValues
+//     *
+//     * @return $this
+//     */
+//    public function setOptionValues($optionValues)
+//    {
+//        $this->optionValues = $optionValues;
+//
+//        return $this;
+//    }
+
+//    /**
+//     * @param OptionValue $optionValue
+//     *
+//     * @return $this
+//     */
+//    public function addProduct2options(\Lokos\ShopBundle\Entity\OptionValue $optionValue)
+//    {
+//        $this->optionValues[] = $optionValue;
+//
+//        return $this;
+//    }
+//
+//    /**
+//     * @param OptionValue $optionValue
+//     *
+//     * @return $this
+//     */
+//    public function removeOptionValues(\Lokos\ShopBundle\Entity\OptionValue $optionValue)
+//    {
+//        $this->optionValues->removeElement($optionValue);
+//
+//        return $this;
+//    }
+
 
 }

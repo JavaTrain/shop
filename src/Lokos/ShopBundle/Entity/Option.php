@@ -57,18 +57,18 @@ class Option
 //     */
 //    private $product2Option;
 
-    /**
-     * @ORM\OneToMany(targetEntity="OptionValue", mappedBy="option")
-     */
-    private $optionValues;
+//    /**
+//     * @ORM\OneToOne(targetEntity="OptionValue", mappedBy="option")
+//     */
+//    private $optionValues;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->category     = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->optionValues = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->category = new \Doctrine\Common\Collections\ArrayCollection();
+//        $this->optionValues = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
 
@@ -194,25 +194,25 @@ class Option
         return $this->product2Option;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getOptionValues()
-    {
-        return $this->optionValues;
-    }
-
-    /**
-     * @param $optionValues
-     *
-     * @return $this
-     */
-    public function setOptionValues($optionValues)
-    {
-        $this->optionValues = $optionValues;
-
-        return $this;
-    }
+//    /**
+//     * @return mixed
+//     */
+//    public function getOptionValues()
+//    {
+//        return $this->optionValues;
+//    }
+//
+//    /**
+//     * @param $optionValues
+//     *
+//     * @return $this
+//     */
+//    public function setOptionValues($optionValues)
+//    {
+//        $this->optionValues = $optionValues;
+//
+//        return $this;
+//    }
 
     /**
      * @return string

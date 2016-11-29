@@ -8,12 +8,15 @@ use Lokos\ShopBundle\Entity\OptionValue;
 use Lokos\ShopBundle\Entity\ProductSet;
 use Lokos\ShopBundle\Form\EventListener\AddCategoryFieldSubscriber;
 use Lokos\ShopBundle\Form\EventListener\AddOptionFieldSubscriber;
+use Lokos\ShopBundle\Form\Fields\ExtendedCollectionType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -48,7 +51,12 @@ class ProductFormType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventSubscriber(new AddCategoryFieldSubscriber('options'));
+//        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+//            $product = $event->getData();
+//            var_dump($event);die;
+//        });
+
+//        $builder->addEventSubscriber(new AddCategoryFieldSubscriber('options'));
 //        $builder->addEventSubscriber(new AddOptionFieldSubscriber('options'));
 //        var_dump($options);die;
         $builder
@@ -81,16 +89,16 @@ class ProductFormType extends AbstractType
             ->add('category')
             ->add(
                 'productSets',
-                CollectionType::class,
+                ExtendedCollectionType::class,
                 array(
-                    'entry_type'   => ProductSetFormType::class,
-                    'prototype'    => true,
-                    'allow_add'    => true,
-                    'allow_delete' => true,
-                    'required'     => false
+                    'extended_data' => [$options['data']],
+                    'entry_type'    => ProductSetFormType::class,
+                    'prototype'     => true,
+                    'allow_add'     => true,
+                    'allow_delete'  => true,
+                    'required'      => false
                 )
             )
-
             ;
     }
 
