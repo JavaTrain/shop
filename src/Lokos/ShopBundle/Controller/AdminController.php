@@ -4,6 +4,7 @@ namespace Lokos\ShopBundle\Controller;
 
 use Lokos\ShopBundle\Entity\Category;
 use Lokos\ShopBundle\Entity\Option;
+use Lokos\ShopBundle\Entity\Product;
 use Lokos\ShopBundle\Form\Type\CategoryFormType;
 use Lokos\ShopBundle\Form\Type\OptionFormType;
 use Lokos\ShopBundle\Form\Type\ProductFormType;
@@ -160,14 +161,14 @@ class AdminController extends BaseController
      */
     public function editProductAction(Request $request)
     {
-        $id     = $request->get('id', null);
+        $id      = $request->get('id', null);
         $product = $this->getDoctrine()
                        ->getRepository('LokosShopBundle:Product')
                        ->find($id);
 
-        if (empty($option)) {
-            $option = new Option();
-            $title  = $this->translate('option.add_new_title');
+        if (empty($product)) {
+            $product = new Product();
+            $title   = $this->translate('option.add_new_title');
         } else {
             $title = $this->translate('product.edit_title', array(':product' => $product->getName()));
         }
@@ -177,6 +178,7 @@ class AdminController extends BaseController
 
         if ($request->isMethod('POST')) {
             $form->handleRequest($request);
+//            var_dump($request->request->all()['lokos_shop_product']['productSets']);die;
 
             //            if ($request->isXmlHttpRequest()) {
             //                return $this->jsonResponse($this->getErrorMessages($form));
@@ -184,15 +186,30 @@ class AdminController extends BaseController
 
             if ($form->isValid()) {
                 $em = $this->getDoctrine()->getManager();
+//                var_dump(count($product->getProductSets()));die;
+                foreach ($product->getProductSets() as $productSet){
+                    $productSet->setProduct($product);
+                    foreach ($productSet->getProduct2Options() as $product2Option){
+                        $product2Option->setProduct($product);
+                        $product2Option->setProductSet($productSet);
+                    }
+                }
 
-                $em->persist($option);
+                $em->persist($product);
                 $em->flush();
 
                 $this->get('session')->getFlashBag()->add('success', $this->translate('messages.successfully_saved'));
 
                 return $this->redirect($this->generateUrl('lokos_shop_admin_products'));
+            }else{
+                $errors = $form->getErrors();
+                foreach ($errors as $e){
+                    var_dump($e->getMessage());
+                }
+                die;
             }
         }
+
 
         return $this->render(
             'LokosShopBundle:Product:form.html.twig',

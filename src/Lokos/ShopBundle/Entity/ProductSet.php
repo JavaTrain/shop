@@ -31,7 +31,7 @@ class ProductSet
     /**
      * @var \Product
      *
-     * @ORM\ManyToOne(targetEntity="Product", inversedBy="productSets")
+     * @ORM\ManyToOne(targetEntity="Product", inversedBy="productSets", cascade={"persist", "remove", "detach"})
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="product_id", referencedColumnName="id")
      * })
@@ -39,7 +39,7 @@ class ProductSet
     private $product;
 
     /**
-     * @ORM\OneToMany(targetEntity="Product2Option", mappedBy="productSet")
+     * @ORM\OneToMany(targetEntity="Product2Option", mappedBy="productSet", cascade={"persist", "remove", "detach"})
      */
     private $product2Options;
 

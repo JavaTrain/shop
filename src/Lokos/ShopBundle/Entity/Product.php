@@ -89,7 +89,7 @@ class Product
     private $optionValues;
 
     /**
-     * @ORM\OneToMany(targetEntity="ProductSet", mappedBy="product")
+     * @ORM\OneToMany(targetEntity="ProductSet", mappedBy="product", cascade={"persist", "remove", "detach"})
      */
     private $productSets;
 
@@ -377,37 +377,37 @@ class Product
         return $this->productSets;
     }
 
-//    /**
-//     * @param $productSets
-//     *
-//     * @return $this
-//     */
-//    public function setProductSets($productSets)
-//    {
-//        $this->productSets = $productSets;
-//
-//        return $this;
-//    }
-
     /**
-     * @param ProductSet $productSet
+     * @param $productSets
      *
      * @return $this
      */
-    public function addProductSets(\Lokos\ShopBundle\Entity\ProductSet $productSet)
+    public function setProductSets($productSets)
     {
-        $this->productSets[] = $productSet;
+        $this->productSets = $productSets;
 
         return $this;
     }
 
-    /**
-     * @param ProductSet $productSet
-     */
-    public function removeProductSet(\Lokos\ShopBundle\Entity\ProductSet $productSet)
-    {
-        $this->productSets->removeElement($productSet);
-    }
+//    /**
+//     * @param ProductSet $productSet
+//     *
+//     * @return $this
+//     */
+//    public function addProductSets(\Lokos\ShopBundle\Entity\ProductSet $productSet)
+//    {
+//        $this->productSets[] = $productSet;
+//
+//        return $this;
+//    }
+//
+//    /**
+//     * @param ProductSet $productSet
+//     */
+//    public function removeProductSet(\Lokos\ShopBundle\Entity\ProductSet $productSet)
+//    {
+//        $this->productSets->removeElement($productSet);
+//    }
 
     /**
      * @return mixed
