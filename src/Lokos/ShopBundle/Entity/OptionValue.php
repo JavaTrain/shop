@@ -29,23 +29,9 @@ class OptionValue
     private $value;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="quantity", type="integer", nullable=true)
-     */
-    private $quantity;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="price", type="float", precision=10, scale=0, nullable=true)
-     */
-    private $price;
-
-    /**
      * @var \Option
      *
-     * @ORM\OneToOne(targetEntity="Option", inversedBy="optionValues")
+     * @ORM\ManyToOne(targetEntity="Option", inversedBy="optionValues")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="option_id", referencedColumnName="id")
      * })
@@ -68,16 +54,6 @@ class OptionValue
      * @ORM\ManyToMany(targetEntity="OrderDetail", mappedBy="optionValue")
      */
     private $orderDetail;
-
-    /**
-     * @var
-     *
-     * @ORM\OneToOne(targetEntity="Product2Option", inversedBy="optionValue")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="product_2_option_id", referencedColumnName="id")
-     * })
-     */
-    private $product2Option;
 
     /**
      * Constructor
@@ -120,54 +96,6 @@ class OptionValue
     public function getValue()
     {
         return $this->value;
-    }
-
-    /**
-     * Set quantity
-     *
-     * @param integer $quantity
-     *
-     * @return OptionValue
-     */
-    public function setQuantity($quantity)
-    {
-        $this->quantity = $quantity;
-
-        return $this;
-    }
-
-    /**
-     * Get quantity
-     *
-     * @return integer
-     */
-    public function getQuantity()
-    {
-        return $this->quantity;
-    }
-
-    /**
-     * Set price
-     *
-     * @param float $price
-     *
-     * @return OptionValue
-     */
-    public function setPrice($price)
-    {
-        $this->price = $price;
-
-        return $this;
-    }
-
-    /**
-     * Get price
-     *
-     * @return float
-     */
-    public function getPrice()
-    {
-        return $this->price;
     }
 
     /**
@@ -253,24 +181,10 @@ class OptionValue
     }
 
     /**
-     * @return \Product
+     * @return string
      */
-    public function getProduct2Option()
+    function __toString()
     {
-        return $this->product2Option;
+        return $this->value;
     }
-
-    /**
-     * @param $product2Option
-     *
-     * @return $this
-     */
-    public function setProduct2Option($product2Option)
-    {
-        $this->product2Option = $product2Option;
-
-        return $this;
-    }
-
-
 }

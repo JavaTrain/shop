@@ -4,6 +4,9 @@ namespace Lokos\ShopBundle\Form\Type;
 
 use Doctrine\ORM\EntityRepository;
 //use FOS\UserBundle\Event\FormEvent;
+use Doctrine\ORM\Query\Expr\Join;
+use Lokos\ShopBundle\Entity\Option;
+use Lokos\ShopBundle\Repositories\OptionRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -16,7 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class Product2OptionFormType extends AbstractType
+class ProductToOptionFormType extends AbstractType
 {
     /**
      * {@inheritDoc}
@@ -41,29 +44,24 @@ class Product2OptionFormType extends AbstractType
 //            var_dump($event);die;
 //        });
 
-//        var_dump($options);die;
+//        var_dump($builder, $options);die;
         $builder
             ->add(
                 'option',
                 EntityType::class,
                 array(
                     'class' => 'LokosShopBundle:Option',
-                    'query_builder' => function (EntityRepository $er) {
-                        return $er->createQueryBuilder('o')
-                                  ->orderBy('o.name', 'ASC');
-                    },
+//                    'query_builder' => function (OptionRepository $repository) use ($options) {
+//                        return $repository->createQueryBuilder('tbl')
+//                                          ->join('tbl.category', 'c', Join::WITH, 'c.name = :category')
+//                                          ->setParameter(':category', $options['attr']['product']->getCategory()->getName())
+//                                          ->orderBy('tbl.name', 'ASC');
+//                    },
                 )
             )
             ->add(
                 'optionValue',
-                ChoiceType::class,
-                array(
-                    'choices'  => array(
-                        'Maybe' => null,
-                        'Yes' => true,
-                        'No' => false,
-                    ),
-                )
+                null
             )
         ;
     }
@@ -73,6 +71,6 @@ class Product2OptionFormType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'lokos_product_2_option';
+        return 'lokos_product_to_option';
     }
 }

@@ -40,25 +40,26 @@ class OptionFormType extends AbstractType
                     'label'      => 'option.name_title',
                 )
             )
+            ->add('description')
             ->add(
                 'category',
                 EntityType::class,
                 array(
-                    'class' => 'LokosShopBundle:Category'
+                    'class'    => 'LokosShopBundle:Category',
+                    'multiple' => true,
                 )
             )
-//            ->add('description')
-//            ->add(
-//                'optionValues',
-//                CollectionType::class,
-//                array(
-//                    'entry_type'   => OptionValueFormType::class,
-//                    'prototype'    => true,
-//                    'allow_add'    => true,
-//                    'allow_delete' => true,
-//                    'required'     => false
-//                )
-//            )
+            ->add(
+                'optionValues',
+                CollectionType::class,
+                array(
+                    'entry_type'   => OptionValueFormType::class,
+                    'prototype'    => true,
+                    'allow_add'    => true,
+                    'allow_delete' => true,
+                    'required'     => false,
+                )
+            )
             ;
     }
 

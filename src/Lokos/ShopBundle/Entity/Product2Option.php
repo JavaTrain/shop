@@ -21,15 +21,15 @@ class Product2Option
      */
     private $id;
 
-    /**
-     * @var \Product
-     *
-     * @ORM\ManyToOne(targetEntity="Product")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="product_id", referencedColumnName="id")
-     * })
-     */
-    private $product;
+//    /**
+//     * @var \Product
+//     *
+//     * @ORM\ManyToOne(targetEntity="Product")
+//     * @ORM\JoinColumns({
+//     *   @ORM\JoinColumn(name="product_id", referencedColumnName="id")
+//     * })
+//     */
+//    private $product;
 
     /**
      * @var \Option
@@ -52,9 +52,21 @@ class Product2Option
     private $productSet;
 
     /**
-     * @ORM\OneToMany(targetEntity="OptionValue", mappedBy="product2Option", cascade={"persist", "remove", "detach"})
+     * @var \Option
+     *
+     * @ORM\ManyToOne(targetEntity="OptionValue")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="option_value_id", referencedColumnName="id")
+     * })
      */
     private $optionValue;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="price", type="float", precision=10, scale=0, nullable=true)
+     */
+    private $price;
 
     /**
      * Get id
@@ -66,25 +78,25 @@ class Product2Option
         return $this->id;
     }
 
-    /**
-     * @return \Product
-     */
-    public function getProduct()
-    {
-        return $this->product;
-    }
-
-    /**
-     * @param $product
-     *
-     * @return $this
-     */
-    public function setProduct($product)
-    {
-        $this->product = $product;
-
-        return $this;
-    }
+//    /**
+//     * @return \Product
+//     */
+//    public function getProduct()
+//    {
+//        return $this->product;
+//    }
+//
+//    /**
+//     * @param $product
+//     *
+//     * @return $this
+//     */
+//    public function setProduct($product)
+//    {
+//        $this->product = $product;
+//
+//        return $this;
+//    }
 
     /**
      * @return \Option
@@ -139,9 +151,29 @@ class Product2Option
      *
      * @return $this
      */
-    public function setOptioValue($optionValue)
+    public function setOptionValue($optionValue)
     {
         $this->optionValue = $optionValue;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    /**
+     * @param $price
+     *
+     * @return $this
+     */
+    public function setPrice($price)
+    {
+        $this->price = $price;
 
         return $this;
     }

@@ -20,17 +20,17 @@ class OptionRepository extends BaseRepository
     {
         parent::buildQuery();
 
-        $this->query->select(array('tbl'));
-        if (!empty($params['product'])) {
-            $this->query
-                ->addSelect('o_val')
-                ->join('tbl.optionValues', 'o_val')
-                ->addSelect('p2o_val')
-                ->join('o_val.product2optionValues', 'p2o_val')
-                ->where('p2o_val.product = :product_id')
-                ->setParameter(':product_id', $params['product'])
-            ;
-        }
+//        $this->query->select(array('tbl'));
+//        if (!empty($params[':'])) {
+//            $this->query
+//                ->addSelect('o_val')
+//                ->join('tbl.optionValues', 'o_val')
+//                ->addSelect('p2o_val')
+//                ->join('o_val.product2optionValues', 'p2o_val')
+//                ->where('p2o_val.product = :product_id')
+//                ->setParameter(':product_id', $params['product'])
+//            ;
+//        }
         
 
         return $this;

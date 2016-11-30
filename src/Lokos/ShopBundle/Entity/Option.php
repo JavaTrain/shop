@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Option
  *
  * @ORM\Table(name="`option`")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Lokos\ShopBundle\Repositories\OptionRepository")
  */
 class Option
 {
@@ -57,18 +57,18 @@ class Option
 //     */
 //    private $product2Option;
 
-//    /**
-//     * @ORM\OneToOne(targetEntity="OptionValue", mappedBy="option")
-//     */
-//    private $optionValues;
+    /**
+     * @ORM\OneToMany(targetEntity="OptionValue", mappedBy="option", cascade={"persist", "remove"})
+     */
+    private $optionValues;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->category = new \Doctrine\Common\Collections\ArrayCollection();
-//        $this->optionValues = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->category     = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->optionValues = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
 
@@ -194,14 +194,14 @@ class Option
         return $this->product2Option;
     }
 
-//    /**
-//     * @return mixed
-//     */
-//    public function getOptionValues()
-//    {
-//        return $this->optionValues;
-//    }
-//
+    /**
+     * @return mixed
+     */
+    public function getOptionValues()
+    {
+        return $this->optionValues;
+    }
+
 //    /**
 //     * @param $optionValues
 //     *
@@ -213,6 +213,30 @@ class Option
 //
 //        return $this;
 //    }
+
+    /**
+     * @param OptionValue $optionValue
+     *
+     * @return $this
+     */
+    public function addOptionValues(\Lokos\ShopBundle\Entity\OptionValue $optionValue)
+    {
+        $this->optionValues[] = $optionValue;
+
+        return $this;
+    }
+
+    /**
+     * @param OptionValue $optionValue
+     *
+     * @return $this
+     */
+    public function removeOptionValue(\Lokos\ShopBundle\Entity\OptionValue $optionValue)
+    {
+        $this->optionValues->removeElement($optionValue);
+
+        return $this;
+    }
 
     /**
      * @return string

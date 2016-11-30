@@ -19,39 +19,46 @@
             {{ form_widget(form.name) }}
         </div>
         <div class="uk-margin-bottom">
+            <label class="uk-form-label" for="{{ form.description.vars.id }}">{{ form.description.vars.label|trans }}</label>
+            {{ form_widget(form.description) }}
+        </div>
+        <div class="uk-margin-bottom">
             <label class="uk-form-label" for="{{ form.name.vars.id }}">{{ form.name.vars.label|trans }}</label>
             {{ form_widget(form.category) }}
         </div>
-        {#<div id="mediaLinks" class="uk-margin-large-bottom" data-prototype="{{ form_widget(form.optionValues.vars.prototype)|e }}">#}
-            {#{% for optionVlue in form.optionValues %}#}
-                {#<div class="tm-panel-border">#}
-                    {#<span class="delete-location-btn uk-close uk-close-alt">X</span>#}
-                    {#{{ form_widget(optionVlue) }}#}
-                {#</div>#}
-            {#{% endfor %}#}
-            {#<div class="uk-form-row ">#}
-                {#<a class="uk-button uk-button-success" href="#" id="addLink"><i class="uk-icon-plus"></i> {{ 'button.add_link'|trans() }}</a>#}
-            {#</div>#}
-        {#</div>#}
+        <div id="optionValues" class="uk-margin-large-bottom" data-prototype="{{ form_widget(form.optionValues.vars.prototype)|e }}">
+            {% for optionValue in form.optionValues %}
+                <div class="tm-panel-border">
+                    <span class="delete-location-btn uk-close uk-close-alt">X</span>
+                    {{ form_widget(optionValue) }}
+                </div>
+            {% endfor %}
+        </div>
+        <br>
+        <div class="uk-form-row ">
+            <a class="uk-button uk-button-success" href="#" id="addOptionValue"><i class="uk-icon-plus"></i> {{ 'button.add_option_value'|trans() }}</a>
+        </div>
+        <div>
+            {{ form_row(form._token) }}
+        </div>
     </form>
 
     <script>
         var delLink = function (e) {
-            var links = $('#mediaLinks');
             $(e.target).parent('div').remove();
 //            saveField(links);
         };
-        $('#addLink').click(function (e) {
-            {#var medialinksCount = '{{ form.optionValues|length }}';#}
+        var valuesCount = '{{ form.optionValues|length }}';
+        $('#addOptionValue').click(function (e) {
             e.preventDefault();
-            var linkList = $('#mediaLinks'),
-                    newWidget = linkList.attr('data-prototype');
-            newWidget = newWidget.replace(/__name__/g, medialinksCount);
-            medialinksCount++;
-            var newDiv = $(newWidget).prepend("<span class='delete-location-btn uk-close uk-close-alt'></span>");
+            var optionValueList = $('#optionValues'),
+                newWidget = optionValueList.attr('data-prototype');
+            newWidget = newWidget.replace(/__name__/g, valuesCount);
+            valuesCount++;
+            var newDiv = $(newWidget).prepend("<span class='delete-location-btn uk-close uk-close-alt'>X</span>");
             newDiv.addClass('tm-panel-border');
-            newDiv.appendTo(linkList);
-            $(linkList).find('.delete-location-btn').click(delLink);
+            newDiv.appendTo(optionValueList);
+            $(optionValueList).find('.delete-location-btn').click(delLink);
 //            $.each($('.ajax-form'), function () {
 //                AjaxForm.init(this)
 //            });

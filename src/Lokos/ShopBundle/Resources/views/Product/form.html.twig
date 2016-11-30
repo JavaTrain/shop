@@ -31,43 +31,52 @@
             {{ form_widget(form.category) }}
         </div>
 
-        <div id="productSets" data-prototype="{{ form_widget(form.productSets.vars.prototype)|e }}">
-            <input type="hidden" class="cnt" value="{{ form.productSets|length }}"/>
-            {#{{ dump(form.productSets) }}#}
-            {% for productSet in form.productSets %}
-                <div class="tm-panel-border">
-                    <span class='delete-btn'>X</span>
-                    {{ form_widget(productSet.name) }}
-                    <div id="options" class="uk-margin-large-bottom">
-                    </div>
+        {% if form.productSets is defined %}
+            <div id="productSets" data-prototype="{{ form_widget(form.productSets.vars.prototype)|e }}">
+                <input type="hidden" class="cnt" value="{{ form.productSets|length }}"/>
+                {#{{ dump(form.productSets) }}#}
+                {% for productSet in form.productSets %}
+                    {#{{ dump(productSet) }}#}
 
-                    <div id="product2Options" data-prototype="{{ form_widget(productSet.product2Options.vars.prototype)|e }}">
-                        <input type="hidden" class="cnt" value="{{ productSet.product2Options|length }}"/>
-                        <div class="tm-panel-border">
-                            {#{{ form_widget(productSet.product2Options) }}#}
-                            {% for product2Option in  productSet.product2Options %}
-                                <div id="option">
-                                    {{ form_widget(product2Option.option) }}
-                                    <div id="optionValues">
-                                        {{ form_widget(product2Option.optionValue) }}
-                                    </div>
-                                    <br>
-                                </div>
-                            {% endfor %}
+                    <div class="tm-panel-border">
+                        <span class='delete-btn'>X</span>
+                        {{ form_widget(productSet.name) }}
+                        <div id="options" class="uk-margin-large-bottom">
                         </div>
+
+                        {% if productSet.product2Options is defined %}
+                            <div id="product2Options" data-prototype="{{ form_widget(productSet.product2Options.vars.prototype)|e }}">
+                                <input type="hidden" class="cnt" value="{{ productSet.product2Options|length }}"/>
+                                <div class="tm-panel-border">
+                                    {#{{ dump(productSet.product2Options) }}#}
+                                    {{ form_widget(productSet.product2Options) }}
+                                    {% for product2Option in  productSet.product2Options %}
+                                        {#{{ dump(product2Option) }}#}
+                                        <div id="option">
+                                            {{ form_widget(product2Option.option) }}
+                                            <div id="optionValues">
+                                                {#{{ dump(product2Option.optionValue) }}#}
+                                                {{ form_widget(product2Option.optionValue) }}
+                                            </div>
+                                            <br>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="uk-form-row">
+                                <a class="addProduct2Options button button-success" href="#"><i class="uk-icon-plus"></i> {{ 'button.add_product_2_options'|trans }}</a>
+                            </div>
+                        {% endif %}
                     </div>
-                    <div class="uk-form-row">
-                        <a class="addProduct2Options button button-success" href="#"><i class="uk-icon-plus"></i> {{ 'button.add_product_2_options'|trans }}</a>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-        <br>
-        <br>
-        <br>
-        <div class="uk-form-row ">
-            <a class="button button-success" href="#" id="addProductSet"><i class="uk-icon-plus"></i> {{ 'button.add_product_set'|trans }}</a>
-        </div>
+                {% endfor %}
+            </div>
+            <br>
+            <br>
+            <br>
+            <div class="uk-form-row ">
+                <a class="button button-success" href="#" id="addProductSet"><i class="uk-icon-plus"></i> {{ 'button.add_product_set'|trans }}</a>
+            </div>
+        {% endif %}
 
         <div>
             {{ form_row(form._token) }}
@@ -84,8 +93,38 @@
 {% block bottom_script %}
     <script>
         $(document).ready(function(){
+            $('#{{ form.category.vars.id }}').change(function(){
+                var form = $(this).closest('form'),
+                    data = {"update": true};
+                data[$(this).attr('name')] = $(this).val();
+
+                $.ajax({
+                    url    : form.attr('action'),
+                    type   : form.attr('method'),
+                    data   : data,
+                    success: function (html) {
+                        console.log(html);
+                        {#form.find('#{{ form.vars.id }}_params').parents('div.uk-form-row').remove();#}
+                        {#form.find('.channel-form-wrapper').append($(html).find('#{{ form.vars.id }}_params').parents('div.uk-form-row'));#}
+                        {#form.find('#{{ form.vars.id }}_params').parents('div.uk-form-row').find('.chosen-select').chosen();#}
+                        {#$.each($('.ajax-form'), function () {#}
+                        {#AjaxForm.init(this)#}
+                        {#});#}
+                        {#$('#{{ form.vars.id }}_params_country select').change(changeCountry);#}
+                        {#$('#{{ form.vars.id }}_params_county select').change(changeCounty);#}
+                    }
+                });
+
+
+            });
+
+
+
+
+
+
+
             var delLink = function (e) {
-//                var links = $('#options');
                 $(e.target).parent('div').remove();
 //            saveField(links);
             };
@@ -94,25 +133,6 @@
             $('.delete-btn').click(function(e){
                 delLink(e);
             });
-//            $('#addOptionValue').click(function (e) {
-//                e.preventDefault();
-//                valuesCount = $(e.target).closest('.wrap').find('input.cnt').val()*1;
-//                var optionList = $('#options'),
-//                    newWidget = optionList.attr('data-prototype');
-//                newWidget = newWidget.replace(/__name__/g, valuesCount);
-//                valuesCount++;
-//                console.log(newWidget);
-//                var newDiv = $(newWidget).prepend("<span class='delete-location-btn uk-close uk-close-alt'>X</span>");
-//                console.log(newWidget);
-//                newDiv.addClass('tm-panel-border');
-//                newDiv.appendTo(optionList);
-//                $(optionList).find('.delete-location-btn').click(delLink);
-////            $.each($('.ajax-form'), function () {
-////                AjaxForm.init(this)
-////            });
-//            });
-//            $('.delete-location-btn').on('click', delLink);
-
 
             $('#addProductSet').click(function (e) {
                 e.preventDefault();

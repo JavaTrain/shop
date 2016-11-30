@@ -18,6 +18,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ProductFormType extends AbstractType
@@ -87,19 +88,78 @@ class ProductFormType extends AbstractType
                   )
             )
             ->add('category')
-            ->add(
-                'productSets',
-                ExtendedCollectionType::class,
-                array(
-                    'extended_data' => [$options['data']],
-                    'entry_type'    => ProductSetFormType::class,
-                    'prototype'     => true,
-                    'allow_add'     => true,
-                    'allow_delete'  => true,
-                    'required'      => false
-                )
-            )
+//            ->add(
+//                'productSets',
+//                CollectionType::class,
+//                array(
+//                    'entry_type'    => ProductSetFormType::class,
+//                    'entry_options'  => array(
+//                        'attr'  => ['product' => $options['data']]
+//                    ),
+//                    'prototype'     => true,
+//                    'allow_add'     => true,
+//                    'allow_delete'  => true,
+//                    'required'      => false
+//                )
+//            )
             ;
+
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (FormEvent $event) {
+                $data = $event->getData();
+                $form = $event->getForm();
+
+                if (null === $data) {
+                    return;
+                }
+                $accessor    = PropertyAccess::createPropertyAccessor();
+                $category = $accessor->getValue($data, 'category');
+                if($category){
+                    $this->addProductSetForm($form, $data);
+                } else {
+                    $form->remove('productSets');
+                }
+            }
+        );
+        $builder->addEventListener(
+            FormEvents::PRE_SUBMIT,
+            function (FormEvent $event) {
+                $data = $event->getData();
+                $form = $event->getForm();
+
+                if (null === $data) {
+                    return;
+                }
+//                var_dump($data);die;
+//                $accessor    = PropertyAccess::createPropertyAccessor();
+//                $category = $accessor->getValue($data, 'category');
+                $category = $data['category'];
+                if($category){
+                    $this->addProductSetForm($form, $data);
+                } else {
+                    $form->remove('productSets');
+                }
+            }
+        );
+
+
+    }
+
+    protected function addProductSetForm($form, $data)
+    {
+        $formOptions = array(
+            'entry_type'    => ProductSetFormType::class,
+            'entry_options' => array(
+                'attr' => ['product' => $data]
+            ),
+            'prototype'     => true,
+            'allow_add'     => true,
+            'allow_delete'  => true,
+            'required'      => false
+        );
+
+        $form->add('productSets', CollectionType::class, $formOptions);
     }
 
     /**

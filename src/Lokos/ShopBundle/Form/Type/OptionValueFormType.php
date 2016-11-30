@@ -32,7 +32,7 @@ class OptionValueFormType extends AbstractType
     {
         $builder
             ->add('value')
-            ->add('price')
+//            ->add('price')
 //            ->add('value')
             
             ;

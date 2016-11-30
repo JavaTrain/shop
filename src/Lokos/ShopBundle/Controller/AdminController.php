@@ -117,21 +117,43 @@ class AdminController extends BaseController
         $form = $this->createForm(OptionFormType::class, $option);
 
         if ($request->isMethod('POST')) {
+            $beforeSaveOptionValues = $currentOptionValuesIds = array();
+            foreach ($option->getOptionValues() as $optionValue)
+                $beforeSaveOptionValues [$optionValue->getId()] = $optionValue;
+
             $form->handleRequest($request);
 
-            //            if ($request->isXmlHttpRequest()) {
-            //                return $this->jsonResponse($this->getErrorMessages($form));
-            //            }
+//            if ($request->isXmlHttpRequest()) {
+//                return $this->jsonResponse($this->getErrorMessages($form));
+//            }
 
             if ($form->isValid()) {
                 $em = $this->getDoctrine()->getManager();
-
                 $em->persist($option);
+                foreach ($option->getOptionValues() as $optionValue) {
+                    $optionValue->setOption($option);
+
+                    if ($optionValue->getId()) {
+                        $currentOptionValuesIds[] = $optionValue->getId();
+                    }
+                }
+                $em->persist($option);
+                foreach ($beforeSaveOptionValues as $optionValueId => $optionValue) {
+                    if (!in_array($optionValueId, $currentOptionValuesIds)) {
+                        $em->remove($optionValue);
+                    }
+                }
+
                 $em->flush();
 
                 $this->get('session')->getFlashBag()->add('success', $this->translate('messages.successfully_saved'));
 
                 return $this->redirect($this->generateUrl('lokos_shop_admin_options'));
+            } else {
+                foreach ($form->getErrors() as $e) {
+                    var_dump($e->getMessage());
+                    die;
+                }
             }
         }
 
@@ -178,35 +200,39 @@ class AdminController extends BaseController
 
         if ($request->isMethod('POST')) {
             $form->handleRequest($request);
-//            var_dump($request->request->all()['lokos_shop_product']['productSets']);die;
 
-            //            if ($request->isXmlHttpRequest()) {
-            //                return $this->jsonResponse($this->getErrorMessages($form));
-            //            }
+            if (!$request->get('update')) {
+//                if ($request->isXmlHttpRequest()) {
+//                    return $this->jsonResponse($this->getErrorMessages($form));
+//                }
 
-            if ($form->isValid()) {
-                $em = $this->getDoctrine()->getManager();
-//                var_dump(count($product->getProductSets()));die;
-                foreach ($product->getProductSets() as $productSet){
-                    $productSet->setProduct($product);
-                    foreach ($productSet->getProduct2Options() as $product2Option){
-                        $product2Option->setProduct($product);
-                        $product2Option->setProductSet($productSet);
+                if ($form->isValid()) {
+                    $em = $this->getDoctrine()->getManager();
+                    //                var_dump(count($product->getProductSets()));die;
+                    foreach ($product->getProductSets() as $productSet) {
+                        $productSet->setProduct($product);
+                        foreach ($productSet->getProduct2Options() as $product2Option) {
+                            $product2Option->setProduct($product);
+                            $product2Option->setProductSet($productSet);
+                        }
                     }
+
+                    $em->persist($product);
+                    $em->flush();
+
+                    $this->get('session')->getFlashBag()->add(
+                        'success',
+                        $this->translate('messages.successfully_saved')
+                    );
+
+                    return $this->redirect($this->generateUrl('lokos_shop_admin_products'));
+                } else {
+                    $errors = $form->getErrors();
+                    foreach ($errors as $e) {
+                        var_dump($e->getMessage());
+                    }
+                    die;
                 }
-
-                $em->persist($product);
-                $em->flush();
-
-                $this->get('session')->getFlashBag()->add('success', $this->translate('messages.successfully_saved'));
-
-                return $this->redirect($this->generateUrl('lokos_shop_admin_products'));
-            }else{
-                $errors = $form->getErrors();
-                foreach ($errors as $e){
-                    var_dump($e->getMessage());
-                }
-                die;
             }
         }
 

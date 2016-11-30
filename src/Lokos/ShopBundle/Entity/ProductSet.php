@@ -44,6 +44,13 @@ class ProductSet
     private $product2Options;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="quantity", type="integer", nullable=true)
+     */
+    private $quantity;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -119,6 +126,26 @@ class ProductSet
     public function setProduct2Options($product2Options)
     {
         $this->product2Options = $product2Options;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getQuantity()
+    {
+        return $this->quantity;
+    }
+
+    /**
+     * @param $quantity
+     *
+     * @return $this
+     */
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
 
         return $this;
     }

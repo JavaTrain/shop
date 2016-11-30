@@ -7,6 +7,7 @@
         '@LokosShopBundle/Resources/public/js/move-top.js'
         '@LokosShopBundle/Resources/public/js/easing.js'
         '@LokosShopBundle/Resources/public/js/startstop-slider.js'
+        '@LokosShopBundle/Resources/public/js/chosen.jquery.js'
         %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
@@ -24,6 +25,9 @@
 {% endblock content  %}
 
 {% block bottom_script %}
+    <script>
+        $('.chosen-select').chosen();
+    </script>
 {% endblock bottom_script %}
 </body>
 </html>
