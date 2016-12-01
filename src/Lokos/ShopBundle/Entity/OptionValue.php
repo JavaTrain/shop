@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * OptionValue
  *
  * @ORM\Table(name="option_value", indexes={@ORM\Index(name="fk_option_detail_option1_idx", columns={"option_id"}), @ORM\Index(name="fk_option_value_product1_idx", columns={"product_id"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Lokos\ShopBundle\Repositories\OptionValueRepository")
  */
 class OptionValue
 {

@@ -26,55 +26,48 @@
             {{ form_widget(form.quantity) }}
         </div>
 
-        <div class="uk-margin-bottom">
+        <div class="uk-margin-bottom block-categories">
             <label class="uk-form-label" for="{{ form.category.vars.id }}">{{ form.category.vars.label|trans }}</label>
             {{ form_widget(form.category) }}
         </div>
 
         {% if form.productSets is defined %}
-            <div id="productSets" data-prototype="{{ form_widget(form.productSets.vars.prototype)|e }}">
-                <input type="hidden" class="cnt" value="{{ form.productSets|length }}"/>
-                {#{{ dump(form.productSets) }}#}
-                {% for productSet in form.productSets %}
-                    {#{{ dump(productSet) }}#}
-
-                    <div class="tm-panel-border">
-                        <span class='delete-btn'>X</span>
-                        {{ form_widget(productSet.name) }}
-                        <div id="options" class="uk-margin-large-bottom">
-                        </div>
-
-                        {% if productSet.product2Options is defined %}
-                            <div id="product2Options" data-prototype="{{ form_widget(productSet.product2Options.vars.prototype)|e }}">
-                                <input type="hidden" class="cnt" value="{{ productSet.product2Options|length }}"/>
-                                <div class="tm-panel-border">
-                                    {#{{ dump(productSet.product2Options) }}#}
-                                    {{ form_widget(productSet.product2Options) }}
-                                    {% for product2Option in  productSet.product2Options %}
-                                        {#{{ dump(product2Option) }}#}
-                                        <div id="option">
-                                            {{ form_widget(product2Option.option) }}
-                                            <div id="optionValues">
-                                                {#{{ dump(product2Option.optionValue) }}#}
-                                                {{ form_widget(product2Option.optionValue) }}
+            <div id="product_sets_block">
+                <div id="productSets" data-prototype="{{ form_widget(form.productSets.vars.prototype)|e }}">
+                    {#{{ dump(form.productSets) }}#}
+                    {% for productSet in form.productSets %}
+                        {#{{ dump(productSet) }}#}
+                        <div class="tm-panel-border">
+                            <span class='delete-btn'>X</span>
+                            {{ form_widget(productSet.name) }}
+                            {#{% if productSet.product2Options is defined %}#}
+                                <div class="product-2-options" data-prototype="{{ form_widget(productSet.product2Options.vars.prototype)|e }}">
+                                    <input type="hidden" class="cnt" value="{{ productSet.product2Options|length }}"/>
+                                    <div class="tm-panel-border">
+                                        {{ form_widget(productSet.product2Options) }}
+                                        {% for product2Option in productSet.product2Options %}
+                                            <div id="option">
+                                                {{ form_widget(product2Option.option) }}
+                                                <div id="optionValues">
+                                                    {{ form_widget(product2Option.optionValue) }}
+                                                </div>
+                                                <br>
                                             </div>
-                                            <br>
-                                        </div>
-                                    {% endfor %}
+                                        {% endfor %}
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="uk-form-row">
-                                <a class="addProduct2Options button button-success" href="#"><i class="uk-icon-plus"></i> {{ 'button.add_product_2_options'|trans }}</a>
-                            </div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </div>
-            <br>
-            <br>
-            <br>
-            <div class="uk-form-row ">
-                <a class="button button-success" href="#" id="addProductSet"><i class="uk-icon-plus"></i> {{ 'button.add_product_set'|trans }}</a>
+                                <br>
+                                <div class="uk-form-row">
+                                    <a class="addProduct2Options button button-success" href="#"><i class="uk-icon-plus"></i> {{ 'button.add_product_2_options'|trans }}</a>
+                                </div>
+                            {#{% endif %}#}
+                        </div>
+                    {% endfor %}
+                </div>
+                <br>
+                <div class="uk-form-row ">
+                    <a class="button button-success" href="#" id="addProductSet"><i class="uk-icon-plus"></i> {{ 'button.add_product_set'|trans }}</a>
+                </div>
             </div>
         {% endif %}
 
@@ -92,80 +85,79 @@
 
 {% block bottom_script %}
     <script>
-        $(document).ready(function(){
-            $('#{{ form.category.vars.id }}').change(function(){
-                var form = $(this).closest('form'),
-                    data = {"update": true};
-                data[$(this).attr('name')] = $(this).val();
-
-                $.ajax({
-                    url    : form.attr('action'),
-                    type   : form.attr('method'),
-                    data   : data,
-                    success: function (html) {
-                        console.log(html);
-                        {#form.find('#{{ form.vars.id }}_params').parents('div.uk-form-row').remove();#}
-                        {#form.find('.channel-form-wrapper').append($(html).find('#{{ form.vars.id }}_params').parents('div.uk-form-row'));#}
-                        {#form.find('#{{ form.vars.id }}_params').parents('div.uk-form-row').find('.chosen-select').chosen();#}
-                        {#$.each($('.ajax-form'), function () {#}
-                        {#AjaxForm.init(this)#}
-                        {#});#}
-                        {#$('#{{ form.vars.id }}_params_country select').change(changeCountry);#}
-                        {#$('#{{ form.vars.id }}_params_county select').change(changeCounty);#}
-                    }
-                });
-
-
-            });
-
-
-
-
-
-
-
             var delLink = function (e) {
                 $(e.target).parent('div').remove();
 //            saveField(links);
             };
             var valuesCount;
+            var prodSetCount = {% if form.productSets is defined %}{{ form.productSets|length }}{% else %}{{ 0 }}{% endif %};
+            var addOption = function(e){
+                var form = $(this).closest('form'),
+                        data = {"update": true};
+                data[$(this).attr('name')] = $(this).val();
+                console.log(data);
+                $.ajax({
+                    url    : form.attr('action'),
+                    type   : form.attr('method'),
+                    data   : data,
+                    success: function (html) {
+//                        $('.block-categories').after($(html).find('#product_sets_block'));
+//                        $('#addProductSet').click(addProductSet);
+//                        $('.addProduct2Options button').click(addProduct2Option);
+                    }
+                });
+            };
+
 
             $('.delete-btn').click(function(e){
                 delLink(e);
             });
+            valuesCount=0;
+            var addProduct2Option = function (e) {
+                e.preventDefault();
+                var blockDiv = $(e.target).parent().parent();
+//                console.log(blockDiv);
+//                var valuesCountInput = blockDiv.find('input.cnt');
+//                if(!valuesCountInput.length){
+////                    blockDiv.append('<input type="hidden" class="cnt" value="0"/>')
+//                    valuesCount = 0;
+//                } else {
+//                    valuesCount = parseInt(blockDiv.find('input.cnt').val());
+//                }
 
-            $('#addProductSet').click(function (e) {
-                e.preventDefault();
-                valuesCount = $('#productSets').find('input.cnt').val()*1;
-                var productSetList = $('#productSets'),
-                    newWidget = productSetList.attr('data-prototype');
-                newWidget = newWidget.replace(/__name__/g, valuesCount);
-                valuesCount++;
-                var newDiv = $(newWidget).prepend("<span class='delete-btn'>X</span>");
-                newDiv.addClass('tm-panel-border');
-                newDiv.appendTo(productSetList);
-                $(productSetList).find('.delete-btn').click(delLink);
-//            $.each($('.ajax-form'), function () {
-//                AjaxForm.init(this)
-//                if (!is_array($data) && !($data instanceof \Traversable && $data instanceof \ArrayAccess)) {
-//            });
-            });
-            $('.addProduct2Options').click(function (e) {
-                e.preventDefault();
-                valuesCount = parseInt($(e.target).parent().siblings('#product2Options').find('input.cnt').val());
-                var product2OptionList = $(e.target).parent().siblings('#product2Options'),
+                var product2OptionList = $(e.target).parent().parent().find('.product-2-options'),
                     newWidget = product2OptionList.attr('data-prototype');
-                newWidget = newWidget.replace(/__name__/g, valuesCount);
+                newWidget = newWidget.replace(/__prod_set__/g, valuesCount);
                 valuesCount++;
                 var newDiv = $(newWidget).prepend("<span class='delete-btn'>X</span>");
                 newDiv.addClass('tm-panel-border');
                 newDiv.appendTo(product2OptionList);
                 $(product2OptionList).find('.delete-btn').click(delLink);
+                $('.option-select').change(addOption)
+            };
+
+            var addProductSet = function (e) {
+                e.preventDefault();
+                var productSetList = $('#productSets'),
+                    newWidget = productSetList.attr('data-prototype');
+                newWidget = newWidget.replace(/__name__/g, prodSetCount);
+                prodSetCount++;
+                var newDiv = $(newWidget).prepend('<span class="delete-btn">X</span><br><div class="uk-form-row"><a class="addProduct2Options button button-success" href="#"><i class="uk-icon-plus"></i> {{ 'button.add_product_2_options'|trans }}</a> </div>');
+                newDiv.addClass('tm-panel-border');
+                newDiv.appendTo(productSetList);
+                var optionId = newDiv.attr('id')+'_product2Options';
+                {#$('#'+optionId).prepend(#}
+                        {#'<br><div class="uk-form-row"><a class="addProduct2Options button button-success" href="#"><i class="uk-icon-plus"></i> {{ 'button.add_product_2_options'|trans }}</a> </div>'#}
+                {#);#}
+                $(productSetList).find('.delete-btn').click(delLink);
+                $('.addProduct2Options').click(addProduct2Option);
 //            $.each($('.ajax-form'), function () {
 //                AjaxForm.init(this)
-//                if (!is_array($data) && !($data instanceof \Traversable && $data instanceof \ArrayAccess)) {
 //            });
-            });
+            };
+            $('#addProductSet').click(addProductSet);
+
+            $('.addProduct2Options').click(addProduct2Option);
 
             $('.addOptionValues').click(function (e) {
                 e.preventDefault();
@@ -180,11 +172,28 @@
                 $(product2OptionList).find('.delete-btn').click(delLink);
 //            $.each($('.ajax-form'), function () {
 //                AjaxForm.init(this)
-//                if (!is_array($data) && !($data instanceof \Traversable && $data instanceof \ArrayAccess)) {
 //            });
             });
 
-        });
+            $('#{{ form.category.vars.id }}').change(function(){
+                var form = $(this).closest('form'),
+                        data = {"update": true};
+                data[$(this).attr('name')] = $(this).val();
+
+                $.ajax({
+                    url    : form.attr('action'),
+                    type   : form.attr('method'),
+                    data   : data,
+                    success: function (html) {
+                        $('.block-categories').after($(html).find('#product_sets_block'));
+                        $('#addProductSet').click(addProductSet);
+                        $('.addProduct2Options button').click(addProduct2Option);
+                    }
+                });
+            });
+
+
+
 
 //        $.each($('.ajax-form'), function () { AjaxForm.init(this) });
     </script>

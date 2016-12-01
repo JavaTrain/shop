@@ -67,20 +67,22 @@ class ProductSetFormType extends AbstractType
                     'label' => 'product.name_title',
                 )
             )
-//            ->add(
-//                'product2Options',
-//                ExtendedCollectionType::class,
-//                array(
-//                    'entry_type'    => ProductToOptionFormType::class,
-//                    'entry_options' => array(
-//                        'attr' => ['product' => $options['attr']['product']]
-//                    ),
-//                    'prototype'     => true,
-//                    'allow_add'     => true,
-//                    'allow_delete'  => true,
-//                    'required'      => false,
-//                )
-//            )
+            ->add(
+                'product2Options',
+                CollectionType::class,
+                array(
+                    'entry_type'     => ProductToOptionFormType::class,
+                    'entry_options'  => array(
+                        'attr' => ['product' => $options['attr']['product']]
+                    ),
+                    'prototype'      => true,
+                    'allow_add'      => true,
+                    'allow_delete'   => true,
+                    'required'       => false,
+                    'prototype_name' => '__prod_set__',
+                    'attr'           => ['class' => 'product-2-options']
+                )
+            )
         ;
     }
 

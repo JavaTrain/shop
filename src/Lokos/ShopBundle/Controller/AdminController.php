@@ -185,8 +185,8 @@ class AdminController extends BaseController
     {
         $id      = $request->get('id', null);
         $product = $this->getDoctrine()
-                       ->getRepository('LokosShopBundle:Product')
-                       ->find($id);
+                        ->getRepository('LokosShopBundle:Product')
+                        ->find($id);
 
         if (empty($product)) {
             $product = new Product();
@@ -195,20 +195,14 @@ class AdminController extends BaseController
             $title = $this->translate('product.edit_title', array(':product' => $product->getName()));
         }
 
-//        var_dump($product->getProductSets()[0]->getProduct2Options()[0]->getOption()->getName());die;
         $form = $this->createForm(ProductFormType::class, $product);
 
         if ($request->isMethod('POST')) {
             $form->handleRequest($request);
 
             if (!$request->get('update')) {
-//                if ($request->isXmlHttpRequest()) {
-//                    return $this->jsonResponse($this->getErrorMessages($form));
-//                }
-
                 if ($form->isValid()) {
                     $em = $this->getDoctrine()->getManager();
-                    //                var_dump(count($product->getProductSets()));die;
                     foreach ($product->getProductSets() as $productSet) {
                         $productSet->setProduct($product);
                         foreach ($productSet->getProduct2Options() as $product2Option) {

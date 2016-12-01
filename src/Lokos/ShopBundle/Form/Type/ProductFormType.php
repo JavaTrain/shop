@@ -9,6 +9,7 @@ use Lokos\ShopBundle\Entity\ProductSet;
 use Lokos\ShopBundle\Form\EventListener\AddCategoryFieldSubscriber;
 use Lokos\ShopBundle\Form\EventListener\AddOptionFieldSubscriber;
 use Lokos\ShopBundle\Form\Fields\ExtendedCollectionType;
+use Lokos\ShopBundle\Repositories\OptionValueRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -23,16 +24,15 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ProductFormType extends AbstractType
 {
-//    /**
-//     * @var EntityManager
-//     */
-//    private $em;
-//
-//    public function __construct(EntityManager $em)
-//    {
-//        $this->em = $em;
-//    }
+    /**
+     * @var EntityManager
+     */
+    private $em;
 
+    public function __construct(EntityManager $em)
+    {
+        $this->em = $em;
+    }
 
     /**
      * {@inheritDoc}
@@ -88,20 +88,6 @@ class ProductFormType extends AbstractType
                   )
             )
             ->add('category')
-//            ->add(
-//                'productSets',
-//                CollectionType::class,
-//                array(
-//                    'entry_type'    => ProductSetFormType::class,
-//                    'entry_options'  => array(
-//                        'attr'  => ['product' => $options['data']]
-//                    ),
-//                    'prototype'     => true,
-//                    'allow_add'     => true,
-//                    'allow_delete'  => true,
-//                    'required'      => false
-//                )
-//            )
             ;
 
         $builder->addEventListener(
@@ -109,13 +95,14 @@ class ProductFormType extends AbstractType
             function (FormEvent $event) {
                 $data = $event->getData();
                 $form = $event->getForm();
+                var_dump($form);die;
 
                 if (null === $data) {
                     return;
                 }
-                $accessor    = PropertyAccess::createPropertyAccessor();
+                $accessor = PropertyAccess::createPropertyAccessor();
                 $category = $accessor->getValue($data, 'category');
-                if($category){
+                if ($category) {
                     $this->addProductSetForm($form, $data);
                 } else {
                     $form->remove('productSets');
@@ -132,18 +119,75 @@ class ProductFormType extends AbstractType
                     return;
                 }
 //                var_dump($data);die;
-//                $accessor    = PropertyAccess::createPropertyAccessor();
-//                $category = $accessor->getValue($data, 'category');
-                $category = $data['category'];
-                if($category){
-                    $this->addProductSetForm($form, $data);
-                } else {
-                    $form->remove('productSets');
+
+//                print_r($data);die;
+//                if(array_key_exists('category', $data){
+//
+//                }
+//                $opt = $this->getFilteredArray('option', $data);
+                $option = $this->searchKey('option', $data);
+//                var_dump($option);die;
+
+                if($option){
+                    $optionValues = $this->em->getRepository('LokosShopBundle:OptionValue')
+                                             ->findBy(
+                                                 array(
+                                                     'option' => $option['product2Options'][0]['option'],
+                                                 )
+                                             );
+//                    $form->add('optionValue',
+//                               EntityType::class,
+//                               array(
+//                                   'class' => 'LokosShopBundle:OptionValue',
+//                                   'attr'  => ['class' => 'option-select'],
+//                                   'query_builder' => function (OptionValueRepository $repository) use ($option) {
+//                                       return $repository->createQueryBuilder('tbl')
+//                                                         ->where('tbl.option = '.$option['product2Options'][0]['option'])
+////                                                         ->join('tbl.category', 'c', Join::WITH, 'c.name = :category')
+////                                                         ->setParameter(':category', $option['attr']['product']->getCategory()->getName())
+////                                                         ->orderBy('tbl.name', 'ASC')
+//                                           ;
+//                                   },
+//                               )
+//                    );
+//                    var_dump($optionValues);die;
+
+                }
+
+
+                if(array_key_exists('category', $data)){
+//                    $category = $data['category'];
+                    $category = $this->em->getRepository('LokosShopBundle:Category')
+                                         ->findOneBy(
+                                             array(
+                                                 'id' => $data['category'],
+                                             )
+                                         );
+                    if ($category) {
+                        $product  = $form->getData()->setCategory($category);
+                        $this->addProductSetForm($form, $product);
+                    } else {
+                        $form->remove('productSets');
+                    }
                 }
             }
         );
 
 
+    }
+
+
+    function searchKey($key, $arr)
+    {
+        foreach ($arr as $k => $v) {
+            if ($k == $key) {
+                return $v;
+            } elseif (is_array($v)) {
+                return $this->searchKey($key, $v);
+            } else {
+                return false;
+            }
+        }
     }
 
     protected function addProductSetForm($form, $data)
@@ -156,7 +200,8 @@ class ProductFormType extends AbstractType
             'prototype'     => true,
             'allow_add'     => true,
             'allow_delete'  => true,
-            'required'      => false
+            'required'      => false,
+//            'prototype_name' => '__prod__'
         );
 
         $form->add('productSets', CollectionType::class, $formOptions);
