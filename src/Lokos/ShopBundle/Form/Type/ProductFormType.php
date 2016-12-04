@@ -95,7 +95,7 @@ class ProductFormType extends AbstractType
             function (FormEvent $event) {
                 $data = $event->getData();
                 $form = $event->getForm();
-                var_dump($form);die;
+//                var_dump($form);die;
 
                 if (null === $data) {
                     return;
@@ -118,42 +118,6 @@ class ProductFormType extends AbstractType
                 if (null === $data) {
                     return;
                 }
-//                var_dump($data);die;
-
-//                print_r($data);die;
-//                if(array_key_exists('category', $data){
-//
-//                }
-//                $opt = $this->getFilteredArray('option', $data);
-                $option = $this->searchKey('option', $data);
-//                var_dump($option);die;
-
-                if($option){
-                    $optionValues = $this->em->getRepository('LokosShopBundle:OptionValue')
-                                             ->findBy(
-                                                 array(
-                                                     'option' => $option['product2Options'][0]['option'],
-                                                 )
-                                             );
-//                    $form->add('optionValue',
-//                               EntityType::class,
-//                               array(
-//                                   'class' => 'LokosShopBundle:OptionValue',
-//                                   'attr'  => ['class' => 'option-select'],
-//                                   'query_builder' => function (OptionValueRepository $repository) use ($option) {
-//                                       return $repository->createQueryBuilder('tbl')
-//                                                         ->where('tbl.option = '.$option['product2Options'][0]['option'])
-////                                                         ->join('tbl.category', 'c', Join::WITH, 'c.name = :category')
-////                                                         ->setParameter(':category', $option['attr']['product']->getCategory()->getName())
-////                                                         ->orderBy('tbl.name', 'ASC')
-//                                           ;
-//                                   },
-//                               )
-//                    );
-//                    var_dump($optionValues);die;
-
-                }
-
 
                 if(array_key_exists('category', $data)){
 //                    $category = $data['category'];
@@ -167,9 +131,25 @@ class ProductFormType extends AbstractType
                         $product  = $form->getData()->setCategory($category);
                         $this->addProductSetForm($form, $product);
                     } else {
+                        var_dump('bad');die;
                         $form->remove('productSets');
                     }
                 }
+
+
+//                $option = $this->searchKey('option', $data);
+//                if($option){
+////                    $form->setCategory();
+//                    $optionValues = $this->em->getRepository('LokosShopBundle:OptionValue')
+//                                             ->findBy(
+//                                                 array(
+//                                                     'option' => $option['product2Options'][0]['option'],
+//                                                 )
+//                                             );
+////
+//
+//                }
+
             }
         );
 

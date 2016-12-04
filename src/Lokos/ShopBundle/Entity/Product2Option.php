@@ -21,15 +21,15 @@ class Product2Option
      */
     private $id;
 
-//    /**
-//     * @var \Product
-//     *
-//     * @ORM\ManyToOne(targetEntity="Product")
-//     * @ORM\JoinColumns({
-//     *   @ORM\JoinColumn(name="product_id", referencedColumnName="id")
-//     * })
-//     */
-//    private $product;
+    /**
+     * @var \Product
+     *
+     * @ORM\ManyToOne(targetEntity="Product", inversedBy="product2Options")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="product_id", referencedColumnName="id")
+     * })
+     */
+    private $product;
 
     /**
      * @var \Option
@@ -78,25 +78,25 @@ class Product2Option
         return $this->id;
     }
 
-//    /**
-//     * @return \Product
-//     */
-//    public function getProduct()
-//    {
-//        return $this->product;
-//    }
-//
-//    /**
-//     * @param $product
-//     *
-//     * @return $this
-//     */
-//    public function setProduct($product)
-//    {
-//        $this->product = $product;
-//
-//        return $this;
-//    }
+    /**
+     * @return \Product
+     */
+    public function getProduct()
+    {
+        return $this->product;
+    }
+
+    /**
+     * @param $product
+     *
+     * @return $this
+     */
+    public function setProduct($product)
+    {
+        $this->product = $product;
+
+        return $this;
+    }
 
     /**
      * @return \Option

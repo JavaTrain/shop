@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * OptionValue
  *
- * @ORM\Table(name="option_value", indexes={@ORM\Index(name="fk_option_detail_option1_idx", columns={"option_id"}), @ORM\Index(name="fk_option_value_product1_idx", columns={"product_id"})})
+ * @ORM\Table(name="option_value", indexes={@ORM\Index(name="fk_option_detail_option1_idx", columns={"option_id"})})
  * @ORM\Entity(repositoryClass="Lokos\ShopBundle\Repositories\OptionValueRepository")
  */
 class OptionValue
@@ -38,15 +38,15 @@ class OptionValue
      */
     private $option;
 
-    /**
-     * @var \Product
-     *
-     * @ORM\ManyToOne(targetEntity="Product", inversedBy="optionValues")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="product_id", referencedColumnName="id")
-     * })
-     */
-    private $product;
+//    /**
+//     * @var \Product
+//     *
+//     * @ORM\ManyToOne(targetEntity="Product", inversedBy="optionValues")
+//     * @ORM\JoinColumns({
+//     *   @ORM\JoinColumn(name="product_id", referencedColumnName="id")
+//     * })
+//     */
+//    private $product;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -122,29 +122,29 @@ class OptionValue
         return $this->option;
     }
 
-    /**
-     * Set product
-     *
-     * @param \Lokos\ShopBundle\Entity\Product $product
-     *
-     * @return OptionValue
-     */
-    public function setProduct(\Lokos\ShopBundle\Entity\Product $product = null)
-    {
-        $this->product = $product;
-
-        return $this;
-    }
-
-    /**
-     * Get product
-     *
-     * @return \Lokos\ShopBundle\Entity\Product
-     */
-    public function getProduct()
-    {
-        return $this->product;
-    }
+//    /**
+//     * Set product
+//     *
+//     * @param \Lokos\ShopBundle\Entity\Product $product
+//     *
+//     * @return OptionValue
+//     */
+//    public function setProduct(\Lokos\ShopBundle\Entity\Product $product = null)
+//    {
+//        $this->product = $product;
+//
+//        return $this;
+//    }
+//
+//    /**
+//     * Get product
+//     *
+//     * @return \Lokos\ShopBundle\Entity\Product
+//     */
+//    public function getProduct()
+//    {
+//        return $this->product;
+//    }
 
     /**
      * Add orderDetail

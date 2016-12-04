@@ -76,17 +76,17 @@ class Product
      */
     private $attribute;
 
-//    /**
-//     * @var \Doctrine\Common\Collections\Collection
-//     *
-//     * @ORM\OneToMany(targetEntity="Product2Option", mappedBy="product")
-//     */
-//    private $product2options;
-
     /**
-     * @ORM\OneToMany(targetEntity="OptionValue", mappedBy="product")
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\OneToMany(targetEntity="Product2Option", mappedBy="product")
      */
-    private $optionValues;
+    private $product2options;
+
+//    /**
+//     * @ORM\OneToMany(targetEntity="OptionValue", mappedBy="product")
+//     */
+//    private $optionValues;
 
     /**
      * @ORM\OneToMany(targetEntity="ProductSet", mappedBy="product", cascade={"persist", "remove", "detach"})
@@ -101,8 +101,8 @@ class Product
     public function __construct()
     {
         $this->attribute       = new \Doctrine\Common\Collections\ArrayCollection();
-//        $this->product2options = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->optionValues    = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->product2options = new \Doctrine\Common\Collections\ArrayCollection();
+//        $this->optionValues    = new \Doctrine\Common\Collections\ArrayCollection();
         $this->productSets     = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
@@ -293,60 +293,6 @@ class Product
     public function getAttribute()
     {
         return $this->attribute;
-    }
-
-//    /**
-//     * Add option
-//     *
-//     * @param \Lokos\ShopBundle\Entity\Option $option
-//     *
-//     * @return Product
-//     */
-//    public function addProduct2options(\Lokos\ShopBundle\Entity\Option $option)
-//    {
-//        $this->product2options[] = $option;
-//
-//        return $this;
-//    }
-//
-//    /**
-//     * Remove option
-//     *
-//     * @param \Lokos\ShopBundle\Entity\Option $option
-//     */
-//    public function removeProduct2options(\Lokos\ShopBundle\Entity\Option $option)
-//    {
-//        $this->product2options->removeElement($option);
-//    }
-//
-//    /**
-//     * Get option
-//     *
-//     * @return \Doctrine\Common\Collections\Collection
-//     */
-//    public function getProduct2options()
-//    {
-//        return $this->product2options;
-//    }
-
-    /**
-     * @return mixed
-     */
-    public function getOptionValues()
-    {
-        return $this->optionValues;
-    }
-
-    /**
-     * @param $optionValues
-     *
-     * @return $this
-     */
-    public function setOptionValues($optionValues)
-    {
-        $this->optionValues = $optionValues;
-        
-        return $this;
     }
 
     /**

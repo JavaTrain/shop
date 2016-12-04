@@ -14,9 +14,11 @@ services:
       - '@doctrine.orm.entity_manager'
     tags: [{ name: form.type }]
 
-  lokos.shop.product_2_option_form_type:
+  lokos.shop.product_to_option_form_type:
     class: Lokos\ShopBundle\Form\Type\ProductToOptionFormType
-    tags: [{ name: form.type, alias: lokos_product_to_option }]
+    arguments:
+      - '@doctrine.orm.entity_manager'
+    tags: [{ name: form.type }]
 
   lokos.shop.extended_collection_type:
     class: Lokos\ShopBundle\Form\Fields\ExtendedCollectionType

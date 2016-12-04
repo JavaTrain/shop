@@ -93,14 +93,24 @@
             var prodSetCount = {% if form.productSets is defined %}{{ form.productSets|length }}{% else %}{{ 0 }}{% endif %};
             var addOption = function(e){
                 var form = $(this).closest('form'),
-                        data = {"update": true};
+                        data = {"update": true},
+                        attrName = $(this).attr('name');
                 data[$(this).attr('name')] = $(this).val();
-                console.log(data);
+                data[$('#lokos_shop_product_category').attr('name')] = $('#lokos_shop_product_category').val();
                 $.ajax({
                     url    : form.attr('action'),
                     type   : form.attr('method'),
                     data   : data,
                     success: function (html) {
+//                        console.log(html);
+                        var id = attrName.replace(/\[|\]/g, '\_');
+                        id = id.replace(/\_\_/g, '\_');
+                        if(id[id.length-1] == '_'){
+                            id = id.slice(0,-8);
+                        }
+                        optionId = id+'_optionValue';
+                        var div = $(html).find('#'+optionId).parent().parent();
+                        $('#'+id).parent().replaceWith(div);
 //                        $('.block-categories').after($(html).find('#product_sets_block'));
 //                        $('#addProductSet').click(addProductSet);
 //                        $('.addProduct2Options button').click(addProduct2Option);
@@ -193,8 +203,69 @@
             });
 
 
-
-
-//        $.each($('.ajax-form'), function () { AjaxForm.init(this) });
+            //        $.each($('.ajax-form'), function () { AjaxForm.init(this) });
     </script>
 {% endblock bottom_script %}
+{#
+
+<div id="product_sets_block">
+    <div id="productSets"
+         data-prototype="&lt;div id=&quot;lokos_shop_product_productSets___name__&quot; product=&quot;New product&quot;&gt;&lt;div&gt;&lt;label for=&quot;lokos_shop_product_productSets___name___name&quot;&gt;product.name_title&lt;/label&gt;&lt;input type=&quot;text&quot; id=&quot;lokos_shop_product_productSets___name___name&quot; name=&quot;lokos_shop_product[productSets][__name__][name]&quot; /&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Product2 options&lt;/label&gt;&lt;div id=&quot;lokos_shop_product_productSets___name___product2Options&quot; class=&quot;product-2-options&quot; data-prototype=&quot;&amp;lt;div&amp;gt;&amp;lt;label&amp;gt;__prod_set__label__&amp;lt;/label&amp;gt;&amp;lt;div id=&amp;quot;lokos_shop_product_productSets___name___product2Options___prod_set__&amp;quot; product=&amp;quot;New product&amp;quot;&amp;gt;&amp;lt;div&amp;gt;&amp;lt;label for=&amp;quot;lokos_shop_product_productSets___name___product2Options___prod_set___option&amp;quot;&amp;gt;Option&amp;lt;/label&amp;gt;&amp;lt;select id=&amp;quot;lokos_shop_product_productSets___name___product2Options___prod_set___option&amp;quot; name=&amp;quot;lokos_shop_product[productSets][__name__][product2Options][__prod_set__][option]&amp;quot; class=&amp;quot;option-select&amp;quot;&amp;gt;&amp;lt;option value=&amp;quot;&amp;quot;&amp;gt;Choose an option&amp;lt;/option&amp;gt;            &amp;lt;option value=&amp;quot;1&amp;quot; &amp;gt;Color&amp;lt;/option&amp;gt;            &amp;lt;option value=&amp;quot;2&amp;quot; &amp;gt;Size&amp;lt;/option&amp;gt;&amp;lt;/select&amp;gt;&amp;lt;/div&amp;gt;&amp;lt;/div&amp;gt;&amp;lt;/div&amp;gt;&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;">
+        <div class="tm-panel-border">
+            <span class='delete-btn'>X</span>
+            <input type="text" id="lokos_shop_product_productSets_0_name"
+                   name="lokos_shop_product[productSets][0][name]"/>
+            <div class="product-2-options"
+                 data-prototype="&lt;div id=&quot;lokos_shop_product_productSets_0_product2Options___prod_set__&quot; product=&quot;New product&quot;&gt;&lt;div&gt;&lt;label for=&quot;lokos_shop_product_productSets_0_product2Options___prod_set___option&quot;&gt;Option&lt;/label&gt;&lt;select id=&quot;lokos_shop_product_productSets_0_product2Options___prod_set___option&quot; name=&quot;lokos_shop_product[productSets][0][product2Options][__prod_set__][option]&quot; class=&quot;option-select&quot;&gt;&lt;option value=&quot;&quot;&gt;Choose an option&lt;/option&gt;            &lt;option value=&quot;1&quot; &gt;Color&lt;/option&gt;            &lt;option value=&quot;2&quot; &gt;Size&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;/div&gt;">
+                <input type="hidden" class="cnt" value="1"/>
+                <div class="tm-panel-border">
+                    <div id="lokos_shop_product_productSets_0_product2Options" class="product-2-options"
+                         data-prototype="">
+                        <div><label>0</label>
+                            <div id="lokos_shop_product_productSets_0_product2Options_0" product="New product">
+                                <div>
+                                    <label for="lokos_shop_product_productSets_0_product2Options_0_option">Option</label><select
+                                            id="lokos_shop_product_productSets_0_product2Options_0_option"
+                                            name="lokos_shop_product[productSets][0][product2Options][0][option]"
+                                            class="option-select">
+                                        <option value="">Choose an option</option>
+                                        <option value="1" selected="selected">Color</option>
+                                        <option value="2">Size</option>
+                                    </select></div>
+                                <div><label for="lokos_shop_product_productSets_0_product2Options_0_optionValue">Option
+                                        value</label><select
+                                            id="lokos_shop_product_productSets_0_product2Options_0_optionValue"
+                                            name="lokos_shop_product[productSets][0][product2Options][0][optionValue]">
+                                        <option value="">Choose a value</option>
+                                        <option value="1">red</option>
+                                        <option value="2">black</option>
+                                    </select></div>
+                                <div><label for="lokos_shop_product_productSets_0_product2Options_0_price">Price</label><input
+                                            type="text" id="lokos_shop_product_productSets_0_product2Options_0_price"
+                                            name="lokos_shop_product[productSets][0][product2Options][0][price]"/></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="option">
+
+                        <div id="optionValues">
+
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="uk-form-row">
+                <a class="addProduct2Options button button-success" href="#"><i class="uk-icon-plus"></i>
+                    button.add_product_2_options</a>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="uk-form-row ">
+        <a class="button button-success" href="#" id="addProductSet"><i class="uk-icon-plus"></i> button.add_product_set</a>
+    </div>
+</div>
+
+#}

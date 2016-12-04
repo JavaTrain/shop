@@ -2,11 +2,13 @@
 
 namespace Lokos\ShopBundle\Form\Type;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 //use FOS\UserBundle\Event\FormEvent;
 use Doctrine\ORM\Query\Expr\Join;
 use Lokos\ShopBundle\Entity\Option;
 use Lokos\ShopBundle\Repositories\OptionRepository;
+use Lokos\ShopBundle\Repositories\OptionValueRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -22,6 +24,16 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ProductToOptionFormType extends AbstractType
 {
+    /**
+     * @var EntityManager
+     */
+    private $em;
+
+    public function __construct(EntityManager $em)
+    {
+        $this->em = $em;
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -53,12 +65,9 @@ class ProductToOptionFormType extends AbstractType
                                           ->setParameter(':category', $options['attr']['product']->getCategory()->getName())
                                           ->orderBy('tbl.name', 'ASC');
                     },
+                    'placeholder' => 'Choose an option',
                 )
             )
-//            ->add(
-//                'optionValue',
-//                null
-//            )
         ;
 
         $builder->addEventListener(
@@ -88,22 +97,29 @@ class ProductToOptionFormType extends AbstractType
                 $data = $event->getData();
                 $form = $event->getForm();
 
-                var_dump($data);die;
+//                var_dump($data);die;
                 if (null === $data) {
                     return;
                 }
-                $category = $data['category'];
-                if ($category) {
-                    $category = $this->em->getRepository('LokosShopBundle:Category')
-                                         ->findOneBy(
-                                             array(
-                                                 'id' => $data['category'],
-                                             )
-                                         );
-                    $product  = $form->getData()->setCategory($category);
-                    $this->addProductSetForm($form, $product);
+                $option = $data['option'];
+                if ($option) {
+                    $form->add(
+                        'optionValue',
+                        EntityType::class,
+                        array(
+                            'class' => 'LokosShopBundle:OptionValue',
+                            'query_builder' => function (OptionValueRepository $repository) use ($data) {
+                                return $repository->createQueryBuilder('tbl')
+                                                    ->where('tbl.option = :optionId')
+                                                    ->setParameter(':optionId', $data['option'])
+                                    ;
+                            },
+                            'placeholder' => 'Choose a value',
+                        )
+                    );
+                    $form->add('price');
                 } else {
-                    $form->remove('productSets');
+//                    $form->remove('productSets');
                 }
             }
         );
