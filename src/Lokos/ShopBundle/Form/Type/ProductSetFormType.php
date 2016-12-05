@@ -67,6 +67,7 @@ class ProductSetFormType extends AbstractType
                     'label' => 'product.name_title',
                 )
             )
+            ->add('quantity')
             ->add(
                 'product2Options',
                 CollectionType::class,

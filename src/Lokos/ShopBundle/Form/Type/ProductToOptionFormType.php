@@ -76,16 +76,27 @@ class ProductToOptionFormType extends AbstractType
                 $data = $event->getData();
                 $form = $event->getForm();
 
-//                var_dump($data);die;
-
                 if (null === $data) {
                     return;
                 }
                 $accessor = PropertyAccess::createPropertyAccessor();
-                $category = $accessor->getValue($data, 'category');
-                if ($category) {
-                    $this->addProductSetForm($form, $data);
-                } else {
+                $option = $accessor->getValue($data, 'option');
+                if ($option) {
+                    $form->add(
+                        'optionValue',
+                        EntityType::class,
+                        array(
+                            'class' => 'LokosShopBundle:OptionValue',
+                            'query_builder' => function (OptionValueRepository $repository) use ($option) {
+                                return $repository->createQueryBuilder('tbl')
+                                                  ->where('tbl.option = :optionId')
+                                                  ->setParameter(':optionId', $option->getId())
+                                    ;
+                            },
+                            'placeholder' => 'Choose a value',
+                        )
+                    );
+                    $form->add('price');
                     $form->remove('productSets');
                 }
             }
@@ -97,7 +108,6 @@ class ProductToOptionFormType extends AbstractType
                 $data = $event->getData();
                 $form = $event->getForm();
 
-//                var_dump($data);die;
                 if (null === $data) {
                     return;
                 }
@@ -119,6 +129,7 @@ class ProductToOptionFormType extends AbstractType
                     );
                     $form->add('price');
                 } else {
+                    var_dump('Very bad');die;
 //                    $form->remove('productSets');
                 }
             }

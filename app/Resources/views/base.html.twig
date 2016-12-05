@@ -12,9 +12,6 @@
             {% stylesheets
             '@bootstrap_css'
             '@LokosShopBundle/Resources/public/css/style.css'
-            '@LokosShopBundle/Resources/public/css/slider.css'
-            '@LokosShopBundle/Resources/public/css/easy-responsive-tabs.css'
-            '@LokosShopBundle/Resources/public/css/global.css'
             %}
             <link href="{{ asset_url }}" type="text/css" rel="stylesheet"/>
             {% endstylesheets %}
@@ -25,15 +22,14 @@
 
         {% block head_scripts %}
             {% javascripts
-            '@LokosShopBundle/Resources/public/js/jquery-1.7.2.min.js'
-            '@LokosShopBundle/Resources/public/js/move-top.js'
-            '@LokosShopBundle/Resources/public/js/easing.js'
-            '@LokosShopBundle/Resources/public/js/startstop-slider.js'
+            '@LokosShopBundle/Resources/public/js/jquery-2.1.4.js'
+            '@bootstrap_js'
             %}
             <script src="{{ asset_url }}"></script>
             {% endjavascripts %}
         {% endblock head_scripts %}
-        {% block page_script %}{% endblock page_script %}
+
+        {#{% block page_script %}{% endblock page_script %}#}
 
         {% block favicon %}
             <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
@@ -43,56 +39,8 @@
     <body>
         <div class="container">
             {% block nav %}
-                <div class="header">
-                    <div class="headertop_desc">
-                        <div class="call">
-                            <p><span>Need help?</span> call us <span class="number">1-22-3456789</span></p>
-                        </div>
-                        <div class="account_desc">
-                            <ul>
-                                <li><a href="#">Register</a></li>
-                                <li><a href="#">Login</a></li>
-                                <li><a href="#">Delivery</a></li>
-                                <li><a href="#">Checkout</a></li>
-                                <li><a href="#">My Account</a></li>
-                            </ul>
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-                    <div class="header_top">
-                        <div class="logo">
-                            <a href="index.html"><img src="/bundles/lokosshop/images/logo.png" alt="" /></a>
-                        </div>
-                        <div class="cart">
-                            <p>Welcome to our Online Store! <span><a href="{{ path('lokos_shop_cart') }}">Cart:</a></span><div id="dd" class="wrapper-dropdown-2"> <span class="cart-items-count">{#{{ cartResume.total_quantity }}#}</span> item(s) - $<span class="cart-items-price">{#{{ cartResume.total_price }}#}</span>
-                                <ul class="dropdown">
-                                    <li>you have no items in your Shopping cart</li>
-                                </ul></div></p>
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-                    <div class="header_bottom">
-                        <div class="menu">
-                            <ul>
-                                <li><a href="index.html">Home</a></li>
-                                <li><a href="about.html">About</a></li>
-                                <li><a href="delivery.html">Delivery</a></li>
-                                <li><a href="news.html">News</a></li>
-                                <li><a href="contact.html">Contact</a></li>
-                                <div class="clear"></div>
-                            </ul>
-                        </div>
-                        <div class="search_box">
-                            <form>
-                                <input type="text" value="Search" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Search';}"><input type="submit" value="">
-                            </form>
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-                </div>
             {% endblock nav %}
             <!-- Navbar End -->
-
             <div class="wtap">
                 {% block content %}
                     {% block categories %}
@@ -110,69 +58,9 @@
                 {% endblock content %}
             </div>
             {% block footer %}
-                <div class="footer">
-                    <div class="wrap">
-                        <div class="section group">
-                            <div class="col_1_of_4 span_1_of_4">
-                                <h4>Information</h4>
-                                <ul>
-                                    <li><a href="about.html">About Us</a></li>
-                                    <li><a href="contact.html">Customer Service</a></li>
-                                    <li><a href="#">Advanced Search</a></li>
-                                    <li><a href="delivery.html">Orders and Returns</a></li>
-                                    <li><a href="contact.html">Contact Us</a></li>
-                                </ul>
-                            </div>
-                            <div class="col_1_of_4 span_1_of_4">
-                                <h4>Why buy from us</h4>
-                                <ul>
-                                    <li><a href="about.html">About Us</a></li>
-                                    <li><a href="contact.html">Customer Service</a></li>
-                                    <li><a href="#">Privacy Policy</a></li>
-                                    <li><a href="contact.html">Site Map</a></li>
-                                    <li><a href="#">Search Terms</a></li>
-                                </ul>
-                            </div>
-                            <div class="col_1_of_4 span_1_of_4">
-                                <h4>My account</h4>
-                                <ul>
-                                    <li><a href="contact.html">Sign In</a></li>
-                                    <li><a href="index.html">View Cart</a></li>
-                                    <li><a href="#">My Wishlist</a></li>
-                                    <li><a href="#">Track My Order</a></li>
-                                    <li><a href="contact.html">Help</a></li>
-                                </ul>
-                            </div>
-                            <div class="col_1_of_4 span_1_of_4">
-                                <h4>Contact</h4>
-                                <ul>
-                                    <li><span>+91-123-456789</span></li>
-                                    <li><span>+00-123-000000</span></li>
-                                </ul>
-                                <div class="social-icons">
-                                    <h4>Follow Us</h4>
-                                    <ul>
-                                        <li><a href="#" target="_blank"><img src="/bundles/lokosshop/images/facebook.png" alt="" /></a></li>
-                                        <li><a href="#" target="_blank"><img src="/bundles/lokosshop/images/twitter.png" alt="" /></a></li>
-                                        <li><a href="#" target="_blank"><img src="/bundles/lokosshop/images/skype.png" alt="" /> </a></li>
-                                        <li><a href="#" target="_blank"> <img src="/bundles/lokosshop/images/dribbble.png" alt="" /></a></li>
-                                        <li><a href="#" target="_blank"> <img src="/bundles/lokosshop/images/linkedin.png" alt="" /></a></li>
-                                        <div class="clear"></div>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="copy_right">
-                        <p>Company Name © All rights Reseverd | Design by  <a href="http://w3layouts.com">W3Layouts</a> </p>
-                    </div>
-                </div>
             {% endblock footer %}
         </div>
         {% block javascripts %}
-            {% javascripts '@jquery' '@bootstrap_js' %}
-                <script type="text/javascript" src="{{ asset_url }}"></script>
-            {% endjavascripts %}
         {% endblock %}
     </body>
 </html>

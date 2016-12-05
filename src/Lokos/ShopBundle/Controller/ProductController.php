@@ -58,7 +58,8 @@ class ProductController extends BaseController
                                    ->getCartItemsCountAndPrice($cartItems);
         $data['catId'] = $id;
 
-        return $this->render('Product/overview.html.twig', $data);
+        return $this->render('LokosShopBundle:Product:overview.html.twig', $data);
+
     }
 
     /**
@@ -68,22 +69,19 @@ class ProductController extends BaseController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function detailAction(Request $request, $catId, $itemId)
+    public function detailAction(Request $request, $catId, $itemId, $options=null)
     {
+        $params = array('withOptions' => $itemId);
+        if ($request->isXmlHttpRequest()) {
+            //get option's values
+        }
+
         $item = $this->getDoctrine()
                      ->getRepository('LokosShopBundle:Product')
                      ->reset()
-                     ->buildQuery(array('withOptions' => $itemId))
+                     ->buildQuery($params)
                      ->getSingle();
         $withOptions = true;
-        if (!$item) {
-            $item = $this->getDoctrine()
-                         ->getRepository('LokosShopBundle:Product')
-                         ->reset()
-                         ->buildQuery(array('id' => $itemId))
-                         ->getSingle();
-            $withOptions = false;
-        }
         if (!$item) {
             throw new NotFoundHttpException('Item "'.$itemId.'" not found');
         }
@@ -93,6 +91,7 @@ class ProductController extends BaseController
 
         $data = array(
             'item'        => $item,
+//            'options'     => $this->getProductOptions($item),
             'cartResume'  => $this->get('lokos.shop.cart_repository')->getCartItemsCountAndPrice($cartItems),
             'categories'  => $this->getDoctrine()->getRepository('LokosShopBundle:Category')->findAll(),
             'withOptions' => $withOptions,
@@ -101,7 +100,7 @@ class ProductController extends BaseController
         if ($request->isMethod('POST')) {
             $response = $this->render('Product/detail_block.html.twig', $data);
         } else {
-            $response = $this->render('Product/detail.html.twig', $data);
+            $response = $this->render('LokosShopBundle:Product:detail.html.twig', $data);
         }
 
         return $response;

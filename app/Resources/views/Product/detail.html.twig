@@ -11,17 +11,6 @@
     {#<link href="{{ asset_url }}" type="text/css" rel="stylesheet"/>#}
 {#{% endblock head_styles %}#}
 
-{% block page_script %}
-    {% javascripts
-    '@LokosShopBundle/Resources/public/js/easyResponsiveTabs.js'
-    '@LokosShopBundle/Resources/public/js/slides.min.jquery.js'
-    %}
-    <script src="{{ asset_url }}"></script>
-    {% endjavascripts %}
-
-
-{% endblock page_script %}
-
 {% block content %}
     <div class="wrap">
         <div class="main">

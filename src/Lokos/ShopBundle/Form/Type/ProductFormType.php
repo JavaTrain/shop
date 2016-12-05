@@ -52,14 +52,6 @@ class ProductFormType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-//        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-//            $product = $event->getData();
-//            var_dump($event);die;
-//        });
-
-//        $builder->addEventSubscriber(new AddCategoryFieldSubscriber('options'));
-//        $builder->addEventSubscriber(new AddOptionFieldSubscriber('options'));
-//        var_dump($options);die;
         $builder
             ->add(
                 'name',
@@ -81,21 +73,27 @@ class ProductFormType extends AbstractType
                       'label' => 'product.price',
                   )
             )
-            ->add('quantity',
-                  null,
-                  array(
-                      'label' => 'product.quantity',
-                  )
+            ->add(
+                'quantity',
+                null,
+                array(
+                    'label' => 'product.quantity',
+                )
             )
-            ->add('category')
-            ;
+            ->add(
+                'category',
+                EntityType::class,
+                array(
+                    'class'       => 'LokosShopBundle:Category',
+                    'placeholder' => 'Choose category'
+                )
+            );
 
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
             function (FormEvent $event) {
                 $data = $event->getData();
                 $form = $event->getForm();
-//                var_dump($form);die;
 
                 if (null === $data) {
                     return;
@@ -108,6 +106,7 @@ class ProductFormType extends AbstractType
                     $form->remove('productSets');
                 }
             }
+
         );
         $builder->addEventListener(
             FormEvents::PRE_SUBMIT,
@@ -119,8 +118,7 @@ class ProductFormType extends AbstractType
                     return;
                 }
 
-                if(array_key_exists('category', $data)){
-//                    $category = $data['category'];
+                if (array_key_exists('category', $data)) {
                     $category = $this->em->getRepository('LokosShopBundle:Category')
                                          ->findOneBy(
                                              array(
@@ -128,46 +126,17 @@ class ProductFormType extends AbstractType
                                              )
                                          );
                     if ($category) {
-                        $product  = $form->getData()->setCategory($category);
+                        $product = $form->getData()->setCategory($category);
                         $this->addProductSetForm($form, $product);
                     } else {
                         var_dump('bad');die;
                         $form->remove('productSets');
                     }
                 }
-
-
-//                $option = $this->searchKey('option', $data);
-//                if($option){
-////                    $form->setCategory();
-//                    $optionValues = $this->em->getRepository('LokosShopBundle:OptionValue')
-//                                             ->findBy(
-//                                                 array(
-//                                                     'option' => $option['product2Options'][0]['option'],
-//                                                 )
-//                                             );
-////
-//
-//                }
-
             }
         );
 
 
-    }
-
-
-    function searchKey($key, $arr)
-    {
-        foreach ($arr as $k => $v) {
-            if ($k == $key) {
-                return $v;
-            } elseif (is_array($v)) {
-                return $this->searchKey($key, $v);
-            } else {
-                return false;
-            }
-        }
     }
 
     protected function addProductSetForm($form, $data)

@@ -198,6 +198,9 @@ class AdminController extends BaseController
         $form = $this->createForm(ProductFormType::class, $product);
 
         if ($request->isMethod('POST')) {
+            $beforeSaveProductSets = $currentProductSetIds = array();
+            foreach ($product->getProductSets() as $productSet)
+                $beforeSaveProductSets [$productSet->getId()] = $productSet;
             $form->handleRequest($request);
 
             if (!$request->get('update')) {
@@ -205,9 +208,18 @@ class AdminController extends BaseController
                     $em = $this->getDoctrine()->getManager();
                     foreach ($product->getProductSets() as $productSet) {
                         $productSet->setProduct($product);
+                        if ($productSet->getId()) {
+                            $currentProductSetIds[] = $productSet->getId();
+                        }
                         foreach ($productSet->getProduct2Options() as $product2Option) {
                             $product2Option->setProduct($product);
                             $product2Option->setProductSet($productSet);
+                        }
+                    }
+
+                    foreach ($beforeSaveProductSets as $productSetId => $productSet) {
+                        if (!in_array($productSetId, $currentProductSetIds)) {
+                            $em->remove($productSet);
                         }
                     }
 

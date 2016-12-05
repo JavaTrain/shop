@@ -28,44 +28,49 @@
 
         <div class="uk-margin-bottom block-categories">
             <label class="uk-form-label" for="{{ form.category.vars.id }}">{{ form.category.vars.label|trans }}</label>
-            {{ form_widget(form.category) }}
+            {{ form_row(form.category) }}
         </div>
 
         {% if form.productSets is defined %}
             <div id="product_sets_block">
                 <div id="productSets" data-prototype="{{ form_widget(form.productSets.vars.prototype)|e }}">
-                    {#{{ dump(form.productSets) }}#}
                     {% for productSet in form.productSets %}
-                        {#{{ dump(productSet) }}#}
-                        <div class="tm-panel-border">
+                        <div id="{{ productSet.vars.id }}" class="tm-panel-border">
                             <span class='delete-btn'>X</span>
-                            {{ form_widget(productSet.name) }}
+                            <br>
+                            <div class="uk-form-row">
+                                <a class="addProduct2Options button button-success" href="#"><i class="uk-icon-plus"></i> {{ 'button.add_product_2_options'|trans }}</a>
+                            </div>
+                            {{ form_row(productSet.name) }}
+                            {{ form_row(productSet.quantity) }}
                             {#{% if productSet.product2Options is defined %}#}
-                                <div class="product-2-options" data-prototype="{{ form_widget(productSet.product2Options.vars.prototype)|e }}">
-                                    <input type="hidden" class="cnt" value="{{ productSet.product2Options|length }}"/>
-                                    <div class="tm-panel-border">
-                                        {{ form_widget(productSet.product2Options) }}
+                                {#<div id="{{ productSet.product2Options.vars.id }}" class="product-2-options" data-prototype="{{ form_widget(productSet.product2Options.vars.prototype)|e }}">#}
+                                    {#<input type="hidden" class="cnt" value="{{ productSet.product2Options|length }}"/>#}
+                                    <div class="product-2-options tm-panel-border" data-prototype="{{ form_widget(productSet.product2Options.vars.prototype)|e }}">
+                                        {#{{ form_widget(productSet.product2Options) }}#}
                                         {% for product2Option in productSet.product2Options %}
-                                            <div id="option">
-                                                {{ form_widget(product2Option.option) }}
-                                                <div id="optionValues">
-                                                    {{ form_widget(product2Option.optionValue) }}
-                                                </div>
+                                            <div id="option" class="tm-panel-border">
+                                                <span class="delete-btn">X</span>
                                                 <br>
+                                                <div id="{{ product2Option.vars.id }}">
+                                                    {{ form_row(product2Option.option) }}
+                                                    <div id="optionValues">
+                                                        {{ form_row(product2Option.optionValue) }}
+                                                        {{ form_row(product2Option.price) }}
+                                                    </div>
+                                                    <br>
+                                                </div>
                                             </div>
                                         {% endfor %}
                                     </div>
-                                </div>
+                                {#</div>#}
                                 <br>
-                                <div class="uk-form-row">
-                                    <a class="addProduct2Options button button-success" href="#"><i class="uk-icon-plus"></i> {{ 'button.add_product_2_options'|trans }}</a>
-                                </div>
                             {#{% endif %}#}
                         </div>
                     {% endfor %}
                 </div>
                 <br>
-                <div class="uk-form-row ">
+                <div class="uk-form-row">
                     <a class="button button-success" href="#" id="addProductSet"><i class="uk-icon-plus"></i> {{ 'button.add_product_set'|trans }}</a>
                 </div>
             </div>
@@ -76,7 +81,7 @@
         </div>
 
 
-        <button class="uk-button uk-button-primary uk-align-right" type="submit">
+        <button class="btn btn-primary uk-align-right" type="submit">
             <i class="uk-icon-check"></i>
             {{ 'button.save'|trans }}
         </button>
@@ -87,14 +92,13 @@
     <script>
             var delLink = function (e) {
                 $(e.target).parent('div').remove();
-//            saveField(links);
             };
             var valuesCount;
             var prodSetCount = {% if form.productSets is defined %}{{ form.productSets|length }}{% else %}{{ 0 }}{% endif %};
             var addOption = function(e){
                 var form = $(this).closest('form'),
-                        data = {"update": true},
-                        attrName = $(this).attr('name');
+                    data = {"update": true},
+                    attrName = $(this).attr('name');
                 data[$(this).attr('name')] = $(this).val();
                 data[$('#lokos_shop_product_category').attr('name')] = $('#lokos_shop_product_category').val();
                 $.ajax({
@@ -102,18 +106,19 @@
                     type   : form.attr('method'),
                     data   : data,
                     success: function (html) {
-//                        console.log(html);
                         var id = attrName.replace(/\[|\]/g, '\_');
                         id = id.replace(/\_\_/g, '\_');
                         if(id[id.length-1] == '_'){
                             id = id.slice(0,-8);
                         }
-                        optionId = id+'_optionValue';
+                        var optionId = id+'_optionValue';
                         var div = $(html).find('#'+optionId).parent().parent();
-                        $('#'+id).parent().replaceWith(div);
-//                        $('.block-categories').after($(html).find('#product_sets_block'));
-//                        $('#addProductSet').click(addProductSet);
-//                        $('.addProduct2Options button').click(addProduct2Option);
+                        div.find('.option-select').parent().remove();
+                        var optionSelect = $('#'+id);
+                        console.log(optionSelect);
+                        optionSelect.nextAll('div').remove();
+                        optionSelect.parent().append(div);
+                        optionSelect.parent().find('.delete-btn').click(delLink);
                     }
                 });
             };
@@ -122,19 +127,17 @@
             $('.delete-btn').click(function(e){
                 delLink(e);
             });
-            valuesCount=0;
+            valuesCount = 0;
             var addProduct2Option = function (e) {
                 e.preventDefault();
                 var blockDiv = $(e.target).parent().parent();
-//                console.log(blockDiv);
-//                var valuesCountInput = blockDiv.find('input.cnt');
-//                if(!valuesCountInput.length){
-////                    blockDiv.append('<input type="hidden" class="cnt" value="0"/>')
-//                    valuesCount = 0;
-//                } else {
-//                    valuesCount = parseInt(blockDiv.find('input.cnt').val());
-//                }
-
+                console.log(blockDiv);
+                var cnt = blockDiv.find('.option-select').length;
+                if(cnt){
+                    valuesCount = cnt;
+                }else{
+                    valuesCount = 0;
+                }
                 var product2OptionList = $(e.target).parent().parent().find('.product-2-options'),
                     newWidget = product2OptionList.attr('data-prototype');
                 newWidget = newWidget.replace(/__prod_set__/g, valuesCount);
@@ -155,15 +158,13 @@
                 var newDiv = $(newWidget).prepend('<span class="delete-btn">X</span><br><div class="uk-form-row"><a class="addProduct2Options button button-success" href="#"><i class="uk-icon-plus"></i> {{ 'button.add_product_2_options'|trans }}</a> </div>');
                 newDiv.addClass('tm-panel-border');
                 newDiv.appendTo(productSetList);
-                var optionId = newDiv.attr('id')+'_product2Options';
+                newDiv.find('.addProduct2Options').click(addProduct2Option);
+                newDiv.find('.addProduct2Options').trigger('click');
+//                var optionId = newDiv.attr('id')+'_product2Options';
                 {#$('#'+optionId).prepend(#}
                         {#'<br><div class="uk-form-row"><a class="addProduct2Options button button-success" href="#"><i class="uk-icon-plus"></i> {{ 'button.add_product_2_options'|trans }}</a> </div>'#}
                 {#);#}
                 $(productSetList).find('.delete-btn').click(delLink);
-                $('.addProduct2Options').click(addProduct2Option);
-//            $.each($('.ajax-form'), function () {
-//                AjaxForm.init(this)
-//            });
             };
             $('#addProductSet').click(addProductSet);
 
@@ -268,4 +269,19 @@
     </div>
 </div>
 
+#}
+
+{#
+<div id="lokos_shop_product_productSets___name__" product="New product">
+    <div>
+        <label for="lokos_shop_product_productSets___name___name">product.name_title</label>
+        <input type="text"
+                    id="lokos_shop_product_productSets___name___name"
+                    name="lokos_shop_product[productSets][__name__][name]"/>
+    </div>
+    <div><label>Product2 options</label>
+        <div id="lokos_shop_product_productSets___name___product2Options" class="product-2-options"
+             data-prototype="&lt;div&gt;&lt;label&gt;__prod_set__label__&lt;/label&gt;&lt;div id=&quot;lokos_shop_product_productSets___name___product2Options___prod_set__&quot; product=&quot;New product&quot;&gt;&lt;div&gt;&lt;label for=&quot;lokos_shop_product_productSets___name___product2Options___prod_set___option&quot;&gt;Option&lt;/label&gt;&lt;select id=&quot;lokos_shop_product_productSets___name___product2Options___prod_set___option&quot; name=&quot;lokos_shop_product[productSets][__name__][product2Options][__prod_set__][option]&quot; class=&quot;option-select&quot;&gt;&lt;option value=&quot;&quot;&gt;Choose an option&lt;/option&gt;            &lt;option value=&quot;1&quot; &gt;Color&lt;/option&gt;            &lt;option value=&quot;2&quot; &gt;Size&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;"></div>
+    </div>
+</div>
 #}

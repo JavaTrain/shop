@@ -2,6 +2,7 @@
 
 namespace Lokos\ShopBundle\Repositories;
 
+use Doctrine\ORM\Query\Expr\Join;
 use Lokos\ShopBundle\Entity\Product;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -29,13 +30,17 @@ class ProductRepository extends BaseRepository
         }
         if (!empty($params['withOptions'])) {
             $this->query
+                ->addSelect('ps')
+                ->join('tbl.productSets', 'ps')
+                ->addSelect('p2o')
+                ->join('ps.product2Options', 'p2o')
                 ->addSelect('o')
-                ->join('tbl.options', 'o')
-                ->addSelect('o_val')
-                ->join('o.optionValues', 'o_val')
+                ->join('p2o.option', 'o')
+                ->addSelect('ov')
+                ->join('p2o.optionValue', 'ov')
                 ->where('tbl.id = :id')
                 ->setParameter(':id', $params['withOptions'])
-                ->andWhere('o_val.product = tbl.id')
+//                ->andWhere('o_val.product = tbl.id')
             ;
         }
         if (!empty($params['id'])) {
