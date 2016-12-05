@@ -31,13 +31,14 @@ class ProductRepository extends BaseRepository
         if (!empty($params['withOptions'])) {
             $this->query
                 ->addSelect('ps')
-                ->join('tbl.productSets', 'ps')
+//                ->leftJoin('tbl.productSets', 'ps')
+                ->leftJoin('tbl.productSets', 'ps')
                 ->addSelect('p2o')
-                ->join('ps.product2Options', 'p2o')
+                ->leftJoin('ps.product2Options', 'p2o')
                 ->addSelect('o')
-                ->join('p2o.option', 'o')
+                ->leftJoin('p2o.option', 'o')
                 ->addSelect('ov')
-                ->join('p2o.optionValue', 'ov')
+                ->leftJoin('p2o.optionValue', 'ov')
                 ->where('tbl.id = :id')
                 ->setParameter(':id', $params['withOptions'])
 //                ->andWhere('o_val.product = tbl.id')

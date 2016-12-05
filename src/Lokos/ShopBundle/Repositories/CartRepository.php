@@ -113,13 +113,13 @@ class CartRepository
             foreach ($items as $item) {
                 $priceItem = 0;
                 $priceItem += (float)abs($item['product']->getPrice());
-                if (!empty($item['product']->getOptions())) {
-                    foreach ($item['product']->getOptions() as $option) {
-                        foreach ($option->getOptionValues() as $optionValue) {
-                            $priceItem += (float)abs($optionValue->getPrice());
-                        }
-                    }
-                }
+//                if (!empty($item['product']->getOptions())) {
+//                    foreach ($item['product']->getOptions() as $option) {
+//                        foreach ($option->getOptionValues() as $optionValue) {
+//                            $priceItem += (float)abs($optionValue->getPrice());
+//                        }
+//                    }
+//                }
                 $totalPrice += ($priceItem);
                 $totalQuantity += $item['quantity'];
             }

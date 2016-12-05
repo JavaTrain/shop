@@ -8,9 +8,15 @@
         <div class="available">
             <ul>
                 <p>Available Options :</p>
-                {% for productSet in item.productSets %}
-
+                {% for key, option in options.0 %}
+                    <h3>{{ option.name }}</h3>
+                    <div>
+                        {% for value in options.1[key] %}
+                            <span><b>{{ value.value }}</b></span>
+                        {% endfor %}
+                    </div>
                 {% endfor %}
+                <input type="hidden" name="prodSet" value="">
                 {#{% for option in item.options %}#}
                     {#<li>{{ option.name|capitalize }}:#}
                         {#<select name="{{ option.name }}"  data-item-option-id="{{ option.id }}">#}

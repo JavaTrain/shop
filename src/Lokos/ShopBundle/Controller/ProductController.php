@@ -2,6 +2,7 @@
 
 namespace Lokos\ShopBundle\Controller;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Lokos\ShopBundle\Entity\Product;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -91,19 +92,100 @@ class ProductController extends BaseController
 
         $data = array(
             'item'        => $item,
-//            'options'     => $this->getProductOptions($item),
+            'options'     => $this->getProductOptions($item),
             'cartResume'  => $this->get('lokos.shop.cart_repository')->getCartItemsCountAndPrice($cartItems),
             'categories'  => $this->getDoctrine()->getRepository('LokosShopBundle:Category')->findAll(),
             'withOptions' => $withOptions,
         );
 
         if ($request->isMethod('POST')) {
-            $response = $this->render('Product/detail_block.html.twig', $data);
+            $response = $this->render('LokosShopBundle:Product:detail_block.html.twig', $data);
         } else {
             $response = $this->render('LokosShopBundle:Product:detail.html.twig', $data);
         }
 
         return $response;
+    }
+
+
+    function getProductOptions(Product $item)
+    {
+        $options = [];
+        $arr = [];
+
+        foreach ($item->getProductSets() as $ps){
+            $opts = $ps->getProduct2Options()->filter(function($entry) use (&$arr, &$options){
+                if(!array_key_exists($entry->getOption()->getId(), $arr)){
+                    $options[] = $entry->getOption();
+                    $arr[$entry->getOption()->getId()] = $entry->getOption()->getId();
+                    return true;
+                } else{
+                    return false;
+                }
+            });
+        }
+
+//        var_dump($options);die;
+
+        $arr2 = [];
+        $optVals=[];
+        foreach($options as $opt){
+            $optVals[] = $opt->getOptionValues()->filter(function($entry) use (&$arr2){
+                if(!array_key_exists($entry->getId(), $arr2)){
+                    $arr[$entry->getId()] = $entry->getId();
+                    return true;
+                } else{
+                    return false;
+                }
+            });
+        }
+
+        return [$options, $optVals];
+
+        var_dump($optVals);die;
+
+
+//        $opts = $item->getProductSets()->filter(function($entry) use ($arr){
+//            if(!array_key_exists($entry->getProduct2Options()->getId(), $arr)){
+//                $arr[$entry->getProduct2Options()->getId()] = $entry->getProduct2Options()->getId();
+//                return true;
+//            } else{
+//                return false;
+//            }
+//        });
+
+//        var_dump($opts);die;
+
+
+//        foreach($item->getProductSets() as $ps){
+//            foreach ($ps->getProduct2Options() as $po) {
+//                $options[$ps->getId()][] = [
+//                    $po->getOption()->getId(),
+//                    $po->getOption()->getName(),
+//                    $po->getOptionValue()->getId(),
+//                    $po->getOptionValue()->getValue(),
+//                    $ps->getId()
+//                ];
+//            }
+//        }
+//
+//        $optShow = [];
+//        foreach ($options as $opts){
+//            foreach ($opts as $opt){
+//                $optShow[$opt[0]][] = $opt[2];
+//            }
+//        }
+//        $result = [];
+//        foreach($optShow as $k => $v){
+//            $result[$k] = array_unique($v);
+//        }
+//
+//
+//
+//
+//        var_dump($optShow);
+//        var_dump($result);
+//        var_dump($options);die;
     }
 
 }

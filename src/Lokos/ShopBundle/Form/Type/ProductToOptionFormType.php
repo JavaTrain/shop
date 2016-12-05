@@ -61,8 +61,8 @@ class ProductToOptionFormType extends AbstractType
                     'attr'  => ['class' => 'option-select'],
                     'query_builder' => function (OptionRepository $repository) use ($options) {
                         return $repository->createQueryBuilder('tbl')
-                                          ->join('tbl.category', 'c', Join::WITH, 'c.name = :category')
-                                          ->setParameter(':category', $options['attr']['product']->getCategory()->getName())
+                                          ->join('tbl.category', 'c', Join::WITH, 'c.id = :category')
+                                          ->setParameter(':category', $options['attr']['product']->getCategory()->getId())
                                           ->orderBy('tbl.name', 'ASC');
                     },
                     'placeholder' => 'Choose an option',
