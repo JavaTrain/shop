@@ -86,16 +86,19 @@ class ProductController extends BaseController
         if (!$item) {
             throw new NotFoundHttpException('Item "'.$itemId.'" not found');
         }
-
+//        $request->getSession()->set('cart', array());
         $cartItems = $this->get('lokos.shop.cart_repository')
                           ->getCartItems($request->getSession()->get('cart', array()));
 
+//        var_dump($item->getProductSets()->toArray());die;
+
         $data = array(
-            'item'        => $item,
-            'options'     => $this->getProductOptions($item),
-            'cartResume'  => $this->get('lokos.shop.cart_repository')->getCartItemsCountAndPrice($cartItems),
-            'categories'  => $this->getDoctrine()->getRepository('LokosShopBundle:Category')->findAll(),
-            'withOptions' => $withOptions,
+            'item'             => $item,
+            'options'          => $this->getProductOptions($item),
+            'cartResume'       => $this->get('lokos.shop.cart_repository')->getCartItemsCountAndPrice($cartItems),
+            'categories'       => $this->getDoctrine()->getRepository('LokosShopBundle:Category')->findAll(),
+            'availableOptions' => json_encode($this->getAvailableOptions($item)),
+            'withOptions'      => $withOptions,
         );
 
         if ($request->isMethod('POST')) {
@@ -107,34 +110,59 @@ class ProductController extends BaseController
         return $response;
     }
 
-
-    function getProductOptions(Product $item)
+    private function getAvailableOptions(Product $item)
     {
         $options = [];
-        $arr = [];
-
-        foreach ($item->getProductSets() as $ps){
-            $opts = $ps->getProduct2Options()->filter(function($entry) use (&$arr, &$options){
-                if(!array_key_exists($entry->getOption()->getId(), $arr)){
-                    $options[] = $entry->getOption();
-                    $arr[$entry->getOption()->getId()] = $entry->getOption()->getId();
-                    return true;
-                } else{
-                    return false;
-                }
-            });
+        foreach($item->getProductSets() as $ps){
+            foreach ($ps->getProduct2Options() as $po) {
+                $options[$ps->getId()][] = [
+                    'optionId'   => $po->getOption()->getId(),
+                    'valueId'    => $po->getOptionValue()->getId(),
+                ];
+            }
         }
 
 //        var_dump($options);die;
 
-        $arr2 = [];
-        $optVals=[];
+        return $options;
+    }
+
+
+    /**
+     * @param Product $item
+     *
+     * @return array|null
+     */
+    private function getProductOptions(Product $item)
+    {
+        if(!$item->getProductSets()){
+            return null;
+        }
+
+        $options = [];
+        $arr     = [];
+
+        foreach ($item->getProductSets() as $ps) {
+            $ps->getProduct2Options()->filter(
+                function ($entry) use (&$arr, &$options) {
+                    if (!array_key_exists($entry->getOption()->getId(), $arr)) {
+                        $options[]                         = $entry->getOption();
+                        $arr[$entry->getOption()->getId()] = $entry->getOption()->getId();
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            );
+        }
+
+        $arr = $optVals = [];
         foreach($options as $opt){
-            $optVals[] = $opt->getOptionValues()->filter(function($entry) use (&$arr2){
-                if(!array_key_exists($entry->getId(), $arr2)){
+            $optVals[] = $opt->getOptionValues()->filter(function($entry) use (&$arr){
+                if (!array_key_exists($entry->getId(), $arr)) {
                     $arr[$entry->getId()] = $entry->getId();
                     return true;
-                } else{
+                } else {
                     return false;
                 }
             });
@@ -142,8 +170,11 @@ class ProductController extends BaseController
 
         return [$options, $optVals];
 
-        var_dump($optVals);die;
 
+
+
+
+//        var_dump($optVals);die;
 
 //        $opts = $item->getProductSets()->filter(function($entry) use ($arr){
 //            if(!array_key_exists($entry->getProduct2Options()->getId(), $arr)){
@@ -157,14 +188,15 @@ class ProductController extends BaseController
 //        var_dump($opts);die;
 
 
+//        $options = [];
 //        foreach($item->getProductSets() as $ps){
 //            foreach ($ps->getProduct2Options() as $po) {
 //                $options[$ps->getId()][] = [
-//                    $po->getOption()->getId(),
-//                    $po->getOption()->getName(),
-//                    $po->getOptionValue()->getId(),
-//                    $po->getOptionValue()->getValue(),
-//                    $ps->getId()
+//                    'optionId'   => $po->getOption()->getId(),
+//                    'optionName' => $po->getOption()->getName(),
+//                    'valueId'    => $po->getOptionValue()->getId(),
+//                    'valueData'  => $po->getOptionValue()->getValue(),
+//                    'prodSetId'  => $ps->getId()
 //                ];
 //            }
 //        }
@@ -185,7 +217,7 @@ class ProductController extends BaseController
 //
 //        var_dump($optShow);
 //        var_dump($result);
-//        var_dump($options);die;
+        var_dump($options);die;
     }
 
 }

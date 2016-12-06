@@ -66,9 +66,9 @@ class CartController extends BaseController
      */
     public function addToCartAction(Request $request)
     {
-        $data   = array();
-        $item   = $request->get('item', null);
-        if ($item) {
+        $data = array();
+        $item = $request->get('item', null);
+        if (!empty($item)) {
             $itemObj = json_decode($item);
             $session = $request->getSession();
             $cart    = $session->get('cart', array());
@@ -93,14 +93,8 @@ class CartController extends BaseController
         $result           = new \stdClass();
         $result->id       = (int)abs($item->id);
         $result->quantity = empty($item->quantity)?1:(int)abs($item->quantity);
-        if (!empty($item->options)) {
-            $options = new \stdClass();
-            foreach ($item->options as $k => $v) {
-                $k = (int)abs($k);
-                $v = (int)abs($v);
-                $options->{$k} = $v;
-            }
-            $result->options = $options;
+        if (!empty($item->productSet)) {
+            $result->productSet = (int)abs($item->productSet);
         }
         
         return $result;

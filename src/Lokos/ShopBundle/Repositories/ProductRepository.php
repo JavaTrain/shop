@@ -50,6 +50,12 @@ class ProductRepository extends BaseRepository
                 ->setParameter(':id', $params['id']);
             ;
         }
+        if (!empty($params['productSet'])) {
+            $this->query
+                ->andWhere('ps.id = :psId')
+                ->setParameter(':psId', $params['productSet']);
+            ;
+        }
         
         return $this;
     }

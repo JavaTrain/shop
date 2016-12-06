@@ -5,18 +5,20 @@
         <p>Price: <span>${{ item.price }}</span></p>
     </div>
     {% if item.productSets is not empty %}
-        <div class="available">
-            <ul>
+        <div>
                 <p>Available Options :</p>
                 {% for key, option in options.0 %}
-                    <h3>{{ option.name }}</h3>
                     <div>
-                        {% for value in options.1[key] %}
-                            <span><b>{{ value.value }}</b></span>
-                        {% endfor %}
+                        <h4>{{ option.name }}</h4>
+                        <div class="option-variants opt{{ option.id }}">
+                            {% for value in options.1[key] %}
+                                <span data-info='{"optionId":{{ option.id }},"valueId":{{ value.id }}}' class="option-value"><b>{{ value.value }}</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            {% endfor %}
+                            <input type="hidden" id="option-{{ option.id }}" value="">
+                        </div>
                     </div>
                 {% endfor %}
-                <input type="hidden" name="prodSet" value="">
+                <input class="prod-set" type="hidden" name="prodSet" value="">
                 {#{% for option in item.options %}#}
                     {#<li>{{ option.name|capitalize }}:#}
                         {#<select name="{{ option.name }}"  data-item-option-id="{{ option.id }}">#}
@@ -27,7 +29,7 @@
                         {#</select>#}
                     {#</li>#}
                 {#{% endfor %}#}
-                <li>Quality:
+                <div>Quality:
                     <select data-item-quantity>
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -35,11 +37,188 @@
                         <option value="4">4</option>
                         <option value="5">5</option>
                     </select>
-                </li>
-            </ul>
+                </div>
+
+                <input type="hidden" class="available-options" value={{ availableOptions }}>
         </div>
     {% endif %}
-    <div class="share-desc">
-        <div class="button add-item-to-cart" data-item-id="{{ item.id }}"><span><a href="#">Add to Cart</a></span></div>
-    </div>
+    <button class="btn add-item-to-cart" disabled>Add to Cart</button>
+    {#<div class="share-desc">#}
+        {#<div class="button add-item-to-cart" data-item-id="{{ item.id }}"><span><a href="#">Add to Cart</a></span></div>#}
+    {#</div>#}
 </div>
+
+<script>
+    var itemId = {{ item.id }};
+    var availableOptions = JSON.parse($('.available-options').val());
+    var chooseValue = function(e){
+
+
+        var optsDiv = $(e.target).parent().parent();
+        var span = $(e.target).parent();
+        var chosenOption = JSON.parse(span.attr('data-info'));
+        var properSets = {};
+        optsDiv.find('span.active').removeClass('active');
+        span.addClass('active');
+        span.parent().find('span.option-value').removeClass('deactive');//!!!!!!!
+        optsDiv.find('#option-' + chosenOption['optionId']).val(span.attr('data-info'));
+        _.forOwn(availableOptions, function(value, key) {
+            _.each(value, function(item){
+                if(_.isEqual(item, chosenOption)){
+                    properSets[key] = value;
+                }
+            });
+        });
+        var activeOpts = getValsToOption(properSets);
+        var allOptions = getAllValsToOption(availableOptions);
+        _.each($('.option-variants'), function(item){
+            if(!$(item).hasClass('opt' + chosenOption['optionId'])){
+                _.each($(item).find('span.option-value'), function(span){
+                    var spanInfo = JSON.parse($(span).attr('data-info'));
+                    if(!_.includes(activeOpts[spanInfo['optionId']], spanInfo['valueId'])){
+                        $(span).addClass('deactive');
+                        $(span).removeClass('active');
+                    }else{
+                        $(span).removeClass('deactive');
+                    }
+
+                });
+            }
+        });
+
+        function getValsToOption(properSets){
+            var obj = {};
+            _.each(properSets, function(item){
+                _.each(item, function(value){
+                    if(!obj[value['optionId']]){
+                        obj[value['optionId']] = [];
+                    }
+                    obj[value['optionId']].push(value['valueId']);
+                })
+            });
+
+            return obj;
+        }
+
+        function getAllValsToOption(availableOptions){
+            var obj = {};
+            _.each(availableOptions, function(item){
+                _.each(item, function(value){
+                    if(!obj[value['optionId']]){
+                        obj[value['optionId']] = [];
+                    }
+                    obj[value['optionId']].push(value['valueId']);
+                })
+            });
+
+            return obj;
+        }
+
+        function checkChosenAvailable(item, activeOpts){
+            _.each(item.parent().find('span.option-value'), function(span){
+                var spanInfo = JSON.parse($(span).attr('data-info'));
+                if(!_.includes(activeOpts[spanInfo['optionId']], spanInfo['valueId'])){
+                    $(span).addClass('deactive');
+                }else{
+                    $(span).removeClass('deactive');
+                }
+
+            });
+        }
+
+        checkChosenAvailable(span, allOptions);
+
+        function checkSubmit(){
+            var optionVariants = $('.option-variants');
+            var arr = [];
+            _.each(optionVariants, function(item){
+                if($(item).find('span.active').length){
+                    arr.push(1);
+                }
+            });
+            if (optionVariants.length === arr.length){
+                $('.add-item-to-cart').prop("disabled", false);
+            } else {
+                $('.add-item-to-cart').prop("disabled", true);
+            }
+        }
+        checkSubmit();
+    };
+
+    var addToCart = function(){
+        var arr = [];
+        var optionVariants = $('.option-variants');
+        _.each(optionVariants, function(item){
+            var span = $(item).find('span.active');
+            if(span.length){
+                arr.push(JSON.parse(span.attr('data-info')));
+            }
+        });
+        _.each(availableOptions, function(item, key){
+            if(_.isEqual(item.sort(), arr.sort())){
+                var cartItem = {};
+                cartItem['id'] = itemId;
+                cartItem['quantity'] = $('[data-item-quantity]').val();
+                cartItem['productSet'] = key;
+                var obj = JSON.stringify(cartItem);
+                $.ajax({
+                    url: '{{ path('lokos_shop_add_to_cart') }}',
+                    type: 'post',
+                    data: { item: obj },
+                    success: function(resp) {
+                        if (resp) {
+                            console.log(resp);
+//                            $('.cart-items-count').text(resp.total_quantity);
+//                            $('.cart-items-price').text(resp.total_price);
+                        }
+                    }
+                });
+            }
+        });
+
+
+    };
+
+
+    {#$('.add-item-to-cart').click(function(e){#}
+        {#e.preventDefault();#}
+        {#e.stopPropagation();#}
+        {#var options = $('.item-options-block').find('select[data-item-option-id]');#}
+        {#var optionsitem = {};#}
+        {#var cartItem = {};#}
+        {#var optionNotChoosen = false;#}
+        {#options.each(function(){#}
+            {#var optionId = $(this).val();#}
+            {#if (!optionId) {#}
+                {#alert('Choose an option '+ this.name);#}
+                {#optionNotChoosen = true;#}
+                {#return;#}
+            {#}#}
+            {#optionNotChoosen = false;#}
+            {#optionsitem[$(this).attr('data-item-option-id')] = $(this).val();#}
+        {#});#}
+        {#if (optionNotChoosen) {#}
+            {#return;#}
+        {#}#}
+
+        {#cartItem['id'] = $(this).attr('data-item-id');#}
+        {#cartItem['quantity'] = $('[data-item-quantity]').val();#}
+        {#cartItem['options'] = optionsitem;#}
+{#//            console.dir(cartItem);#}
+        {#var obj = JSON.stringify(cartItem);#}
+        {#$.ajax({#}
+            {#url: '{{ path('lokos_shop_add_to_cart') }}',#}
+            {#type: 'post',#}
+            {#data: { item: obj },#}
+            {#success: function(resp) {#}
+                {#if (resp) {#}
+                    {#$('.cart-items-count').text(resp.total_quantity);#}
+                    {#$('.cart-items-price').text(resp.total_price);#}
+                {#}#}
+            {#}#}
+        {#});#}
+    {#});#}
+
+    $('.option-value').click(chooseValue);
+    $('.add-item-to-cart').click(addToCart)
+</script>
