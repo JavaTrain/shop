@@ -22,12 +22,20 @@ class CartController extends BaseController
     {
         $cartItems = $this->get('lokos.shop.cart_repository')
                           ->getCartItems($request->getSession()->get('cart', array()));
+
+        $cartData = $this->getCartData($cartItems);
+
         $data = array(
             'cartItems'  => $cartItems,
             'cartResume' => $this->get('lokos.shop.cart_repository')->getCartItemsCountAndPrice($cartItems)
         );
         
-        return $this->render('Cart/index.html.twig', $data);
+        return $this->render('LokosShopBundle:Cart:index.html.twig', $data);
+    }
+
+    private function getCartData($cart)
+    {
+
     }
 
     /**
@@ -72,7 +80,18 @@ class CartController extends BaseController
             $itemObj = json_decode($item);
             $session = $request->getSession();
             $cart    = $session->get('cart', array());
-            array_push($cart, $this->clearCartItem($itemObj));
+            $itemObj = $this->clearCartItem($itemObj);
+            if(!empty($cart)){
+                foreach ($cart as $value){
+                    if(($value->id == $itemObj->id) && ($value->productSet == $itemObj->productSet)){
+                        $value->quantity += $itemObj->quantity;
+                    }else{
+                        array_push($cart, $itemObj);
+                    }
+                }
+            } else {
+                array_push($cart, $itemObj);
+            }
             $session->set('cart', $cart);
             $cartItems = $this->get('lokos.shop.cart_repository')
                               ->getCartItems($cart);
@@ -90,12 +109,10 @@ class CartController extends BaseController
      */
     private function clearCartItem($item)
     {
-        $result           = new \stdClass();
-        $result->id       = (int)abs($item->id);
-        $result->quantity = empty($item->quantity)?1:(int)abs($item->quantity);
-        if (!empty($item->productSet)) {
-            $result->productSet = (int)abs($item->productSet);
-        }
+        $result             = new \stdClass();
+        $result->id         = (int)abs($item->id);
+        $result->quantity   = empty($item->quantity)?1:(int)abs($item->quantity);
+        $result->productSet = (int)abs($item->productSet);
         
         return $result;
     }

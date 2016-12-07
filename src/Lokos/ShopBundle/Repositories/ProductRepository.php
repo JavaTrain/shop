@@ -25,8 +25,7 @@ class ProductRepository extends BaseRepository
         if (!empty($params['categoryId'])) {
             $this->query
                 ->andWhere('tbl.category = :category')
-                ->setParameter(':category', $params['categoryId'])
-            ;
+                ->setParameter(':category', $params['categoryId']);
         }
         if (!empty($params['withOptions'])) {
             $this->query
@@ -39,7 +38,7 @@ class ProductRepository extends BaseRepository
                 ->leftJoin('p2o.option', 'o')
                 ->addSelect('ov')
                 ->leftJoin('p2o.optionValue', 'ov')
-                ->where('tbl.id = :id')
+                ->andWhere('tbl.id = :id')
                 ->setParameter(':id', $params['withOptions'])
 //                ->andWhere('o_val.product = tbl.id')
             ;

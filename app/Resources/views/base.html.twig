@@ -56,6 +56,11 @@
                             </ul>
                         </div>
                     {% endblock categories %}
+                    <div class="cart">
+                        <h3>Cart</h3>
+                        <p class="cart-items-count">{{ cartResume.total_quantity }}</p>
+                        <p class="cart-items-price">$ {{ cartResume.total_price }}</p>
+                    </div>
                 {% endblock content %}
             </div>
             {% block footer %}

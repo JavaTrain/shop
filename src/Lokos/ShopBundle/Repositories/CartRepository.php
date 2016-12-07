@@ -46,7 +46,7 @@ class CartRepository
         $items = array();
         if (!empty($cart)) {
             foreach ($cart as $key => $item) {
-//                if (count((array)$item->options)) {
+//                var_dump($item);die;
                     $params['withOptions'] = $item->id;
                     if(!empty($item->productSet)){
                         $params['productSet'] = $item->productSet;
@@ -58,25 +58,14 @@ class CartRepository
                                          ->buildQuery($params)
                                          ->getSingle();
 
-//                    var_dump($product);die;
-//                    if ($product) {
-//                        $price = $product->getPrice();
-//                        foreach ($product->getOptions() as $option) {
-//                            foreach ($option->getOptionValues() as $value) {
-//                                $price += (float)abs($value->getPrice());
-//                            }
-//                        }
-////                        $price *= $item->quantity;
-////                        $product->setCartPrice($price);
-//                        $items[$key] = array(
-//                            'product'    => $product,
-//                            'quantity'   => $item->quantity,
-//                            'productSet' => $item->productSet,
-//                        );
-//                    }
+                        $items[$key] = array(
+                            'product'    => $product,
+                            'quantity'   => $item->quantity,
+                            'productSet' => $item->productSet,
+                        );
             }
         }
-        var_dump($items);die;
+//        var_dump($items);die;
         return $items;
     }
 
@@ -90,8 +79,9 @@ class CartRepository
         $data          = array('total_quantity' => 0, 'total_price' => 0);
         $totalPrice    = 0;
         $totalQuantity = 0;
-//        var_dump($items);die;
+
         if (!empty($items)) {
+//            var_dump($items);die;
             foreach ($items as $item) {
                 $priceItem = 0;
                 $priceItem += (float)abs($item['product']->getPrice());
@@ -100,18 +90,11 @@ class CartRepository
                         /** @var ProductSet $ps */
                         /** @var Product2Option $p2o */
                         foreach ($ps->getProduct2Options() as $p2o){
-                            $priceItem += abs((int)$p2o->getOptionValue()->getPrice());
+                            $priceItem += abs((int)$p2o->getPrice());
                         }
                     }
                 }
 
-//                if (!empty($item['product']->getOptions())) {
-//                    foreach ($item['product']->getOptions() as $option) {
-//                        foreach ($option->getOptionValues() as $optionValue) {
-//                            $priceItem += (float)abs($optionValue->getPrice());
-//                        }
-//                    }
-//                }
                 $totalPrice += $priceItem;
                 $totalQuantity += $item['quantity'];
             }

@@ -49,8 +49,24 @@
 </div>
 
 <script>
+
+    var checkSubmit = function(){
+        var optionVariants = $('.option-variants'),
+            arr = [];
+        _.each(optionVariants, function(item){
+            if($(item).find('span.active').length){
+                arr.push(1);
+            }
+        });
+        if (optionVariants.length === arr.length || optionVariants.length == 0){
+            $('.add-item-to-cart').prop("disabled", false);
+        } else {
+            $('.add-item-to-cart').prop("disabled", true);
+        }
+    };
+
     var itemId = {{ item.id }};
-    var availableOptions = JSON.parse($('.available-options').val());
+    var availableOptions = $('.available-options').val()?JSON.parse($('.available-options').val()):null;
     var chooseValue = function(e){
 
 
@@ -128,96 +144,64 @@
 
         checkChosenAvailable(span, allOptions);
 
-        function checkSubmit(){
-            var optionVariants = $('.option-variants');
-            var arr = [];
-            _.each(optionVariants, function(item){
-                if($(item).find('span.active').length){
-                    arr.push(1);
-                }
-            });
-            if (optionVariants.length === arr.length){
-                $('.add-item-to-cart').prop("disabled", false);
-            } else {
-                $('.add-item-to-cart').prop("disabled", true);
-            }
-        }
         checkSubmit();
     };
 
     var addToCart = function(){
         var arr = [];
         var optionVariants = $('.option-variants');
-        _.each(optionVariants, function(item){
-            var span = $(item).find('span.active');
-            if(span.length){
-                arr.push(JSON.parse(span.attr('data-info')));
-            }
-        });
-        _.each(availableOptions, function(item, key){
-            if(_.isEqual(item.sort(), arr.sort())){
-                var cartItem = {};
-                cartItem['id'] = itemId;
-                cartItem['quantity'] = $('[data-item-quantity]').val();
-                cartItem['productSet'] = key;
-                var obj = JSON.stringify(cartItem);
-                $.ajax({
-                    url: '{{ path('lokos_shop_add_to_cart') }}',
-                    type: 'post',
-                    data: { item: obj },
-                    success: function(resp) {
-                        if (resp) {
-                            console.log(resp);
-//                            $('.cart-items-count').text(resp.total_quantity);
-//                            $('.cart-items-price').text(resp.total_price);
+        if(optionVariants.length){
+            _.each(optionVariants, function(item){
+                var span = $(item).find('span.active');
+                if(span.length){
+                    arr.push(JSON.parse(span.attr('data-info')));
+                }
+            });
+            _.each(availableOptions, function(item, key){
+                if(_.isEqual(item.sort(), arr.sort())){
+                    var cartItem = {};
+                    cartItem['id'] = itemId;
+                    cartItem['quantity'] = $('[data-item-quantity]').val();
+                    cartItem['productSet'] = key;
+                    var obj = JSON.stringify(cartItem);
+                    $.ajax({
+                        url: '{{ path('lokos_shop_add_to_cart') }}',
+                        type: 'post',
+                        data: { item: obj },
+                        success: function(resp) {
+                            if (resp) {
+                                console.log(resp);
+                                $('.cart-items-count').text(resp.total_quantity);
+                                $('.cart-items-price').text(resp.total_price);
+                            }
                         }
+                    });
+                }
+            });
+        } else {
+            var cartItem = {};
+            cartItem['id'] = itemId;
+            cartItem['quantity'] = $('[data-item-quantity]').val();
+            cartItem['productSet'] = '';
+            var obj = JSON.stringify(cartItem);
+            $.ajax({
+                url: '{{ path('lokos_shop_add_to_cart') }}',
+                type: 'post',
+                data: { item: obj },
+                success: function(resp) {
+                    if (resp) {
+                        console.log(resp);
+                        $('.cart-items-count').text(resp.total_quantity);
+                        $('.cart-items-price').text(resp.total_price);
                     }
-                });
-            }
-        });
+                }
+            });
+        }
 
 
     };
 
-
-    {#$('.add-item-to-cart').click(function(e){#}
-        {#e.preventDefault();#}
-        {#e.stopPropagation();#}
-        {#var options = $('.item-options-block').find('select[data-item-option-id]');#}
-        {#var optionsitem = {};#}
-        {#var cartItem = {};#}
-        {#var optionNotChoosen = false;#}
-        {#options.each(function(){#}
-            {#var optionId = $(this).val();#}
-            {#if (!optionId) {#}
-                {#alert('Choose an option '+ this.name);#}
-                {#optionNotChoosen = true;#}
-                {#return;#}
-            {#}#}
-            {#optionNotChoosen = false;#}
-            {#optionsitem[$(this).attr('data-item-option-id')] = $(this).val();#}
-        {#});#}
-        {#if (optionNotChoosen) {#}
-            {#return;#}
-        {#}#}
-
-        {#cartItem['id'] = $(this).attr('data-item-id');#}
-        {#cartItem['quantity'] = $('[data-item-quantity]').val();#}
-        {#cartItem['options'] = optionsitem;#}
-{#//            console.dir(cartItem);#}
-        {#var obj = JSON.stringify(cartItem);#}
-        {#$.ajax({#}
-            {#url: '{{ path('lokos_shop_add_to_cart') }}',#}
-            {#type: 'post',#}
-            {#data: { item: obj },#}
-            {#success: function(resp) {#}
-                {#if (resp) {#}
-                    {#$('.cart-items-count').text(resp.total_quantity);#}
-                    {#$('.cart-items-price').text(resp.total_price);#}
-                {#}#}
-            {#}#}
-        {#});#}
-    {#});#}
+    checkSubmit();
 
     $('.option-value').click(chooseValue);
     $('.add-item-to-cart').click(addToCart)

@@ -86,7 +86,7 @@ class ProductController extends BaseController
         if (!$item) {
             throw new NotFoundHttpException('Item "'.$itemId.'" not found');
         }
-//        $request->getSession()->set('cart', array());
+//        var_dump($request->getSession()->set('cart', array()));die;
         $cartItems = $this->get('lokos.shop.cart_repository')
                           ->getCartItems($request->getSession()->get('cart', array()));
 
@@ -127,7 +127,6 @@ class ProductController extends BaseController
         return $options;
     }
 
-
     /**
      * @param Product $item
      *
@@ -139,85 +138,33 @@ class ProductController extends BaseController
             return null;
         }
 
-        $options = [];
-        $arr     = [];
-
+        $options      = [];
+        $optionFilter = [];
+        $values       = [];
+        $valueFilter  = [];
         foreach ($item->getProductSets() as $ps) {
             $ps->getProduct2Options()->filter(
-                function ($entry) use (&$arr, &$options) {
-                    if (!array_key_exists($entry->getOption()->getId(), $arr)) {
-                        $options[]                         = $entry->getOption();
-                        $arr[$entry->getOption()->getId()] = $entry->getOption()->getId();
+                function ($entry) use (&$optionFilter, &$options, &$values, &$valueFilter) {
+                    if (!array_key_exists($entry->getOption()->getId(), $optionFilter)) {
+                        $options[$entry->getOption()->getId()]                         = $entry->getOption();
+                        $optionFilter[$entry->getOption()->getId()] = $entry->getOption()->getId();
+                        if(!array_key_exists($entry->getOptionValue()->getId(), $valueFilter)){
+                            $valueFilter[$entry->getOptionValue()->getId()] = $entry->getOptionValue()->getId();
+                            $values[$entry->getOption()->getId()][] = $entry->getOptionValue();
+                        }
                         return true;
                     } else {
+                        if(!array_key_exists($entry->getOptionValue()->getId(), $valueFilter)){
+                            $valueFilter[$entry->getOptionValue()->getId()] = $entry->getOptionValue()->getId();
+                            $values[$entry->getOption()->getId()][] = $entry->getOptionValue();
+                        }
                         return false;
                     }
                 }
             );
         }
 
-        $arr = $optVals = [];
-        foreach($options as $opt){
-            $optVals[] = $opt->getOptionValues()->filter(function($entry) use (&$arr){
-                if (!array_key_exists($entry->getId(), $arr)) {
-                    $arr[$entry->getId()] = $entry->getId();
-                    return true;
-                } else {
-                    return false;
-                }
-            });
-        }
-
-        return [$options, $optVals];
-
-
-
-
-
-//        var_dump($optVals);die;
-
-//        $opts = $item->getProductSets()->filter(function($entry) use ($arr){
-//            if(!array_key_exists($entry->getProduct2Options()->getId(), $arr)){
-//                $arr[$entry->getProduct2Options()->getId()] = $entry->getProduct2Options()->getId();
-//                return true;
-//            } else{
-//                return false;
-//            }
-//        });
-
-//        var_dump($opts);die;
-
-
-//        $options = [];
-//        foreach($item->getProductSets() as $ps){
-//            foreach ($ps->getProduct2Options() as $po) {
-//                $options[$ps->getId()][] = [
-//                    'optionId'   => $po->getOption()->getId(),
-//                    'optionName' => $po->getOption()->getName(),
-//                    'valueId'    => $po->getOptionValue()->getId(),
-//                    'valueData'  => $po->getOptionValue()->getValue(),
-//                    'prodSetId'  => $ps->getId()
-//                ];
-//            }
-//        }
-//
-//        $optShow = [];
-//        foreach ($options as $opts){
-//            foreach ($opts as $opt){
-//                $optShow[$opt[0]][] = $opt[2];
-//            }
-//        }
-//        $result = [];
-//        foreach($optShow as $k => $v){
-//            $result[$k] = array_unique($v);
-//        }
-//
-//
-//
-//
-//        var_dump($optShow);
-//        var_dump($result);
-        var_dump($options);die;
+        return [$options, $values];
     }
 
 }

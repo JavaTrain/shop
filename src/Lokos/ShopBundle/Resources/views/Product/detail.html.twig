@@ -1,65 +1,16 @@
 {% trans_default_domain 'general' %}
 {% extends '::base.html.twig' %}
 
-{#{% block head_styles %}#}
-    {#{% stylesheets#}
-    {#'@LokosShopBundle/Resources/public/css/easy-responsive-tabs.css'#}
-    {#'@LokosShopBundle/Resources/public/css/global.css'#}
-    {#%}#}
-    {#{% endstylesheets %}#}
-
-    {#<link href="{{ asset_url }}" type="text/css" rel="stylesheet"/>#}
-{#{% endblock head_styles %}#}
 
 {% block content %}
-    <div class="wrap">
-        <div class="cont-desc span_1_of_2">
+    {{ parent() }}
+    <div class="container">
+        <div class="">
             {% include 'LokosShopBundle:Product:detail_block.html.twig' %}
         </div>
-        <div class="">
-            {{ block('categories') }}
-        </div>
+        {#<div class="">#}
+            {#{{ block('categories') }}#}
+        {#</div>#}
     </div>
     {#{{ block('footer') }}#}
-    <script type="text/javascript">
-        {#$('.add-item-to-cart').click(function(e){#}
-            {#e.preventDefault();#}
-            {#e.stopPropagation();#}
-            {#var options = $('.item-options-block').find('select[data-item-option-id]');#}
-            {#var optionsitem = {};#}
-            {#var cartItem = {};#}
-            {#var optionNotChoosen = false;#}
-            {#options.each(function(){#}
-                {#var optionId = $(this).val();#}
-                {#if (!optionId) {#}
-                    {#alert('Choose an option '+ this.name);#}
-                    {#optionNotChoosen = true;#}
-                    {#return;#}
-                {#}#}
-                {#optionNotChoosen = false;#}
-                {#optionsitem[$(this).attr('data-item-option-id')] = $(this).val();#}
-            {#});#}
-            {#if (optionNotChoosen) {#}
-                {#return;#}
-            {#}#}
-
-            {#cartItem['id'] = $(this).attr('data-item-id');#}
-            {#cartItem['quantity'] = $('[data-item-quantity]').val();#}
-            {#cartItem['options'] = optionsitem;#}
-{#//            console.dir(cartItem);#}
-            {#var obj = JSON.stringify(cartItem);#}
-            {#$.ajax({#}
-                {#url: '{{ path('lokos_shop_add_to_cart') }}',#}
-                {#type: 'post',#}
-                {#data: { item: obj },#}
-                {#success: function(resp) {#}
-                    {#if (resp) {#}
-                        {#$('.cart-items-count').text(resp.total_quantity);#}
-                        {#$('.cart-items-price').text(resp.total_price);#}
-                    {#}#}
-                {#}#}
-            {#});#}
-        {#});#}
-    </script>
-    <a href="#" id="toTop"><span id="toTopHover"> </span></a>
 {% endblock %}
