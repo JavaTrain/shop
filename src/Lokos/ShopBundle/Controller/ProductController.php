@@ -74,7 +74,6 @@ class ProductController extends BaseController
     {
         $params = array('withOptions' => $itemId);
         if ($request->isXmlHttpRequest()) {
-            //get option's values
         }
 
         $item = $this->getDoctrine()
@@ -82,10 +81,11 @@ class ProductController extends BaseController
                      ->reset()
                      ->buildQuery($params)
                      ->getSingle();
-        $withOptions = true;
+//        $withOptions = true;
         if (!$item) {
             throw new NotFoundHttpException('Item "'.$itemId.'" not found');
         }
+//        var_dump($request->getSession()->get('cart', array()));die;
 //        var_dump($request->getSession()->set('cart', array()));die;
         $cartItems = $this->get('lokos.shop.cart_repository')
                           ->getCartItems($request->getSession()->get('cart', array()));
@@ -94,11 +94,11 @@ class ProductController extends BaseController
 
         $data = array(
             'item'             => $item,
-            'options'          => $this->getProductOptions($item),
+            'options'          => $this->getDoctrine()->getRepository('LokosShopBundle:Product')->getProductOptions($item),
             'cartResume'       => $this->get('lokos.shop.cart_repository')->getCartItemsCountAndPrice($cartItems),
             'categories'       => $this->getDoctrine()->getRepository('LokosShopBundle:Category')->findAll(),
-            'availableOptions' => json_encode($this->getAvailableOptions($item)),
-            'withOptions'      => $withOptions,
+            'availableOptions' => json_encode($this->getDoctrine()->getRepository('LokosShopBundle:Product')->getAvailableOptions($item)),
+//            'withOptions'      => $withOptions,
         );
 
         if ($request->isMethod('POST')) {
@@ -110,61 +110,61 @@ class ProductController extends BaseController
         return $response;
     }
 
-    private function getAvailableOptions(Product $item)
-    {
-        $options = [];
-        foreach($item->getProductSets() as $ps){
-            foreach ($ps->getProduct2Options() as $po) {
-                $options[$ps->getId()][] = [
-                    'optionId'   => $po->getOption()->getId(),
-                    'valueId'    => $po->getOptionValue()->getId(),
-                ];
-            }
-        }
+//    private function getAvailableOptions(Product $item)
+//    {
+//        $options = [];
+//        foreach($item->getProductSets() as $ps){
+//            foreach ($ps->getProduct2Options() as $po) {
+//                $options[$ps->getId()][] = [
+//                    'optionId'   => $po->getOption()->getId(),
+//                    'valueId'    => $po->getOptionValue()->getId(),
+//                ];
+//            }
+//        }
+//
+////        var_dump($options);die;
+//
+//        return $options;
+//    }
 
-//        var_dump($options);die;
-
-        return $options;
-    }
-
-    /**
-     * @param Product $item
-     *
-     * @return array|null
-     */
-    private function getProductOptions(Product $item)
-    {
-        if(!$item->getProductSets()){
-            return null;
-        }
-
-        $options      = [];
-        $optionFilter = [];
-        $values       = [];
-        $valueFilter  = [];
-        foreach ($item->getProductSets() as $ps) {
-            $ps->getProduct2Options()->filter(
-                function ($entry) use (&$optionFilter, &$options, &$values, &$valueFilter) {
-                    if (!array_key_exists($entry->getOption()->getId(), $optionFilter)) {
-                        $options[$entry->getOption()->getId()]                         = $entry->getOption();
-                        $optionFilter[$entry->getOption()->getId()] = $entry->getOption()->getId();
-                        if(!array_key_exists($entry->getOptionValue()->getId(), $valueFilter)){
-                            $valueFilter[$entry->getOptionValue()->getId()] = $entry->getOptionValue()->getId();
-                            $values[$entry->getOption()->getId()][] = $entry->getOptionValue();
-                        }
-                        return true;
-                    } else {
-                        if(!array_key_exists($entry->getOptionValue()->getId(), $valueFilter)){
-                            $valueFilter[$entry->getOptionValue()->getId()] = $entry->getOptionValue()->getId();
-                            $values[$entry->getOption()->getId()][] = $entry->getOptionValue();
-                        }
-                        return false;
-                    }
-                }
-            );
-        }
-
-        return [$options, $values];
-    }
+//    /**
+//     * @param Product $item
+//     *
+//     * @return array|null
+//     */
+//    private function getProductOptions(Product $item)
+//    {
+//        if(!$item->getProductSets()){
+//            return null;
+//        }
+//
+//        $options      = [];
+//        $optionFilter = [];
+//        $values       = [];
+//        $valueFilter  = [];
+//        foreach ($item->getProductSets() as $ps) {
+//            $ps->getProduct2Options()->filter(
+//                function ($entry) use (&$optionFilter, &$options, &$values, &$valueFilter) {
+//                    if (!array_key_exists($entry->getOption()->getId(), $optionFilter)) {
+//                        $options[$entry->getOption()->getId()]                         = $entry->getOption();
+//                        $optionFilter[$entry->getOption()->getId()] = $entry->getOption()->getId();
+//                        if(!array_key_exists($entry->getOptionValue()->getId(), $valueFilter)){
+//                            $valueFilter[$entry->getOptionValue()->getId()] = $entry->getOptionValue()->getId();
+//                            $values[$entry->getOption()->getId()][] = $entry->getOptionValue();
+//                        }
+//                        return true;
+//                    } else {
+//                        if(!array_key_exists($entry->getOptionValue()->getId(), $valueFilter)){
+//                            $valueFilter[$entry->getOptionValue()->getId()] = $entry->getOptionValue()->getId();
+//                            $values[$entry->getOption()->getId()][] = $entry->getOptionValue();
+//                        }
+//                        return false;
+//                    }
+//                }
+//            );
+//        }
+//
+//        return [$options, $values];
+//    }
 
 }

@@ -2,6 +2,8 @@
 
 namespace Lokos\ShopBundle\Controller;
 
+use Lokos\ShopBundle\Entity\Product;
+use Lokos\ShopBundle\Repositories\ProductRepository;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -20,22 +22,35 @@ class CartController extends BaseController
      */
     public function indexAction(Request $request)
     {
-        $cartItems = $this->get('lokos.shop.cart_repository')
-                          ->getCartItems($request->getSession()->get('cart', array()));
+        $cart = $request->getSession()->get('cart', array());
 
-        $cartData = $this->getCartData($cartItems);
+        $productIds = [];
+        foreach ($cart as $key => $item){
+            $productIds[] = $item->id;
+        }
+
+        /** @var ProductRepository $productRepository */
+        $productRepository = $this->getDoctrine()->getRepository('LokosShopBundle:Product');
+        $products = $productRepository->reset()
+                                      ->buildQuery(['productIds' => array_unique($productIds)])
+                                      ->getList();
+
+        $productData = [];
+        /** @var Product $product */
+        foreach ($products as $product){
+            $productData[$product->getId()] = array(
+                'product'          => $product,
+                'availableOptions' => json_encode($productRepository->getAvailableOptions($product)),
+                'options'          => $productRepository->getProductOptions($product),
+            );
+        }
 
         $data = array(
-            'cartItems'  => $cartItems,
-            'cartResume' => $this->get('lokos.shop.cart_repository')->getCartItemsCountAndPrice($cartItems)
+            'cart'        => $cart,
+            'productData' => $productData,
         );
         
         return $this->render('LokosShopBundle:Cart:index.html.twig', $data);
-    }
-
-    private function getCartData($cart)
-    {
-
     }
 
     /**
@@ -82,17 +97,23 @@ class CartController extends BaseController
             $cart    = $session->get('cart', array());
             $itemObj = $this->clearCartItem($itemObj);
             if(!empty($cart)){
-                foreach ($cart as $value){
-                    if(($value->id == $itemObj->id) && ($value->productSet == $itemObj->productSet)){
+//                var_dump($cart, $itemObj);die;
+                $added = false;
+                foreach ($cart as $value) {
+                    if (($value->id == $itemObj->id) && ($value->productSet == $itemObj->productSet)) {
                         $value->quantity += $itemObj->quantity;
-                    }else{
-                        array_push($cart, $itemObj);
+                        $added = true;
+                        break;
                     }
+                }
+                if(!$added){
+                    array_push($cart, $itemObj);
                 }
             } else {
                 array_push($cart, $itemObj);
             }
             $session->set('cart', $cart);
+//            var_dump($cart);die;
             $cartItems = $this->get('lokos.shop.cart_repository')
                               ->getCartItems($cart);
             $data      = $this->get('lokos.shop.cart_repository')
@@ -111,7 +132,7 @@ class CartController extends BaseController
     {
         $result             = new \stdClass();
         $result->id         = (int)abs($item->id);
-        $result->quantity   = empty($item->quantity)?1:(int)abs($item->quantity);
+        $result->quantity   = empty((int)abs($item->quantity))?1:(int)abs($item->quantity);
         $result->productSet = (int)abs($item->productSet);
         
         return $result;

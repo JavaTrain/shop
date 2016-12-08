@@ -1,67 +1,78 @@
-<div class="desc span_3_of_2 item-options-block">
-    <h2>{{ item.name }} </h2>
-    <p>{{ item.description }}</p>
-    <div class="price">
-        <p>Price: <span>${{ item.price }}</span></p>
+<div class="thumbnail">
+    <img class="img-responsive" src="http://placehold.it/800x300" alt="">
+    <div class="caption-full">
+        <h4 class="pull-right product-title" data-product-price={{ item.price }}>$<span class="item-price">{{ item.price }}</span></h4>
+        <h4><a href="#">{{ item.name }}</a></h4>
+        <div>{{ item.description }}</div>
     </div>
-    {% if item.productSets is not empty %}
-        <div>
-                <p>Available Options :</p>
+    <div>
+        {% if item.productSets is not empty %}
+            <div>
+                <h4>Available Options :</h4>
                 {% for key, option in options.0 %}
                     <div>
-                        <h4>{{ option.name }}</h4>
+                        <h5>{{ option.name }}</h5>
                         <div class="option-variants opt{{ option.id }}">
-                            {% for value in options.1[key] %}
-                                <span data-info='{"optionId":{{ option.id }},"valueId":{{ value.id }}}' class="option-value"><b>{{ value.value }}</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            {% endfor %}
-                            <input type="hidden" id="option-{{ option.id }}" value="">
+                            <div class="container">
+                                <div class="row">
+                                    {% for value in options.1[key] %}
+                                        <div class="option-value col-sm-1" data-option-price="{{ value.price }}" data-info='{"optionId":{{ option.id }},"valueId":{{ value.id }}}'><b>{{ value.value }}</b></div>
+                                    {% endfor %}
+                                    {#<input type="hidden" id="option-{{ option.id }}" value="">#}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
                 <input class="prod-set" type="hidden" name="prodSet" value="">
-                {#{% for option in item.options %}#}
-                    {#<li>{{ option.name|capitalize }}:#}
-                        {#<select name="{{ option.name }}"  data-item-option-id="{{ option.id }}">#}
-                            {#<option value="">Choose an option</option>#}
-                            {#{% for optionValue in option.optionValues %}#}
-                                {#<option value="{{ optionValue.id }}">{{ optionValue.value|capitalize }}</option>#}
-                            {#{% endfor %}#}
-                        {#</select>#}
-                    {#</li>#}
-                {#{% endfor %}#}
-                <div>Quality:
-                    <select data-item-quantity>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                    </select>
-                </div>
-
                 <input type="hidden" class="available-options" value={{ availableOptions }}>
+            </div>
+        {% endif %}
+        <div>Quality:
+            <select data-item-quantity>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
         </div>
-    {% endif %}
-    <button class="btn add-item-to-cart" disabled>Add to Cart</button>
-    {#<div class="share-desc">#}
-        {#<div class="button add-item-to-cart" data-item-id="{{ item.id }}"><span><a href="#">Add to Cart</a></span></div>#}
-    {#</div>#}
+        <button class="btn add-item-to-cart" disabled>Add to Cart</button>
+    </div>
+    <div class="ratings">
+        <p class="pull-right">3 reviews</p>
+        <p>
+            <span class="glyphicon glyphicon-star"></span>
+            <span class="glyphicon glyphicon-star"></span>
+            <span class="glyphicon glyphicon-star"></span>
+            <span class="glyphicon glyphicon-star"></span>
+            <span class="glyphicon glyphicon-star-empty"></span>
+            4.0 stars
+        </p>
+    </div>
 </div>
 
 <script>
-
+    var price = $('.item-price');
+    var productPrice = parseFloat($('.product-title').attr('data-product-price'));
     var checkSubmit = function(){
-        var optionVariants = $('.option-variants'),
+        var addedPrice = 0,
+            optionVariants = $('.option-variants'),
             arr = [];
+
         _.each(optionVariants, function(item){
-            if($(item).find('span.active').length){
+            if($(item).find('div.active').length){
                 arr.push(1);
+                addedPrice += parseFloat($(item).find('div.active').attr('data-option-price'));
             }
         });
         if (optionVariants.length === arr.length || optionVariants.length == 0){
             $('.add-item-to-cart').prop("disabled", false);
+            var priceValue = productPrice + addedPrice;
+            price.text(priceValue);
         } else {
             $('.add-item-to-cart').prop("disabled", true);
+            price.text(productPrice);
         }
     };
 
@@ -69,14 +80,18 @@
     var availableOptions = $('.available-options').val()?JSON.parse($('.available-options').val()):null;
     var chooseValue = function(e){
 
-
         var optsDiv = $(e.target).parent().parent();
-        var span = $(e.target).parent();
+        var span = ($(e.target)[0].nodeName == 'DIV')?$(e.target):$(e.target).parent();
         var chosenOption = JSON.parse(span.attr('data-info'));
         var properSets = {};
-        optsDiv.find('span.active').removeClass('active');
+
+        var activeDiv = optsDiv.find('div.active');
+        if(activeDiv.length){
+            optsDiv.find('div.active').removeClass('active');
+        }
         span.addClass('active');
-        span.parent().find('span.option-value').removeClass('deactive');//!!!!!!!
+
+        span.parent().find('div.option-value').removeClass('deactive');//!!!!!!!
         optsDiv.find('#option-' + chosenOption['optionId']).val(span.attr('data-info'));
         _.forOwn(availableOptions, function(value, key) {
             _.each(value, function(item){
@@ -89,7 +104,7 @@
         var allOptions = getAllValsToOption(availableOptions);
         _.each($('.option-variants'), function(item){
             if(!$(item).hasClass('opt' + chosenOption['optionId'])){
-                _.each($(item).find('span.option-value'), function(span){
+                _.each($(item).find('div.option-value'), function(span){
                     var spanInfo = JSON.parse($(span).attr('data-info'));
                     if(!_.includes(activeOpts[spanInfo['optionId']], spanInfo['valueId'])){
                         $(span).addClass('deactive');
@@ -152,7 +167,7 @@
         var optionVariants = $('.option-variants');
         if(optionVariants.length){
             _.each(optionVariants, function(item){
-                var span = $(item).find('span.active');
+                var span = $(item).find('div.active');
                 if(span.length){
                     arr.push(JSON.parse(span.attr('data-info')));
                 }
@@ -182,7 +197,7 @@
             var cartItem = {};
             cartItem['id'] = itemId;
             cartItem['quantity'] = $('[data-item-quantity]').val();
-            cartItem['productSet'] = '';
+            cartItem['productSet'] = 0;
             var obj = JSON.stringify(cartItem);
             $.ajax({
                 url: '{{ path('lokos_shop_add_to_cart') }}',

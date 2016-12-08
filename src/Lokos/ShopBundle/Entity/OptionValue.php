@@ -38,6 +38,11 @@ class OptionValue
      */
     private $option;
 
+    /**
+     * @var int
+     */
+    private $price = 0;
+
 //    /**
 //     * @var \Product
 //     *
@@ -179,6 +184,28 @@ class OptionValue
     {
         return $this->orderDetail;
     }
+
+    /**
+     * @return int
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    /**
+     * @param $price
+     *
+     * @return $this
+     */
+    public function setPrice($price)
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+
 
     /**
      * @return string

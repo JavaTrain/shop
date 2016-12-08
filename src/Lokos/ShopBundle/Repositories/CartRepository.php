@@ -47,22 +47,25 @@ class CartRepository
         if (!empty($cart)) {
             foreach ($cart as $key => $item) {
 //                var_dump($item);die;
-                    $params['withOptions'] = $item->id;
-                    if(!empty($item->productSet)){
-                        $params['productSet'] = $item->productSet;
-                    }
-                    /** @var Product $product */
-                    $product = $this->getEntityManager()
-                                         ->getRepository('LokosShopBundle:Product')
-                                         ->reset()
-                                         ->buildQuery($params)
-                                         ->getSingle();
+                $params['withOptions'] = $item->id;
+//                if(!empty($item->productSet)){
+                $params['productSet'] = $item->productSet;
+//                }
 
-                        $items[$key] = array(
-                            'product'    => $product,
-                            'quantity'   => $item->quantity,
-                            'productSet' => $item->productSet,
-                        );
+                // if prodSet don't added get all prodset !!!!!!!
+
+                /** @var Product $product */
+                $product = $this->getEntityManager()
+                                ->getRepository('LokosShopBundle:Product')
+                                ->reset()
+                                ->buildQuery($params)
+                                ->getSingle();
+
+                    $items[$key] = array(
+                        'product'    => $product,
+                        'quantity'   => $item->quantity,
+                        'productSet' => $item->productSet,
+                    );
             }
         }
 //        var_dump($items);die;
@@ -81,21 +84,20 @@ class CartRepository
         $totalQuantity = 0;
 
         if (!empty($items)) {
-//            var_dump($items);die;
             foreach ($items as $item) {
                 $priceItem = 0;
-                $priceItem += (float)abs($item['product']->getPrice());
+                $priceItem += abs((float)$item['product']->getPrice());
                 if(!empty($item['product']->getProductSets())){
                     foreach ($item['product']->getProductSets() as $ps){
                         /** @var ProductSet $ps */
                         /** @var Product2Option $p2o */
                         foreach ($ps->getProduct2Options() as $p2o){
-                            $priceItem += abs((int)$p2o->getPrice());
+                            $priceItem += abs((float)$p2o->getPrice());
                         }
                     }
                 }
 
-                $totalPrice += $priceItem;
+                $totalPrice += ($priceItem*$item['quantity']);
                 $totalQuantity += $item['quantity'];
             }
             $data['total_quantity'] = $totalQuantity;
