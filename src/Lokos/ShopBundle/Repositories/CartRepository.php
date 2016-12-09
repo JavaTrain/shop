@@ -5,7 +5,6 @@ namespace Lokos\ShopBundle\Repositories;
 use Doctrine\ORM\EntityManager;
 use Lokos\ShopBundle\Entity\Product;
 use Lokos\ShopBundle\Entity\Product2Option;
-use Lokos\ShopBundle\Entity\ProductSet;
 
 class CartRepository
 {
@@ -42,58 +41,62 @@ class CartRepository
      */
     public function getCartItems(array $cart)
     {
-//        var_dump($cart);die;
         $items = array();
         if (!empty($cart)) {
-            foreach ($cart as $key => $item) {
-//                var_dump($item);die;
-                $params['withOptions'] = $item->id;
-//                if(!empty($item->productSet)){
-                $params['productSet'] = $item->productSet;
-//                }
-
-                // if prodSet don't added get all prodset !!!!!!!
-
-                /** @var Product $product */
-                $product = $this->getEntityManager()
-                                ->getRepository('LokosShopBundle:Product')
-                                ->reset()
-                                ->buildQuery($params)
-                                ->getSingle();
-
-                    $items[$key] = array(
-                        'product'    => $product,
-                        'quantity'   => $item->quantity,
-                        'productSet' => $item->productSet,
-                    );
+            $productIds = [];
+            foreach($cart as $value){
+                $productIds[] = $value->id;
+            }
+            /** @var Product $clone */
+            $products = $this->getEntityManager()
+                            ->getRepository('LokosShopBundle:Product')
+                            ->reset()
+                            ->buildQuery(['productIds' => array_unique($productIds)])
+                            ->getList();
+            foreach ($cart as $key => $item){
+                foreach ($products as $product) {
+                    if($product->getId() === $item->id){
+                        $set = null;
+                        if($product->getProductSets()->count()){
+                            $setId = $item->productSet;
+                            $set = $product->getProductSets()->filter(
+                                function($entry) use ($setId){
+                                    return $setId === $entry->getId();
+                                }
+                            );
+                        }
+                        $items[$key] = array(
+                            'product'    => $product,
+                            'quantity'   => $item->quantity,
+                            'productSet' => $set,
+                        );
+                    }
+                }
             }
         }
-//        var_dump($items);die;
+
         return $items;
     }
 
     /**
-     * @param array $items
+     * @param array $cartItems
      *
      * @return array
      */
-    public function getCartItemsCountAndPrice(array $items)
+    public function getCartItemsCountAndPrice(array $cartItems)
     {
         $data          = array('total_quantity' => 0, 'total_price' => 0);
         $totalPrice    = 0;
         $totalQuantity = 0;
 
-        if (!empty($items)) {
-            foreach ($items as $item) {
+        if (!empty($cartItems)) {
+            foreach ($cartItems as $item) {
                 $priceItem = 0;
                 $priceItem += abs((float)$item['product']->getPrice());
-                if(!empty($item['product']->getProductSets())){
-                    foreach ($item['product']->getProductSets() as $ps){
-                        /** @var ProductSet $ps */
-                        /** @var Product2Option $p2o */
-                        foreach ($ps->getProduct2Options() as $p2o){
-                            $priceItem += abs((float)$p2o->getPrice());
-                        }
+                if(!empty($item['productSet'])){
+                    /** @var Product2Option $p2o */
+                    foreach ($item['productSet']->first()->getProduct2Options() as $p2o){
+                        $priceItem += abs((float)$p2o->getPrice());
                     }
                 }
 
@@ -103,8 +106,6 @@ class CartRepository
             $data['total_quantity'] = $totalQuantity;
             $data['total_price']    = $totalPrice;
         }
-
-//        var_dump($data);die;
 
         return $data;
     }

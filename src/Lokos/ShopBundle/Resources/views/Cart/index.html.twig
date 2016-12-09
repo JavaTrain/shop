@@ -8,76 +8,67 @@
     %}
     <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
-
-
 {% endblock page_script %}
 
 {% block content %}
     {{ block('categories') }}
-    {#{{ block('cart') }}#}
         <div>
             {% if cart %}
-            <table id="cart_table" class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th class="col-md-3">Name</th>
-                        <th class="col-md-4">Options</th>
-                        <th class="col-md-2">Quantity</th>
-                        <th class="col-md-2">Price</th>
-                        <th class="col-md-1">Remove</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <td colspan="4">Total:</td>
-                        <td class="total-price"></td>
-                    </tr>
-                </tfoot>
-                <tbody>
-                    {% for key, item in cart %}
-                        <tr class="item item-{{ key }}" data-cart-item="{{ key }}" data-item="{{ item.id }}" data-item-price="{{ productData[item.id].product.price }}">
-                            <td>{{ productData[item.id].product.name }}</td>
-                            <td class="options">
-                                {% if productData[item.id].product.productSets is not empty %}
-                                    <div>
-                                        {% for key, option in productData[item.id].options.0 %}
-                                            <div>
-                                                <h5>{{ option.name }}</h5>
-                                                <div class="option-variants opt{{ option.id }}">
-                                                    <div class="container">
-                                                        <div class="row">
-                                                            {% for value in productData[item.id].options.1[key] %}
-                                                                <div class="option-value col-sm-1" data-option-price="{{ value.price }}" data-info='{"optionId":{{ option.id }},"valueId":{{ value.id }}}'><b>{{ value.value }}</b></div>
-                                                            {% endfor %}
+                <table id="cart_table" class="table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Options</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2">Total:</td>
+                            <td class="total-quantity"></td>
+                            <td colspan="2" class="total-price"></td>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for key, item in cart %}
+                            <tr class="item-cart item-{{ key }}" data-cart-item-id="{{ key }}" data-item-id="{{ item.id }}" data-item-price="{{ productData[item.id].product.price }}">
+                                <th scope="row">{{ productData[item.id].product.name }}</th>
+                                <td class="options">
+                                    {% if productData[item.id].product.productSets is not empty %}
+                                        <div>
+                                            {% for key, option in productData[item.id].options.0 %}
+                                                <div>
+                                                    <h5>{{ option.name }}</h5>
+                                                    <div class="option-variants opt{{ option.id }}">
+                                                        <div class="container">
+                                                            <div class="row">
+                                                                {% for value in productData[item.id].options.1[key] %}
+                                                                    <div class="option-value col-sm-1" data-option-price="{{ value.price }}"
+                                                                         data-info='{"optionId":{{ option.id }},"valueId":{{ value.id }}}'>
+                                                                        <b>{{ value.value }}</b>
+                                                                    </div>
+                                                                {% endfor %}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        {% endfor %}
-                                        <input class="prod-set" type="hidden" name="prodSet" value="{{ item.productSet }}">
-                                        <input type="hidden" class="available-options" value={{ productData[item.id].availableOptions }}>
-                                    </div>
-                                {% endif %}
-                                {#<input type="hidden" class="available-options" value={{ availableOptions }}>#}
-
-                                {#{% if item.product.options is not empty %}#}
-                                    {#{% for option in item.product.options %}#}
-                                        {#{{ option.name }}:#}
-                                        {#<select name="{{ option.id }}" onchange="updateCart(this)">#}
-                                            {#{% for value in option.optionValues %}#}
-                                                {#<option data-option-price="{{ value.price }}" {% if attribute(item.options, option.id) == value.id %} selected {% endif %} value="{{ value.id }}">{{ value.value }}</option>#}
-                                            {#{% endfor %}#}
-                                        {#</select>#}
-                                    {#{% endfor %}#}
-                                {#{% endif %}#}
-                            </td>
-                            <td class="quantity"><input class="items-quantity" name="quantity" value="{{ item.quantity }}" onchange="updateCart(this)"/></td>
-                            <td class="price">{#{ productData[item.id].cartPrice }#}</td>
-                            <td><span class="delete-item" onclick="updateCart(this)">X</span></td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                                            {% endfor %}
+                                            <input class="prod-set" type="hidden" name="prodSet" value="{{ item.productSet }}">
+                                            <input type="hidden" class="available-options" value={{ productData[item.id].availableOptions }}>
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td class="quantity">
+                                    <input class="item-quantity" name="quantity" value="{{ item.quantity }}" onchange="updateCart(this)"/>
+                                </td>
+                                <td class="item-price">{{ productData[item.id].product.price }}</td>
+                                <td><span class="delete-item" onclick="deleteCartItem(this)">X</span></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             {% else %}
                 <h1>Cart is empty</h1>
             {% endif %}
@@ -87,10 +78,10 @@
 
     <script type="text/javascript">
         _.each($('.prod-set'), function(input){
-            var setId = $(input).val();
-            var wrapDiv = $(input).parent();
-            var availableOptions = JSON.parse(wrapDiv.find('.available-options').val());
-            var currentSet = availableOptions[setId];
+            var setId = $(input).val(),
+                wrapDiv = $(input).parent(),
+                availableOptions = JSON.parse(wrapDiv.find('.available-options').val()),
+                currentSet = availableOptions[setId];
             _.each(wrapDiv.find('.option-value'), function(optionValue){
                 _.each(currentSet, function(setOption){
                     if(_.isEqual(setOption, JSON.parse($(optionValue).attr('data-info')))) {
@@ -99,43 +90,99 @@
                 });
             });
         });
+        var updateProductSets = function(){
+            _.each($('.prod-set'), function(input){
+                var wrapDiv = $(input).parent(),
+                    optioValues = wrapDiv.find('.option-value.active'),
+                    availableOptions = JSON.parse(wrapDiv.find('.available-options').val()),
+                    currentSet = [];
+                _.each(optioValues, function(optionValue){
+                    var optionValueData = JSON.parse($(optionValue).attr('data-info'));
+                    currentSet.push(optionValueData);
+                });
+                _.each(availableOptions, function(item, key){
+                    if(_.isEqual(item.sort(), currentSet.sort())){
+                        $(input).val(key);
+                    }
+                });
+            });
+        };
+        var updatePriceAndQuantity = function(){
+            var totalPrice = 0;
+            var totalQuantity = 0;
+            _.each($('tr.item-cart'), function(tr){
+                var quantity = $(tr).find('input.item-quantity').val();
+                totalQuantity += parseInt(quantity);
+                var itemPrice = parseFloat($(tr).attr('data-item-price'));
+                var optionsPrice = 0;
+                _.each($(tr).find('.option-value.active'), function(option){
+                    var tmp = $(option).attr('data-option-price');
+                    optionsPrice += parseFloat(tmp);
 
+                });
+                itemPrice += optionsPrice;
+                totalPrice += itemPrice;
+                $(tr).find('.item-price').text(itemPrice);
+                $('td.total-price').text(totalPrice);
+                $('td.total-quantity').text(totalQuantity);
+            });
+        };
+        var changeCart = function(item){
+            $.ajax({
+                url: '{{ path('lokos_shop_cart_edit') }}',
+                type: 'post',
+                data: { item: item },
+                success: function(resp) {
+                }
+            });
+        };
+        var updateCart = function(){
+            var cart = {};
+            _.each($('.item-cart'), function(tr){
+                var cartItem = {},
+                    cartItemId = $(tr).attr('data-cart-item-id');
+                cartItem['id'] = $(tr).attr('data-item-id');
+                cartItem['quantity'] = $(tr).find('input.item-quantity').val();
+                cartItem['productSet'] = $(tr).find('input.prod-set').val();
+                cart[cartItemId] = cartItem;
+            });
+            changeCart(JSON.stringify(cart));
+        };
 
+        var deleteCartItem = function(el){
+            $(el).closest('tr').remove();
+            updateCart();
+        };
 
         var checkSubmit = function(){
-            var productPrice = 565;
-            var price = '<span>5445</span>';
-            var addedPrice = 0,
-                optionVariants = $('.option-variants'),
+            var optionVariants = $('.option-variants'),
                 arr = [];
 
             _.each(optionVariants, function(item){
                 if($(item).find('div.active').length){
                     arr.push(1);
-                    addedPrice += parseFloat($(item).find('div.active').attr('data-option-price'));
                 }
             });
             if (optionVariants.length === arr.length || optionVariants.length == 0){
                 $('.add-item-to-cart').removeAttr("disabled");
-                var priceValue = productPrice + addedPrice;
-//                price.text(priceValue);
+                updatePriceAndQuantity();
+                updateProductSets();
+                updateCart();
             } else {
-                console.log($('.add-item-to-cart'));
                 $('.add-item-to-cart').attr("disabled", "disabled");
-//                price.text(productPrice);
             }
         };
 
         var chooseValue = function(e){
 
-            var optsDiv = $(e.target).parent().parent();
-            var wrapper = optsDiv.closest('tr');
-            var span = ($(e.target)[0].nodeName == 'DIV')?$(e.target):$(e.target).parent();
-            var chosenOption = JSON.parse(span.attr('data-info'));
-            var properSets = {};
-            var availableOptions = wrapper.find('.available-options').val()?JSON.parse(wrapper.find('.available-options').val()):null;
+            var optsDiv = $(e.target).parent().parent(),
+                wrapper = optsDiv.closest('tr'),
+                span = ($(e.target)[0].nodeName == 'DIV')?$(e.target):$(e.target).parent(),
+                chosenOption = JSON.parse(span.attr('data-info')),
+                properSets = {},
+                availableOptions = wrapper.find('.available-options').val()?JSON.parse(wrapper.find('.available-options').val()):null,
+                activeDiv = optsDiv.find('div.active');
 
-            var activeDiv = optsDiv.find('div.active');
             if(activeDiv.length){
                 optsDiv.find('div.active').removeClass('active');
             }
@@ -143,23 +190,23 @@
 
             span.parent().find('div.option-value').removeClass('deactive');//!!!!!!!
             optsDiv.find('#option-' + chosenOption['optionId']).val(span.attr('data-info'));
-            _.forOwn(availableOptions, function(value, key) {
-                _.each(value, function(item){
-                    if(_.isEqual(item, chosenOption)){
+            _.forOwn(availableOptions, function (value, key) {
+                _.each(value, function (item) {
+                    if (_.isEqual(item, chosenOption)) {
                         properSets[key] = value;
                     }
                 });
             });
             var activeOpts = getValsToOption(properSets);
             var allOptions = getAllValsToOption(availableOptions);
-            _.each(wrapper.find('.option-variants'), function(item){
-                if(!$(item).hasClass('opt' + chosenOption['optionId'])){
-                    _.each($(item).find('div.option-value'), function(span){
+            _.each(wrapper.find('.option-variants'), function (item) {
+                if (!$(item).hasClass('opt' + chosenOption['optionId'])) {
+                    _.each($(item).find('div.option-value'), function (span) {
                         var spanInfo = JSON.parse($(span).attr('data-info'));
-                        if(!_.includes(activeOpts[spanInfo['optionId']], spanInfo['valueId'])){
+                        if (!_.includes(activeOpts[spanInfo['optionId']], spanInfo['valueId'])) {
                             $(span).addClass('deactive');
                             $(span).removeClass('active');
-                        }else{
+                        } else {
                             $(span).removeClass('deactive');
                         }
 
@@ -167,11 +214,11 @@
                 }
             });
 
-            function getValsToOption(properSets){
+            function getValsToOption(properSets) {
                 var obj = {};
-                _.each(properSets, function(item){
-                    _.each(item, function(value){
-                        if(!obj[value['optionId']]){
+                _.each(properSets, function (item) {
+                    _.each(item, function (value) {
+                        if (!obj[value['optionId']]) {
                             obj[value['optionId']] = [];
                         }
                         obj[value['optionId']].push(value['valueId']);
@@ -181,11 +228,11 @@
                 return obj;
             }
 
-            function getAllValsToOption(availableOptions){
+            function getAllValsToOption(availableOptions) {
                 var obj = {};
-                _.each(availableOptions, function(item){
-                    _.each(item, function(value){
-                        if(!obj[value['optionId']]){
+                _.each(availableOptions, function (item) {
+                    _.each(item, function (value) {
+                        if (!obj[value['optionId']]) {
                             obj[value['optionId']] = [];
                         }
                         obj[value['optionId']].push(value['valueId']);
@@ -195,12 +242,12 @@
                 return obj;
             }
 
-            function checkChosenAvailable(item, activeOpts){
-                _.each(item.parent().find('span.option-value'), function(span){
+            function checkChosenAvailable(item, activeOpts) {
+                _.each(item.parent().find('span.option-value'), function (span) {
                     var spanInfo = JSON.parse($(span).attr('data-info'));
-                    if(!_.includes(activeOpts[spanInfo['optionId']], spanInfo['valueId'])){
+                    if (!_.includes(activeOpts[spanInfo['optionId']], spanInfo['valueId'])) {
                         $(span).addClass('deactive');
-                    }else{
+                    } else {
                         $(span).removeClass('deactive');
                     }
 
@@ -212,109 +259,9 @@
             checkSubmit();
         };
 
-
         $('.option-value').click(chooseValue);
-        checkSubmit();
+        updatePriceAndQuantity();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //        $(document).ready(function() {
-//            $().UItoTop({ easingType: 'easeOutQuart' });
-//
-//        });
-        var cartPrice = function(){
-            var table = $('#cart_table');
-            table.find('tbody tr').each(function () {
-                var price = parseFloat($(this).attr('data-item-price')),
-                    quantity = parseInt($(this).find('.quantity input').val()),
-                    optionsPrice = 0;
-                $(this).find('.options select').each(function(){
-                    optionsPrice += (parseFloat($(this).find('option:selected').attr('data-option-price')) || 0);
-                });
-                $(this).find('.price').text((price+optionsPrice)*quantity);
-            });
-        };
-        var totalCartPrice = function(){
-            var table = $('#cart_table'),
-                price = 0,
-                priceItem,
-                quantity;
-            table.find('tbody tr').each(function () {
-                priceItem = parseFloat($(this).find('.price').text());
-                quantity = parseInt($(this).find('.quantity input').val());
-                price += priceItem * quantity;
-            });
-            table.find('tfoot .total-price').text(price);
-            $('.cart-items-price').text(price)
-        };
-        var totalCartCount = function(){
-            var table = $('#cart_table'),
-                count = 0;
-            table.find('tbody tr').each(function () {
-                count += parseInt($(this).find('.quantity input').val());
-            });
-            $('.cart-items-count').text(count)
-        };
-
-        function updateCart(el) {
-            var tr = $(el).closest('tr'),
-                options = {},
-                cartItem = {},
-                action = 'edit',
-                cartId,
-                obj;
-            tr.find('.options select').each(function () {
-                options[$(this).attr('name')] = $(this).find('option:selected').val();
-            });
-            cartId = tr.attr('data-cart-item');
-            if($(el).hasClass('delete-item')){
-                action = 'delete';
-            }else{
-                cartItem['id'] = tr.attr('data-item');
-                cartItem['quantity'] = tr.find('.quantity input').val();
-                cartItem['options'] = options;
-                obj = JSON.stringify(cartItem);
-            }
-            $.ajax({
-                url: '{{ path('lokos_shop_cart_edit') }}',
-                type: 'post',
-                data: { item: obj, cartId: cartId, action:action },
-                success: function(resp) {
-                    if (resp) {
-                        if(action == 'delete' && resp == 'Ok'){
-                            tr.remove();
-                        }
-                        cartPrice();
-                        totalCartPrice();
-                        totalCartCount();
-                    }
-                }
-            });
-        }
-        totalCartPrice();
-        totalCartCount();
     </script>
     <a href="#" id="toTop"><span id="toTopHover"> </span></a>
 {% endblock %}

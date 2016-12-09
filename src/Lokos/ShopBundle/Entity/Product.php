@@ -3,6 +3,7 @@
 namespace Lokos\ShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Product
@@ -52,7 +53,7 @@ class Product
     /**
      * @var \Category
      *
-     * @ORM\ManyToOne(targetEntity="Category")
+     * @ORM\ManyToOne(targetEntity="Category", inversedBy="products")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="category_id", referencedColumnName="id")
      * })
@@ -77,33 +78,18 @@ class Product
     private $attribute;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\OneToMany(targetEntity="Product2Option", mappedBy="product")
-     */
-    private $product2options;
-
-//    /**
-//     * @ORM\OneToMany(targetEntity="OptionValue", mappedBy="product")
-//     */
-//    private $optionValues;
-
-    /**
-     * @ORM\OneToMany(targetEntity="ProductSet", mappedBy="product", cascade={"persist", "remove", "detach"})
+     * @ORM\OneToMany(targetEntity="ProductSet", mappedBy="product", cascade={"persist"})
      */
     private $productSets;
 
-    private $cartPrice;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->attribute       = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->product2options = new \Doctrine\Common\Collections\ArrayCollection();
-//        $this->optionValues    = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->productSets     = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->attribute   = new ArrayCollection();
+        $this->productSets = new ArrayCollection();
     }
 
 
@@ -220,7 +206,7 @@ class Product
      *
      * @return Product
      */
-    public function setCategory(\Lokos\ShopBundle\Entity\Category $category = null)
+    public function setCategory(Category $category = null)
     {
         $this->category = $category;
 
@@ -228,9 +214,7 @@ class Product
     }
 
     /**
-     * Get category
-     *
-     * @return \Lokos\ShopBundle\Entity\Category
+     * @return \Category
      */
     public function getCategory()
     {
@@ -238,13 +222,11 @@ class Product
     }
 
     /**
-     * Set brand
+     * @param Brand|null $brand
      *
-     * @param \Lokos\ShopBundle\Entity\Brand $brand
-     *
-     * @return Product
+     * @return $this
      */
-    public function setBrand(\Lokos\ShopBundle\Entity\Brand $brand = null)
+    public function setBrand(Brand $brand = null)
     {
         $this->brand = $brand;
 
@@ -255,6 +237,9 @@ class Product
      * Get brand
      *
      * @return \Lokos\ShopBundle\Entity\Brand
+     */
+    /**
+     * @return \Brand
      */
     public function getBrand()
     {
@@ -268,7 +253,7 @@ class Product
      *
      * @return Product
      */
-    public function addAttribute(\Lokos\ShopBundle\Entity\Attribute $attribute)
+    public function addAttribute(Attribute $attribute)
     {
         $this->attribute[] = $attribute;
 
@@ -280,7 +265,7 @@ class Product
      *
      * @param \Lokos\ShopBundle\Entity\Attribute $attribute
      */
-    public function removeAttribute(\Lokos\ShopBundle\Entity\Attribute $attribute)
+    public function removeAttribute(Attribute $attribute)
     {
         $this->attribute->removeElement($attribute);
     }
@@ -293,26 +278,6 @@ class Product
     public function getAttribute()
     {
         return $this->attribute;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCartPrice()
-    {
-        return $this->cartPrice;
-    }
-
-    /**
-     * @param $cartPrice
-     *
-     * @return $this
-     */
-    public function setCartPrice($cartPrice)
-    {
-        $this->cartPrice = $cartPrice;
-
-        return $this;
     }
 
     /**
@@ -334,26 +299,6 @@ class Product
 
         return $this;
     }
-
-//    /**
-//     * @param ProductSet $productSet
-//     *
-//     * @return $this
-//     */
-//    public function addProductSets(\Lokos\ShopBundle\Entity\ProductSet $productSet)
-//    {
-//        $this->productSets[] = $productSet;
-//
-//        return $this;
-//    }
-//
-//    /**
-//     * @param ProductSet $productSet
-//     */
-//    public function removeProductSet(\Lokos\ShopBundle\Entity\ProductSet $productSet)
-//    {
-//        $this->productSets->removeElement($productSet);
-//    }
 
     /**
      * @return mixed

@@ -2,7 +2,6 @@
 
 namespace Lokos\ShopBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -50,27 +49,11 @@ class OrderDetail
     private $product;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="OptionValue", inversedBy="orderDetail")
-     * @ORM\JoinTable(name="option_value2order_detail",
-     *   joinColumns={
-     *     @ORM\JoinColumn(name="order_detail_id", referencedColumnName="id")
-     *   },
-     *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="option_value_id", referencedColumnName="id")
-     *   }
-     * )
+     * Many Features have One Product.
+     * @ORM\ManyToOne(targetEntity="ProductSet", inversedBy="orderDetails")
+     * @ORM\JoinColumn(name="product_set_id", referencedColumnName="id")
      */
-    private $optionValue;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->optionValue = new \Doctrine\Common\Collections\ArrayCollection();
-    }
+    private $productSet;
 
 
     /**
@@ -114,7 +97,7 @@ class OrderDetail
      *
      * @return OrderDetail
      */
-    public function setOrder(\Lokos\ShopBundle\Entity\Order $order = null)
+    public function setOrder(Order $order = null)
     {
         $this->order = $order;
 
@@ -122,9 +105,7 @@ class OrderDetail
     }
 
     /**
-     * Get order
-     *
-     * @return \Lokos\ShopBundle\Entity\Order
+     * @return \Order
      */
     public function getOrder()
     {
@@ -138,7 +119,7 @@ class OrderDetail
      *
      * @return OrderDetail
      */
-    public function setProduct(\Lokos\ShopBundle\Entity\Product $product = null)
+    public function setProduct(Product $product = null)
     {
         $this->product = $product;
 
@@ -146,9 +127,7 @@ class OrderDetail
     }
 
     /**
-     * Get product
-     *
-     * @return \Lokos\ShopBundle\Entity\Product
+     * @return \Product
      */
     public function getProduct()
     {
@@ -156,42 +135,23 @@ class OrderDetail
     }
 
     /**
-     * Add optionValue
-     *
-     * @param \Lokos\ShopBundle\Entity\OptionValue $optionValue
-     *
-     * @return OrderDetail
-     */
-    public function addOptionValue(\Lokos\ShopBundle\Entity\OptionValue $optionValue)
-    {
-        $this->optionValue[] = $optionValue;
-
-        return $this;
-    }
-
-    /**
-     * Remove optionValue
-     *
-     * @param \Lokos\ShopBundle\Entity\OptionValue $optionValue
-     */
-    public function removeOptionValue(\Lokos\ShopBundle\Entity\OptionValue $optionValue)
-    {
-        $this->optionValue->removeElement($optionValue);
-    }
-
-    /**
      * Get optionValue
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getOptionValue()
+    public function getProductSet()
     {
-        return $this->optionValue;
+        return $this->productSet;
     }
-    
-    public function setOptionValues($optionValues)
+
+    /**
+     * @param $productSet
+     *
+     * @return $this
+     */
+    public function setProductSet($productSet)
     {
-        $this->optionValue = $optionValues;
+        $this->productSet = $productSet;
         
         return $this;
     }

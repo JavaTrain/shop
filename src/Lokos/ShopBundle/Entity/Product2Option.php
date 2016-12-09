@@ -22,16 +22,6 @@ class Product2Option
     private $id;
 
     /**
-     * @var \Product
-     *
-     * @ORM\ManyToOne(targetEntity="Product", inversedBy="product2Options")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="product_id", referencedColumnName="id")
-     * })
-     */
-    private $product;
-
-    /**
      * @var \Option
      *
      * @ORM\ManyToOne(targetEntity="Option")
@@ -76,26 +66,6 @@ class Product2Option
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @return \Product
-     */
-    public function getProduct()
-    {
-        return $this->product;
-    }
-
-    /**
-     * @param $product
-     *
-     * @return $this
-     */
-    public function setProduct($product)
-    {
-        $this->product = $product;
-
-        return $this;
     }
 
     /**
@@ -177,42 +147,4 @@ class Product2Option
 
         return $this;
     }
-
-//    /**
-//     * @param $optionValues
-//     *
-//     * @return $this
-//     */
-//    public function setOptionValues($optionValues)
-//    {
-//        $this->optionValues = $optionValues;
-//
-//        return $this;
-//    }
-
-//    /**
-//     * @param OptionValue $optionValue
-//     *
-//     * @return $this
-//     */
-//    public function addProduct2options(\Lokos\ShopBundle\Entity\OptionValue $optionValue)
-//    {
-//        $this->optionValues[] = $optionValue;
-//
-//        return $this;
-//    }
-//
-//    /**
-//     * @param OptionValue $optionValue
-//     *
-//     * @return $this
-//     */
-//    public function removeOptionValues(\Lokos\ShopBundle\Entity\OptionValue $optionValue)
-//    {
-//        $this->optionValues->removeElement($optionValue);
-//
-//        return $this;
-//    }
-
-
 }

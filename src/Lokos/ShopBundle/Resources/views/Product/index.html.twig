@@ -1,0 +1,8 @@
+{% trans_default_domain 'general' %}
+{% extends '::base.html.twig' %}
+
+{% block  content %}
+        {#{{ knp_menu_render('LokosShopBundle:Builder:mainMenu', {'currentClass': 'active', 'template': 'LokosShopBundle:Menu:main.html.twig'}) }}#}
+    {{ block('categories') }}
+    <h2>Home page</h2>
+{% endblock %}

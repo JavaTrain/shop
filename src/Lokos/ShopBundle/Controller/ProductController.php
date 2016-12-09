@@ -2,8 +2,8 @@
 
 namespace Lokos\ShopBundle\Controller;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Lokos\ShopBundle\Entity\Product;
+use Lokos\ShopBundle\Repositories\CartRepository;
+use Lokos\ShopBundle\Repositories\ProductRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -31,7 +31,7 @@ class ProductController extends BaseController
             'cartResume' => $this->get('lokos.shop.cart_repository')->getCartItemsCountAndPrice($cartItems),
         );
 
-        return $this->render('Product/index.html.twig', $data);
+        return $this->render('LokosShopBundle:Product:index.html.twig', $data);
     }
 
     /**
@@ -51,13 +51,12 @@ class ProductController extends BaseController
             );
 
         $data['categories'] = $this->getDoctrine()
-                                   ->getRepository('LokosShopBundle:Category')
-                                   ->findAll();
+                                   ->getRepository('LokosShopBundle:Category')->findAll();
         $cartItems          = $this->get('lokos.shop.cart_repository')
                                    ->getCartItems($request->getSession()->get('cart', array()));
         $data['cartResume'] = $this->get('lokos.shop.cart_repository')
                                    ->getCartItemsCountAndPrice($cartItems);
-        $data['catId'] = $id;
+        $data['catId']      = $id;
 
         return $this->render('LokosShopBundle:Product:overview.html.twig', $data);
 
@@ -70,35 +69,32 @@ class ProductController extends BaseController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function detailAction(Request $request, $catId, $itemId, $options=null)
+    public function detailAction(Request $request, $catId, $itemId)
     {
-        $params = array('withOptions' => $itemId);
-        if ($request->isXmlHttpRequest()) {
-        }
+//        if ($request->isXmlHttpRequest()) {
+//        }
+        /** @var ProductRepository $productRepository */
+        /** @var CartRepository $cartRepository */
+        $productRepository = $this->getDoctrine()->getRepository('LokosShopBundle:Product');
+        $cartRepository    = $this->get('lokos.shop.cart_repository');//repository without entity
 
-        $item = $this->getDoctrine()
-                     ->getRepository('LokosShopBundle:Product')
+        $item = $productRepository
                      ->reset()
-                     ->buildQuery($params)
+                     ->buildQuery(array('productId' => $itemId))
                      ->getSingle();
-//        $withOptions = true;
         if (!$item) {
             throw new NotFoundHttpException('Item "'.$itemId.'" not found');
         }
 //        var_dump($request->getSession()->get('cart', array()));die;
 //        var_dump($request->getSession()->set('cart', array()));die;
-        $cartItems = $this->get('lokos.shop.cart_repository')
-                          ->getCartItems($request->getSession()->get('cart', array()));
-
-//        var_dump($item->getProductSets()->toArray());die;
+        $cartItems = $cartRepository->getCartItems($request->getSession()->get('cart', array()));
 
         $data = array(
             'item'             => $item,
-            'options'          => $this->getDoctrine()->getRepository('LokosShopBundle:Product')->getProductOptions($item),
-            'cartResume'       => $this->get('lokos.shop.cart_repository')->getCartItemsCountAndPrice($cartItems),
+            'options'          => $productRepository->getProductOptions($item),
+            'cartResume'       => $cartRepository->getCartItemsCountAndPrice($cartItems),
             'categories'       => $this->getDoctrine()->getRepository('LokosShopBundle:Category')->findAll(),
-            'availableOptions' => json_encode($this->getDoctrine()->getRepository('LokosShopBundle:Product')->getAvailableOptions($item)),
-//            'withOptions'      => $withOptions,
+            'availableOptions' => json_encode($productRepository->getAvailableOptions($item)),
         );
 
         if ($request->isMethod('POST')) {
@@ -109,62 +105,5 @@ class ProductController extends BaseController
 
         return $response;
     }
-
-//    private function getAvailableOptions(Product $item)
-//    {
-//        $options = [];
-//        foreach($item->getProductSets() as $ps){
-//            foreach ($ps->getProduct2Options() as $po) {
-//                $options[$ps->getId()][] = [
-//                    'optionId'   => $po->getOption()->getId(),
-//                    'valueId'    => $po->getOptionValue()->getId(),
-//                ];
-//            }
-//        }
-//
-////        var_dump($options);die;
-//
-//        return $options;
-//    }
-
-//    /**
-//     * @param Product $item
-//     *
-//     * @return array|null
-//     */
-//    private function getProductOptions(Product $item)
-//    {
-//        if(!$item->getProductSets()){
-//            return null;
-//        }
-//
-//        $options      = [];
-//        $optionFilter = [];
-//        $values       = [];
-//        $valueFilter  = [];
-//        foreach ($item->getProductSets() as $ps) {
-//            $ps->getProduct2Options()->filter(
-//                function ($entry) use (&$optionFilter, &$options, &$values, &$valueFilter) {
-//                    if (!array_key_exists($entry->getOption()->getId(), $optionFilter)) {
-//                        $options[$entry->getOption()->getId()]                         = $entry->getOption();
-//                        $optionFilter[$entry->getOption()->getId()] = $entry->getOption()->getId();
-//                        if(!array_key_exists($entry->getOptionValue()->getId(), $valueFilter)){
-//                            $valueFilter[$entry->getOptionValue()->getId()] = $entry->getOptionValue()->getId();
-//                            $values[$entry->getOption()->getId()][] = $entry->getOptionValue();
-//                        }
-//                        return true;
-//                    } else {
-//                        if(!array_key_exists($entry->getOptionValue()->getId(), $valueFilter)){
-//                            $valueFilter[$entry->getOptionValue()->getId()] = $entry->getOptionValue()->getId();
-//                            $values[$entry->getOption()->getId()][] = $entry->getOptionValue();
-//                        }
-//                        return false;
-//                    }
-//                }
-//            );
-//        }
-//
-//        return [$options, $values];
-//    }
 
 }

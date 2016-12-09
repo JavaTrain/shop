@@ -61,22 +61,16 @@ class CartController extends BaseController
     public function editAction(Request $request)
     {
         $item    = $request->get('item', null);
-        $cartId  = (int)$request->get('cartId', null);
-        $action  = $request->get('action');
         $session = $request->getSession();
         $cart    = $session->get('cart', array());
-        if ($cartId >= 0 && $action == 'delete'){
-            unset($cart[$cartId]);
+        if ($item ) {
+            $cartObj = json_decode($item);
+            $cart = [];
+            foreach ($cartObj as $key => $item){
+                $cart[$key] = $this->clearCartItem($item);
+            }
             $session->set('cart', $cart);
             $msg = 'Ok';
-        } elseif ($item && $cartId >= 0) {
-            $itemObj = json_decode($item);
-            $itemObj = $this->clearCartItem($itemObj);
-            $cart[$cartId] = $itemObj;
-            $session->set('cart', $cart);
-            $msg = 'Ok';
-        } else {
-            $msg = 'Err';
         }
 
         return $this->jsonResponse($msg);
@@ -91,6 +85,7 @@ class CartController extends BaseController
     {
         $data = array();
         $item = $request->get('item', null);
+        $cartRepository = $this->get('lokos.shop.cart_repository');
         if (!empty($item)) {
             $itemObj = json_decode($item);
             $session = $request->getSession();
@@ -114,10 +109,8 @@ class CartController extends BaseController
             }
             $session->set('cart', $cart);
 //            var_dump($cart);die;
-            $cartItems = $this->get('lokos.shop.cart_repository')
-                              ->getCartItems($cart);
-            $data      = $this->get('lokos.shop.cart_repository')
-                              ->getCartItemsCountAndPrice($cartItems);
+            $cartItems = $cartRepository->getCartItems($cart);
+            $data      = $cartRepository->getCartItemsCountAndPrice($cartItems);
         }
 
         return $this->jsonResponse($data);
@@ -130,12 +123,12 @@ class CartController extends BaseController
      */
     private function clearCartItem($item)
     {
-        $result             = new \stdClass();
-        $result->id         = (int)abs($item->id);
-        $result->quantity   = empty((int)abs($item->quantity))?1:(int)abs($item->quantity);
-        $result->productSet = (int)abs($item->productSet);
-        
-        return $result;
+        $obj             = new \stdClass();
+        $obj->id         = (int)abs($item->id);
+        $obj->quantity   = empty($item->quantity)?1:abs((int)$item->quantity);
+        $obj->productSet = empty($item->productSet)?0:abs((int)$item->productSet);
+
+        return $obj;
     }
 
 }

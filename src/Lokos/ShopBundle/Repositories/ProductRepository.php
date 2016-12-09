@@ -23,44 +23,30 @@ class ProductRepository extends BaseRepository
     {
         parent::buildQuery();
 
-        $this->query->select(array('tbl'));
+        $this->query->select(array('tbl'))
+            ->addSelect('ps')
+            ->leftJoin('tbl.productSets', 'ps')
+            ->addSelect('p2o')
+            ->leftJoin('ps.product2Options', 'p2o')
+            ->addSelect('o')
+            ->leftJoin('p2o.option', 'o')
+            ->addSelect('ov')
+            ->leftJoin('p2o.optionValue', 'ov');
         if (!empty($params['categoryId'])) {
             $this->query
                 ->andWhere('tbl.category = :category')
                 ->setParameter(':category', $params['categoryId']);
         }
-        if (!empty($params['withOptions'])) {
-            $this->query
-                ->addSelect('ps')
-                ->leftJoin('tbl.productSets', 'ps')
-                ->addSelect('p2o')
-                ->leftJoin('ps.product2Options', 'p2o')
-                ->addSelect('o')
-                ->leftJoin('p2o.option', 'o')
-                ->addSelect('ov')
-                ->leftJoin('p2o.optionValue', 'ov')
-                ->andWhere('tbl.id = :id')
-                ->setParameter(':id', $params['withOptions'])
-            ;
-        }
         if (!empty($params['productIds'])) {
             $this->query
-                ->addSelect('ps')
-                ->leftJoin('tbl.productSets', 'ps')
-                ->addSelect('p2o')
-                ->leftJoin('ps.product2Options', 'p2o')
-                ->addSelect('o')
-                ->leftJoin('p2o.option', 'o')
-                ->addSelect('ov')
-                ->leftJoin('p2o.optionValue', 'ov')
                 ->andWhere('tbl.id IN (:ids)')
                 ->setParameter(':ids', $params['productIds'])
             ;
         }
-        if (!empty($params['id'])) {
+        if (!empty($params['productId'])) {
             $this->query
-                ->where('tbl.id = :id')
-                ->setParameter(':id', $params['id']);
+                ->where('tbl.id = :productId')
+                ->setParameter(':productId', $params['productId']);
             ;
         }
         if (!empty($params['productSet'])) {

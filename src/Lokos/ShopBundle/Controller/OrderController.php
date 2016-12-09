@@ -44,19 +44,18 @@ class OrderController extends BaseController
                     $orderDetail->setOrder($order);
                     $orderDetail->setQuantity($item['quantity']);
                     $orderDetail->setProduct($item['product']);
-                    if (!empty($item['product']->getOptions())) {
-                        foreach ($item['product']->getOptions() as $option) {
-                            $orderDetail->setOptionValues($option->getOptionValues());
-                        }
-                    }
+                    $productSet = empty($item['productSet'])?null:$item['productSet']->first();
+                    $orderDetail->setProductSet($productSet);
                     $em->persist($orderDetail);
                 }
                 $em->persist($order);
                 $em->flush();
+                $request->getSession()->set('cart', array());
+
 
                 $this->get('session')->getFlashBag()->add('success', $this->translate('messages.successfully_saved'));
 
-                return $this->redirect($this->generateUrl('mindk_publish_my_contact'));
+                return $this->redirect($this->generateUrl('lokos_shop_homepage'));
             } else {
                 $errors = $form->getErrors();
                 var_dump($errors);die;

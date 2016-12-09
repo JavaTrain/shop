@@ -53,12 +53,12 @@ class OptionValue
 //     */
 //    private $product;
 
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="OrderDetail", mappedBy="optionValue")
-     */
-    private $orderDetail;
+//    /**
+//     * @var \Doctrine\Common\Collections\Collection
+//     *
+//     * @ORM\ManyToMany(targetEntity="OrderDetail", mappedBy="optionValue")
+//     */
+//    private $orderDetail;
 
     /**
      * Constructor
@@ -150,41 +150,41 @@ class OptionValue
 //    {
 //        return $this->product;
 //    }
+//
+//    /**
+//     * Add orderDetail
+//     *
+//     * @param \Lokos\ShopBundle\Entity\OrderDetail $orderDetail
+//     *
+//     * @return OptionValue
+//     */
+//    public function addOrderDetail(\Lokos\ShopBundle\Entity\OrderDetail $orderDetail)
+//    {
+//        $this->orderDetail[] = $orderDetail;
+//
+//        return $this;
+//    }
+//
+//    /**
+//     * Remove orderDetail
+//     *
+//     * @param \Lokos\ShopBundle\Entity\OrderDetail $orderDetail
+//     */
+//    public function removeOrderDetail(\Lokos\ShopBundle\Entity\OrderDetail $orderDetail)
+//    {
+//        $this->orderDetail->removeElement($orderDetail);
+//    }
 
-    /**
-     * Add orderDetail
-     *
-     * @param \Lokos\ShopBundle\Entity\OrderDetail $orderDetail
-     *
-     * @return OptionValue
-     */
-    public function addOrderDetail(\Lokos\ShopBundle\Entity\OrderDetail $orderDetail)
-    {
-        $this->orderDetail[] = $orderDetail;
-
-        return $this;
-    }
-
-    /**
-     * Remove orderDetail
-     *
-     * @param \Lokos\ShopBundle\Entity\OrderDetail $orderDetail
-     */
-    public function removeOrderDetail(\Lokos\ShopBundle\Entity\OrderDetail $orderDetail)
-    {
-        $this->orderDetail->removeElement($orderDetail);
-    }
-
-    /**
-     * Get orderDetail
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getOrderDetail()
-    {
-        return $this->orderDetail;
-    }
-
+//    /**
+//     * Get orderDetail
+//     *
+//     * @return \Doctrine\Common\Collections\Collection
+//     */
+//    public function getOrderDetail()
+//    {
+//        return $this->orderDetail;
+//    }
+//
     /**
      * @return int
      */

@@ -1,3 +1,0 @@
-lokos_shop_homepage:
-    path:     /
-    defaults: { _controller: LokosShopBundle:Default:index }

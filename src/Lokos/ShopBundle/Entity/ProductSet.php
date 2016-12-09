@@ -51,11 +51,19 @@ class ProductSet
     private $quantity;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\OneToMany(targetEntity="OrderDetail", mappedBy="productSet")
+     */
+    private $orderDetails;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->product2Options = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->orderDetails    = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -151,12 +159,31 @@ class ProductSet
     }
 
     /**
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getOrderDetails()
+    {
+        return $this->orderDetails;
+    }
+
+    /**
+     * @param $orderDetails
+     *
+     * @return $this
+     */
+    public function setOrderDetails($orderDetails)
+    {
+        $this->orderDetails = $orderDetails;
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     function __toString()
     {
         return $this->getName();
     }
-
 
 }

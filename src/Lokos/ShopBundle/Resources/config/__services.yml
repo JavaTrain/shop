@@ -1,4 +1,0 @@
-services:
-#    lokos_shop.example:
-#        class: Lokos\ShopBundle\Example
-#        arguments: ["@service_id", "plain_value", %parameter%]
