@@ -64,7 +64,7 @@ class ProductSetFormType extends AbstractType
                 'name',
                 TextType::class,
                 array(
-                    'label' => 'product.name_title',
+                    'label' => 'product_set.name_title',
                 )
             )
             ->add('quantity')

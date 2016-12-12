@@ -5,6 +5,8 @@ namespace Lokos\ShopBundle\Controller;
 use Lokos\ShopBundle\Entity\Category;
 use Lokos\ShopBundle\Entity\Option;
 use Lokos\ShopBundle\Entity\Product;
+use Lokos\ShopBundle\Entity\Product2Option;
+use Lokos\ShopBundle\Entity\ProductSet;
 use Lokos\ShopBundle\Form\Type\CategoryFormType;
 use Lokos\ShopBundle\Form\Type\OptionFormType;
 use Lokos\ShopBundle\Form\Type\ProductFormType;
@@ -124,6 +126,7 @@ class AdminController extends BaseController
             $form->handleRequest($request);
 
 //            if ($request->isXmlHttpRequest()) {
+//                die('frfrffr');
 //                return $this->jsonResponse($this->getErrorMessages($form));
 //            }
 
@@ -184,9 +187,12 @@ class AdminController extends BaseController
     public function editProductAction(Request $request)
     {
         $id      = $request->get('id', null);
+        /** @var Product $product */
         $product = $this->getDoctrine()
                         ->getRepository('LokosShopBundle:Product')
-                        ->find($id);
+//                        ->reset()
+                        ->buildQuery(array('productId' => $id))
+                        ->getSingle();
 
         if (empty($product)) {
             $product = new Product();
@@ -199,9 +205,18 @@ class AdminController extends BaseController
 
         if ($request->isMethod('POST')) {
             $beforeSaveProductSets = $currentProductSetIds = array();
-            foreach ($product->getProductSets() as $productSet)
+            /** @var ProductSet $productSet */
+            foreach ($product->getProductSets() as $productSet){
                 $beforeSaveProductSets [$productSet->getId()] = $productSet;
+            }
+
             $form->handleRequest($request);
+
+            if ($request->isXmlHttpRequest()) {
+                if(!$request->get('update')){
+                    return $this->jsonResponse($this->getErrorMessages($form));
+                }
+            }
 
             if (!$request->get('update')) {
                 if ($form->isValid()) {
@@ -211,12 +226,11 @@ class AdminController extends BaseController
                         if ($productSet->getId()) {
                             $currentProductSetIds[] = $productSet->getId();
                         }
+                        /** @var Product2Option $product2Option */
                         foreach ($productSet->getProduct2Options() as $product2Option) {
-                            $product2Option->setProduct($product);
                             $product2Option->setProductSet($productSet);
                         }
                     }
-
                     foreach ($beforeSaveProductSets as $productSetId => $productSet) {
                         if (!in_array($productSetId, $currentProductSetIds)) {
                             $em->remove($productSet);
@@ -236,8 +250,7 @@ class AdminController extends BaseController
                     $errors = $form->getErrors();
                     foreach ($errors as $e) {
                         var_dump($e->getMessage());
-                    }
-                    die;
+                    }die;
                 }
             }
         }

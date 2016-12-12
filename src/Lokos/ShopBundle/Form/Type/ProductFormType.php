@@ -129,7 +129,7 @@ class ProductFormType extends AbstractType
                         $product = $form->getData()->setCategory($category);
                         $this->addProductSetForm($form, $product);
                     } else {
-                        var_dump('bad');die;
+//                        var_dump('bad');die;
                         $form->remove('productSets');
                     }
                 }

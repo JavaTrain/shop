@@ -47,6 +47,7 @@ class OptionFormType extends AbstractType
                 array(
                     'class'    => 'LokosShopBundle:Category',
                     'multiple' => true,
+                    'attr'     => ['class' => 'chosen-select']
                 )
             )
             ->add(

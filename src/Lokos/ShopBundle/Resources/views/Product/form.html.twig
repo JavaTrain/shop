@@ -4,77 +4,132 @@
 {% block page_title %}Order{% endblock page_title %}
 
 {% block content %}
-    <form class="ajax-form uk-form uk-form-horizontal" method="post" enctype="multipart/form-data" novalidate="novalidate">
-        <div class="uk-margin-bottom">
-            <label class="uk-form-label" for="{{ form.name.vars.id }}">{{ form.name.vars.label|trans }}</label>
+    <form class="form ajax-form" method="post" enctype="multipart/form-data" novalidate="novalidate">
+        <div class="form-group row">
+            <label class="col-xs-2 col-form-label" for="{{ form.name.vars.id }}">{{ form.name.vars.label|trans }}</label>
             {{ form_widget(form.name) }}
         </div>
 
-        <div class="uk-margin-bottom">
-            <label class="uk-form-label" for="{{ form.description.vars.id }}">{{ form.description.vars.label|trans }}</label>
+        <div class="form-group row">
+            <label class="col-xs-2 col-form-label" for="{{ form.description.vars.id }}">{{ form.description.vars.label|trans }}</label>
             {{ form_widget(form.description) }}
         </div>
 
-        <div class="uk-margin-bottom">
-            <label class="uk-form-label" for="{{ form.price.vars.id }}">{{ form.price.vars.label|trans }}</label>
+        <div class="form-group row">
+            <label class="col-xs-2 col-form-label" for="{{ form.price.vars.id }}">{{ form.price.vars.label|trans }}</label>
             {{ form_widget(form.price) }}
         </div>
 
 
-        <div class="uk-margin-bottom">
-            <label class="uk-form-label" for="{{ form.quantity.vars.id }}">{{ form.quantity.vars.label|trans }}</label>
+        <div class="form-group row">
+            <label class="col-xs-2 col-form-label" for="{{ form.quantity.vars.id }}">{{ form.quantity.vars.label|trans }}</label>
             {{ form_widget(form.quantity) }}
         </div>
 
-        <div class="uk-margin-bottom block-categories">
-            <label class="uk-form-label" for="{{ form.category.vars.id }}">{{ form.category.vars.label|trans }}</label>
+        <div class="form-group row block-categories">
+            {#<label class="col-xs-2 col-form-label" for="{{ form.category.vars.id }}">{{ form.category.vars.label|trans }}</label>#}
             {{ form_row(form.category) }}
         </div>
 
-        {% if form.productSets is defined %}
-            <div id="product_sets_block">
-                <div id="productSets" data-prototype="{{ form_widget(form.productSets.vars.prototype)|e }}">
-                    {% for productSet in form.productSets %}
-                        <div id="{{ productSet.vars.id }}" class="tm-panel-border">
-                            <span class='delete-btn'>X</span>
-                            <br>
-                            <div class="uk-form-row">
-                                <a class="addProduct2Options button button-success" href="#"><i class="uk-icon-plus"></i> {{ 'button.add_product_2_options'|trans }}</a>
-                            </div>
-                            {{ form_row(productSet.name) }}
-                            {{ form_row(productSet.quantity) }}
-                            {#{% if productSet.product2Options is defined %}#}
-                                {#<div id="{{ productSet.product2Options.vars.id }}" class="product-2-options" data-prototype="{{ form_widget(productSet.product2Options.vars.prototype)|e }}">#}
-                                    {#<input type="hidden" class="cnt" value="{{ productSet.product2Options|length }}"/>#}
-                                    <div class="product-2-options tm-panel-border" data-prototype="{{ form_widget(productSet.product2Options.vars.prototype)|e }}">
-                                        {#{{ form_widget(productSet.product2Options) }}#}
-                                        {% for product2Option in productSet.product2Options %}
-                                            <div id="option" class="tm-panel-border">
-                                                <span class="delete-btn">X</span>
-                                                <br>
-                                                <div id="{{ product2Option.vars.id }}">
-                                                    {{ form_row(product2Option.option) }}
-                                                    <div id="optionValues">
-                                                        {{ form_row(product2Option.optionValue) }}
-                                                        {{ form_row(product2Option.price) }}
-                                                    </div>
+
+
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#sets2product">Product Sets</a></li>
+            <li><a data-toggle="tab" href="#menu1">Product Attributes</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="sets2product" class="tab-pane fade in active">
+                {% if form.productSets is defined %}
+                    <div id="product_sets_block" class="jumbotron">
+                        <div id="productSets" data-prototype="{{ form_widget(form.productSets.vars.prototype)|e }}">
+                            {% for productSet in form.productSets %}
+                                <div id="{{ productSet.vars.id }}" class="tm-panel-border panel panel-default">
+                                    <button class='btn btn-danger delete-btn'>X remove set</button>
+                                    <div class="panel-body">
+                                        {{ form_row(productSet.name) }}
+                                        {{ form_row(productSet.quantity) }}
+                                        <div class="product-2-options tm-panel-border"
+                                             data-prototype="{{ form_widget(productSet.product2Options.vars.prototype)|e }}">
+                                            {% for product2Option in productSet.product2Options %}
+                                                <div id="option" class="tm-panel-border">
+                                                    <button class="btn btn-danger delete-btn">X</button>
                                                     <br>
+                                                    <div id="{{ product2Option.vars.id }}">
+                                                        {{ form_row(product2Option.option) }}
+                                                        <div id="optionValues">
+                                                            {{ form_row(product2Option.optionValue) }}
+                                                            {{ form_row(product2Option.price) }}
+                                                        </div>
+                                                        <br>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        {% endfor %}
+                                            {% endfor %}
+                                        </div>
+                                        <div class="uk-form-row">
+                                            <a class="btn btn-success addProduct2Options" href="#"><i class="uk-icon-plus"></i> {{ 'button.add_product_2_options'|trans }}</a>
+                                        </div>
+                                        <br>
                                     </div>
-                                {#</div>#}
-                                <br>
-                            {#{% endif %}#}
+                                </div>
+                            {% endfor %}
                         </div>
-                    {% endfor %}
-                </div>
-                <br>
-                <div class="uk-form-row">
-                    <a class="button button-success" href="#" id="addProductSet"><i class="uk-icon-plus"></i> {{ 'button.add_product_set'|trans }}</a>
-                </div>
+                        <br>
+                        <div class="uk-form-row">
+                            <a class="btn btn-success" href="#" id="addProductSet"><i
+                                        class="uk-icon-plus"></i> {{ 'button.add_product_set'|trans }}</a>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
-        {% endif %}
+            <div id="menu1" class="tab-pane fade">
+                <h3>Menu 1</h3>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            </div>
+        </div>
+
+
+
+
+        {#{% if form.productSets is defined %}#}
+            {#<div id="product_sets_block" class="jumbotron">#}
+                {#<div id="productSets" data-prototype="{{ form_widget(form.productSets.vars.prototype)|e }}">#}
+                    {#{% for productSet in form.productSets %}#}
+                        {#<div id="{{ productSet.vars.id }}" class="tm-panel-border panel panel-default">#}
+                            {#<button class='btn btn-danger delete-btn'>X remove set</button>#}
+                            {#<div class="panel-body">#}
+                                {#{{ form_row(productSet.name) }}#}
+                                {#{{ form_row(productSet.quantity) }}#}
+                                {#<div class="product-2-options tm-panel-border" data-prototype="{{ form_widget(productSet.product2Options.vars.prototype)|e }}">#}
+                                    {#{% for product2Option in productSet.product2Options %}#}
+                                        {#<div id="option" class="tm-panel-border">#}
+                                            {#<button class="btn btn-danger delete-btn">X</button>#}
+                                            {#<br>#}
+                                            {#<div id="{{ product2Option.vars.id }}">#}
+                                                {#{{ form_row(product2Option.option) }}#}
+                                                {#<div id="optionValues">#}
+                                                    {#{{ form_row(product2Option.optionValue) }}#}
+                                                    {#{{ form_row(product2Option.price) }}#}
+                                                {#</div>#}
+                                                {#<br>#}
+                                            {#</div>#}
+                                        {#</div>#}
+                                    {#{% endfor %}#}
+                                {#</div>#}
+                                {#<div class="uk-form-row">#}
+                                    {#<a class="btn btn-success addProduct2Options" href="#"><i class="uk-icon-plus"></i> {{ 'button.add_product_2_options'|trans }}</a>#}
+                                {#</div>#}
+                                {#<br>#}
+                            {#</div>#}
+                        {#</div>#}
+                    {#{% endfor %}#}
+                {#</div>#}
+                {#<br>#}
+                {#<div class="uk-form-row">#}
+                    {#<a class="btn btn-success" href="#" id="addProductSet"><i class="uk-icon-plus"></i> {{ 'button.add_product_set'|trans }}</a>#}
+                {#</div>#}
+            {#</div>#}
+        {#{% endif %}#}
 
         <div>
             {{ form_row(form._token) }}
@@ -100,7 +155,7 @@
                     data = {"update": true},
                     attrName = $(this).attr('name');
                 data[$(this).attr('name')] = $(this).val();
-                data[$('#lokos_shop_product_category').attr('name')] = $('#lokos_shop_product_category').val();
+                data[$('#lokos_shop_product_category').find('select').attr('name')] = $('#lokos_shop_product_category').find('select').val();
                 $.ajax({
                     url    : form.attr('action'),
                     type   : form.attr('method'),
@@ -112,10 +167,9 @@
                             id = id.slice(0,-8);
                         }
                         var optionId = id+'_optionValue';
-                        var div = $(html).find('#'+optionId).parent().parent();
+                        var div = $(html).find('#'+optionId).parent().parent().parent();
                         div.find('.option-select').parent().remove();
                         var optionSelect = $('#'+id);
-                        console.log(optionSelect);
                         optionSelect.nextAll('div').remove();
                         optionSelect.parent().append(div);
                         optionSelect.parent().find('.delete-btn').click(delLink);
@@ -131,7 +185,6 @@
             var addProduct2Option = function (e) {
                 e.preventDefault();
                 var blockDiv = $(e.target).parent().parent();
-                console.log(blockDiv);
                 var cnt = blockDiv.find('.option-select').length;
                 if(cnt){
                     valuesCount = cnt;
@@ -142,8 +195,10 @@
                     newWidget = product2OptionList.attr('data-prototype');
                 newWidget = newWidget.replace(/__prod_set__/g, valuesCount);
                 valuesCount++;
-                var newDiv = $(newWidget).prepend("<span class='delete-btn'>X</span>");
+                var newDiv = $(newWidget).prepend("<button class='btn btn-danger delete-btn'>X</button>");
                 newDiv.addClass('tm-panel-border');
+                newDiv.find('.delete-btn').siblings('label').remove();
+//                newDiv.find('.delete-btn').parent().sibling('label').remove();
                 newDiv.appendTo(product2OptionList);
                 $(product2OptionList).find('.delete-btn').click(delLink);
                 $('.option-select').change(addOption)
@@ -155,11 +210,13 @@
                     newWidget = productSetList.attr('data-prototype');
                 newWidget = newWidget.replace(/__name__/g, prodSetCount);
                 prodSetCount++;
-                var newDiv = $(newWidget).prepend('<span class="delete-btn">X</span><br><div class="uk-form-row"><a class="addProduct2Options button button-success" href="#"><i class="uk-icon-plus"></i> {{ 'button.add_product_2_options'|trans }}</a> </div>');
-                newDiv.addClass('tm-panel-border');
+                console.log(newWidget);
+                var newDiv = $(newWidget).prepend('<button class="btn btn-danger delete-btn">X remove set</button><div class="panel-body"><a class="addProduct2Options btn btn-success" href="#"><i class="uk-icon-plus"></i> {{ 'button.add_product_2_options'|trans }}</a></div>');
+                newDiv.addClass('panel panel-default');
+                console.log(newDiv.html());
                 newDiv.appendTo(productSetList);
                 newDiv.find('.addProduct2Options').click(addProduct2Option);
-                newDiv.find('.addProduct2Options').trigger('click');
+//                newDiv.find('.addProduct2Options').trigger('click');
 //                var optionId = newDiv.attr('id')+'_product2Options';
                 {#$('#'+optionId).prepend(#}
                         {#'<br><div class="uk-form-row"><a class="addProduct2Options button button-success" href="#"><i class="uk-icon-plus"></i> {{ 'button.add_product_2_options'|trans }}</a> </div>'#}
@@ -188,15 +245,16 @@
 
             $('#{{ form.category.vars.id }}').change(function(){
                 var form = $(this).closest('form'),
-                        data = {"update": true};
-                data[$(this).attr('name')] = $(this).val();
+                    data = {"update": true};
+                data[$(this).find('select').attr('name')] = $(this).find('select').val();
 
                 $.ajax({
                     url    : form.attr('action'),
                     type   : form.attr('method'),
                     data   : data,
                     success: function (html) {
-                        $('.block-categories').after($(html).find('#product_sets_block'));
+                        $('#sets2product').empty();
+                        $('#sets2product').append($(html).find('#product_sets_block'));
                         $('#addProductSet').click(addProductSet);
                         $('.addProduct2Options button').click(addProduct2Option);
                     }
@@ -204,84 +262,6 @@
             });
 
 
-            //        $.each($('.ajax-form'), function () { AjaxForm.init(this) });
+        $.each($('.ajax-form'), function () { AjaxForm.init(this) });
     </script>
 {% endblock bottom_script %}
-{#
-
-<div id="product_sets_block">
-    <div id="productSets"
-         data-prototype="&lt;div id=&quot;lokos_shop_product_productSets___name__&quot; product=&quot;New product&quot;&gt;&lt;div&gt;&lt;label for=&quot;lokos_shop_product_productSets___name___name&quot;&gt;product.name_title&lt;/label&gt;&lt;input type=&quot;text&quot; id=&quot;lokos_shop_product_productSets___name___name&quot; name=&quot;lokos_shop_product[productSets][__name__][name]&quot; /&gt;&lt;/div&gt;&lt;div&gt;&lt;label&gt;Product2 options&lt;/label&gt;&lt;div id=&quot;lokos_shop_product_productSets___name___product2Options&quot; class=&quot;product-2-options&quot; data-prototype=&quot;&amp;lt;div&amp;gt;&amp;lt;label&amp;gt;__prod_set__label__&amp;lt;/label&amp;gt;&amp;lt;div id=&amp;quot;lokos_shop_product_productSets___name___product2Options___prod_set__&amp;quot; product=&amp;quot;New product&amp;quot;&amp;gt;&amp;lt;div&amp;gt;&amp;lt;label for=&amp;quot;lokos_shop_product_productSets___name___product2Options___prod_set___option&amp;quot;&amp;gt;Option&amp;lt;/label&amp;gt;&amp;lt;select id=&amp;quot;lokos_shop_product_productSets___name___product2Options___prod_set___option&amp;quot; name=&amp;quot;lokos_shop_product[productSets][__name__][product2Options][__prod_set__][option]&amp;quot; class=&amp;quot;option-select&amp;quot;&amp;gt;&amp;lt;option value=&amp;quot;&amp;quot;&amp;gt;Choose an option&amp;lt;/option&amp;gt;            &amp;lt;option value=&amp;quot;1&amp;quot; &amp;gt;Color&amp;lt;/option&amp;gt;            &amp;lt;option value=&amp;quot;2&amp;quot; &amp;gt;Size&amp;lt;/option&amp;gt;&amp;lt;/select&amp;gt;&amp;lt;/div&amp;gt;&amp;lt;/div&amp;gt;&amp;lt;/div&amp;gt;&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;">
-        <div class="tm-panel-border">
-            <span class='delete-btn'>X</span>
-            <input type="text" id="lokos_shop_product_productSets_0_name"
-                   name="lokos_shop_product[productSets][0][name]"/>
-            <div class="product-2-options"
-                 data-prototype="&lt;div id=&quot;lokos_shop_product_productSets_0_product2Options___prod_set__&quot; product=&quot;New product&quot;&gt;&lt;div&gt;&lt;label for=&quot;lokos_shop_product_productSets_0_product2Options___prod_set___option&quot;&gt;Option&lt;/label&gt;&lt;select id=&quot;lokos_shop_product_productSets_0_product2Options___prod_set___option&quot; name=&quot;lokos_shop_product[productSets][0][product2Options][__prod_set__][option]&quot; class=&quot;option-select&quot;&gt;&lt;option value=&quot;&quot;&gt;Choose an option&lt;/option&gt;            &lt;option value=&quot;1&quot; &gt;Color&lt;/option&gt;            &lt;option value=&quot;2&quot; &gt;Size&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;/div&gt;">
-                <input type="hidden" class="cnt" value="1"/>
-                <div class="tm-panel-border">
-                    <div id="lokos_shop_product_productSets_0_product2Options" class="product-2-options"
-                         data-prototype="">
-                        <div><label>0</label>
-                            <div id="lokos_shop_product_productSets_0_product2Options_0" product="New product">
-                                <div>
-                                    <label for="lokos_shop_product_productSets_0_product2Options_0_option">Option</label><select
-                                            id="lokos_shop_product_productSets_0_product2Options_0_option"
-                                            name="lokos_shop_product[productSets][0][product2Options][0][option]"
-                                            class="option-select">
-                                        <option value="">Choose an option</option>
-                                        <option value="1" selected="selected">Color</option>
-                                        <option value="2">Size</option>
-                                    </select></div>
-                                <div><label for="lokos_shop_product_productSets_0_product2Options_0_optionValue">Option
-                                        value</label><select
-                                            id="lokos_shop_product_productSets_0_product2Options_0_optionValue"
-                                            name="lokos_shop_product[productSets][0][product2Options][0][optionValue]">
-                                        <option value="">Choose a value</option>
-                                        <option value="1">red</option>
-                                        <option value="2">black</option>
-                                    </select></div>
-                                <div><label for="lokos_shop_product_productSets_0_product2Options_0_price">Price</label><input
-                                            type="text" id="lokos_shop_product_productSets_0_product2Options_0_price"
-                                            name="lokos_shop_product[productSets][0][product2Options][0][price]"/></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="option">
-
-                        <div id="optionValues">
-
-                        </div>
-                        <br>
-                    </div>
-                </div>
-            </div>
-            <br>
-            <div class="uk-form-row">
-                <a class="addProduct2Options button button-success" href="#"><i class="uk-icon-plus"></i>
-                    button.add_product_2_options</a>
-            </div>
-        </div>
-    </div>
-    <br>
-    <div class="uk-form-row ">
-        <a class="button button-success" href="#" id="addProductSet"><i class="uk-icon-plus"></i> button.add_product_set</a>
-    </div>
-</div>
-
-#}
-
-{#
-<div id="lokos_shop_product_productSets___name__" product="New product">
-    <div>
-        <label for="lokos_shop_product_productSets___name___name">product.name_title</label>
-        <input type="text"
-                    id="lokos_shop_product_productSets___name___name"
-                    name="lokos_shop_product[productSets][__name__][name]"/>
-    </div>
-    <div><label>Product2 options</label>
-        <div id="lokos_shop_product_productSets___name___product2Options" class="product-2-options"
-             data-prototype="&lt;div&gt;&lt;label&gt;__prod_set__label__&lt;/label&gt;&lt;div id=&quot;lokos_shop_product_productSets___name___product2Options___prod_set__&quot; product=&quot;New product&quot;&gt;&lt;div&gt;&lt;label for=&quot;lokos_shop_product_productSets___name___product2Options___prod_set___option&quot;&gt;Option&lt;/label&gt;&lt;select id=&quot;lokos_shop_product_productSets___name___product2Options___prod_set___option&quot; name=&quot;lokos_shop_product[productSets][__name__][product2Options][__prod_set__][option]&quot; class=&quot;option-select&quot;&gt;&lt;option value=&quot;&quot;&gt;Choose an option&lt;/option&gt;            &lt;option value=&quot;1&quot; &gt;Color&lt;/option&gt;            &lt;option value=&quot;2&quot; &gt;Size&lt;/option&gt;&lt;/select&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;"></div>
-    </div>
-</div>
-#}

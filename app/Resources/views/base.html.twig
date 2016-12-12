@@ -13,6 +13,7 @@
             '@bootstrap_css'
             '@LokosShopBundle/Resources/public/css/style.css'
             '@LokosShopBundle/Resources/public/css/shop-homepage.css'
+            '@LokosShopBundle/Resources/public/css/chosen.css'
             %}
             <link href="{{ asset_url }}" type="text/css" rel="stylesheet"/>
             {% endstylesheets %}
@@ -25,6 +26,7 @@
             {% javascripts
             '@LokosShopBundle/Resources/public/js/jquery-2.1.4.js'
             '@LokosShopBundle/Resources/public/js/lodash.js'
+            '@LokosShopBundle/Resources/public/js/chosen.jquery.js'
             '@bootstrap_js'
             %}
             <script src="{{ asset_url }}"></script>
@@ -110,6 +112,11 @@
             </div>
         {% endblock footer %}
         {% block javascripts %}
+            {% javascripts
+            '@LokosShopBundle/Resources/public/js/main.js'
+            %}
+            <script src="{{ asset_url }}"></script>
+            {% endjavascripts %}
         {% endblock %}
     </body>
 </html>

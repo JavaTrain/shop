@@ -50,6 +50,8 @@ framework:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
+    form_themes:
+        - 'LokosShopBundle::form_layout.html.twig'
     globals:
         maxPageCount: 5
         limitList:

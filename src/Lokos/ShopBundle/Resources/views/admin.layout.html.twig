@@ -4,6 +4,7 @@
     {% block styles %}
         {% stylesheets
         '@bootstrap_css'
+        '@LokosShopBundle/Resources/public/css/chosen.css'
         %}
         <link href="{{ asset_url }}" type="text/css" rel="stylesheet"/>
         {% endstylesheets %}
@@ -15,16 +16,24 @@
         {% javascripts
         '@LokosShopBundle/Resources/public/js/jquery-2.1.4.js'
         '@bootstrap_js'
+        '@LokosShopBundle/Resources/public/js/lodash.js'
+        '@LokosShopBundle/Resources/public/js/chosen.jquery.js'
+        '@LokosShopBundle/Resources/public/js/ajaxForm.js'
         %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
+        <script src="/ckeditor/ckeditor.js"></script>
     {% endblock head_scripts %}
 
     {% block page_script %}{% endblock page_script %}
 
 </head>
 <body>
-
+{% block ajax_field_error_block %}
+    <div class="hidden" id="ajaxFieldErrorTemplate">
+        <span class="tm-help-block">{message}</span>
+    </div>
+{% endblock ajax_field_error_block %}
 <div class="container">
     <nav class="navbar navbar-light bg-faded">
         <ul class="nav navbar-nav">
@@ -42,16 +51,21 @@
 </div>
 
 
-
-
-
-{% block content %}
-{% endblock content  %}
+<div class="container">
+    <div class="row">
+        {% block content %}
+        {% endblock content  %}
+    </div>
+</div>
+{% block javascripts %}
+    {% javascripts
+    '@LokosShopBundle/Resources/public/js/main.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
 
 {% block bottom_script %}
-    <script>
-        $('.chosen-select').chosen();
-    </script>
 {% endblock bottom_script %}
 </body>
 </html>

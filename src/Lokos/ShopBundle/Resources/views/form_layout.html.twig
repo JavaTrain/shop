@@ -1,0 +1,333 @@
+{% extends 'form_div_layout.html.twig' %}
+{% trans_default_domain 'general' %}
+
+{% block form_row %}
+    {% spaceless %}
+        <div class="{{ errors|length > 0 ? ' form-danger' : '' }}">
+            {{ form_label(form) }}
+            {{ form_widget(form) }}
+            {{ form_errors(form) }}
+        </div>
+    {% endspaceless %}
+{% endblock form_row %}
+
+{% block form_label %}
+    {% if label is not same as(false) %}
+        {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' col-xs-2 col-form-label')|trim}) %}
+    {% endif %}
+    {{ parent() }}
+{% endblock form_label %}
+
+{% block form_widget_simple %}
+    {% spaceless %}
+        {% set attr = attr|merge({'class': (attr.class|default('') ~ ' form-control')|trim, 'placeholder': label|trans }) %}
+        {% if (type is not defined) or (type != 'hidden') %}
+            <div class="col-xs-10">
+        {% endif %}
+            {% if type is defined and type == 'file' and type != 'hidden' %}
+                <div class="uk-form-file">
+                    <button class="uk-button">{{ 'button.upload'|trans({}, translation_domain) }}</button>
+                    <div class="upload-file-name uk-margin-small-top"></div>
+                    {% set attr = attr|merge({'class': (attr.class|default('') ~ ' ajax-form-init upload-file')|trim}) %}
+                    {{ parent() }}
+                    <script>
+                        $('.upload-file').unbind('change')
+                                .change(function () {
+                                    $(this).parent().find('.upload-file-name').html(this.value.split('\\').pop());
+                                });
+                    </script>
+                </div>
+            {% else %}
+                {{ parent() }}
+            {% endif %}
+        {% if (type is not defined) or (type != 'hidden') %}
+            </div>
+        {% endif %}
+    {% endspaceless %}
+{% endblock form_widget_simple %}
+
+{% block choice_widget_collapsed %}
+    {% spaceless %}
+        <div class="col-xs-10 uk-form-controls">
+            {% if not((attr.class is defined) and ('chosen-select' in attr.class)) %}
+               <div id="{{ id }}" class="uk-button uk-form-select uk-width-1-1 {% if attr.disabled is defined and attr.disabled %}tm-disabled{% endif %}" data-uk-form-select>
+                <span></span>
+                <i class="uk-icon-angle-down"></i>
+            {% endif %}
+
+            {% if ((attr.class is defined) and ('chosen-select' in attr.class)) %}
+                <div id="{{ id }}" class="uk-button uk-form-select uk-width-1-1 tm-select-chosen">
+                    <i class="uk-icon-angle-down"></i>
+                {% if attr.placeholder is defined %}
+                    {% set attr = attr|merge({'data-placeholder': attr.placeholder|trans({}, translation_domain)}) %}
+                {% endif %}
+            {% endif %}
+                {% set attr = attr|merge({'data-id': id}) %}
+                {% set attr = attr|merge({'class': (attr.class|default('') ~ ' form-control')|trim}) %}
+                {% set id = null %}
+                {{ parent() }}
+            {% if ((attr.class is defined) and ('chosen-select' in attr.class)) %}
+                </div>
+
+           {% endif %}
+            {% if not((attr.class is defined) and ('chosen-select' in attr.class)) %}
+               </div>
+           {% endif %}
+        </div>
+    {% endspaceless %}
+{% endblock choice_widget_collapsed %}
+
+{% block image_widget %}
+    {% spaceless %}
+        <div class="image-wrapper">
+            <div class="uk-form-controls uk-margin-bottom">
+                {% if image_url is not null %}
+                    <div class="uk-clearfix uk-margin-bottom image-container">
+                        <img src="{{ asset(image_url) }}">
+                    </div>
+                {% endif %}
+                <div class="uk-clearfix tm-form-file uk-flex uk-flex-middle">
+                    {% if image_url is not null %}
+                        <button class="delete-image uk-margin-small-right uk-button uk-button-small uk-button-danger {% if image_url is null %}grey_btn{% endif %}" type="button">
+                            {{ 'button.remove'|trans({}, translation_domain) }}
+                        </button>
+                    {% endif %}
+                    <div class="upload uk-form-file">
+                        <div class="uk-flex uk-flex-middle">
+                            {% set type = type|default('file') %}
+                            <button class="uk-button uk-button-small" style="min-width: 83px;">{{ 'button.upload'|trans({}, translation_domain) }}</button>
+                            {% set attr = attr|merge({'class': (attr.class|default('') ~ ' ajax-form-init image-file')|trim}) %}
+                            <input type="{{ type }}" {{ block('widget_attributes') }}/>
+                            <span class="uk-margin-small-left image-file-name"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endspaceless %}
+    <script>
+        $('.delete-image').unbind('click')
+                .click(function () {
+                    $(this).parents('.image-wrapper').find('.image-container').remove();
+                    $('#{{ id|replace(image_path) }}').val('');
+                    $(this).remove();
+                });
+        $('.image-file').unbind('change')
+                .change(function () {
+                    $(this).parent().find('.image-file-name').html(this.value.split('\\').pop());
+                });
+    </script>
+{% endblock %}
+
+{% block textarea_widget %}
+    {% spaceless %}
+        {% if (attr.type is not defined) or (attr.type != 'full-width') %}
+            {#<div class="form-group row">#}
+                <div class="col-xs-10">
+        {% endif %}
+            {% set attr = attr|merge({'class': (attr.class|default('') ~ ' editor form-control')|trim, 'placeholder':label}) %}
+            {{ parent() }}
+        {% if (attr.type is not defined) or (attr.type != 'full-width') %}
+                </div>
+            {#</div>#}
+        {% endif %}
+    {% endspaceless %}
+{% endblock textarea_widget %}
+
+{% block checkbox_widget %}
+    <div class="uk-form-controls tm-form-label-margin-top">
+        <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+    </div>
+{% endblock checkbox_widget %}
+
+{% block radio_widget -%}
+    <div class="uk-form-controls tm-form-label-margin-top">
+        <input type="radio" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+    </div>
+{% endblock radio_widget -%}
+
+{% block choice_widget %}
+    {% if expanded %}
+        {{- block('choice_widget_expanded') -}}
+    {% else %}
+        {{- block('choice_widget_collapsed') -}}
+    {% endif %}
+{% endblock choice_widget %}
+
+{% block choice_widget_expanded %}
+    <div class="uk-form-row" {{ block('widget_container_attributes') }}>
+    {% for child in form %}
+        <div class="uk-form-row">
+            {{ form_label(child, null, {translation_domain: choice_translation_domain}) }}
+            {{ form_widget(child) }}
+        </div>
+    {% endfor %}
+    </div>
+{% endblock choice_widget_expanded %}
+
+{%- block date_widget -%}
+    {%- set type = 'text' -%}
+    {%- set attr = attr|merge({'data-uk-datepicker': "{format:'DD MMM YYYY', i18n:{weekdays: " ~ ('statistic.weekdays'|trans ) ~ ", months: " ~ ('statistic.months'|trans) ~"}",'readonly': "readonly" }) -%}
+    {{ parent() }}
+{%- endblock date_widget -%}
+
+{%- block time_widget -%}
+    {%- set type = 'text' -%}
+    {% set attr = attr|merge({'class': (attr.class|default('') ~ ' clockpicker')|trim}) %}
+    {%- set attr = attr|merge({'readonly': "readonly" }) -%}
+    {{ parent() }}
+{%- endblock time_widget -%}
+
+{% block releaseImage_widget %}
+    {% spaceless %}
+        <div class="img_wrapper" data-img-default="{{ image_default }}" data-uk-tooltip="{pos:'bottom'}" title="{{ label|trans }}">
+            {% if image_data.imgName is defined %}
+                <a class="content tm-block-release-link">
+                    <span class="tm-block-release-img">
+                        <img src="{{ asset(upload_dir ~ upload_dir_release_thumb ~ image_data.imgName) }}" width="{{ image_width }}" data-width="{{ image_width }}" data-height="{{ image_height }}" data-href="#upload_img">
+                    </span>
+                </a>
+            {% else %}
+                <a class="content tm-block-release-link">
+                    <span class="tm-block-release-img">
+                        <img class="tm-image-default" src="{{ image_default }}" data-width="{{ image_width }}" data-height="{{ image_height }}" data-href="#upload_img">
+                    </span>
+                </a>
+            {% endif %}
+        </div>
+    {% endspaceless %}
+{% endblock %}
+
+{% block location_widget %}
+    <div class="uk-form-controls">
+        {% set attr = attr|merge({'class': (attr.class|default('') ~ ' uk-hidden')|trim}) %}
+        <select {{ block('widget_attributes') }} multiple="multiple">
+            {% for group_label, choice in choices %}
+                {% set attr = choice.attr %}
+                <option value="{{ choice.value }}" {% if choice is selectedchoice(value) %} selected="selected"{% endif %}>{{ choice.label }}</option>
+            {% endfor %}
+        </select>
+
+        <div class="location-template uk-hidden" data-id="{{ id }}">
+            <div class="uk-grid uk-grid-small uk-margin-bottom">
+                <div class="uk-width-1-4">
+                    <div class="uk-button uk-form-select uk-width-1-1" data-uk-form-select>
+                        <span></span>
+                        <i class="uk-icon-angle-down"></i>
+                        <select class="location location-country ajax-form-init">
+                            <option class="uk-hidden" value="" disabled selected>{{ 'button.country_placeholder'|trans({}, translation_domain) }}</option>
+                            {% for group_label, choice in choices %}
+                                {% if(choice.value % 10000 == 0) %}
+                                    <option value="{{ choice.value }}">{{ choice.label }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="uk-width-1-4">
+                    <div class="uk-button uk-form-select uk-width-1-1" data-uk-form-select>
+                        <span></span>
+                        <i class="uk-icon-angle-down"></i>
+                        <select class="location location-county ajax-form-init" disabled>
+                            <option class="uk-hidden" value="" disabled selected>{{ 'button.county_placeholder'|trans({}, translation_domain) }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="uk-width-1-4">
+                    <div class="uk-button uk-form-select uk-width-1-1 tm-select-chosen">
+                        <i class="uk-icon-angle-down"></i>
+                        <select class="location location-municipality ajax-form-init" disabled multiple="multiple" data-placeholder="{{ 'button.municipality_placeholder'|trans({}, translation_domain) }}">
+                        </select>
+                    </div>
+                </div>
+                <div class="uk-width-1-4 uk-flex uk-flex-middle">
+                    <button class="uk-button uk-button-danger uk-button-small location-remove" type="button" data-uk-tooltip="{pos:'bottom'}" title="{{ 'button.remove'|trans({}, translation_domain) }}"><span class="uk-icon-remove"></span></button>
+                </div>
+            </div>
+        </div>
+        <button class="uk-button location-add uk-button-success uk-button-small" type="button"><span class="uk-icon-plus"></span> {{ 'button.add_location'|trans({}, translation_domain) }}</button>
+    </div>
+    <script>
+        (function () {
+            var locationsType = new LocationsType({select_all: '{{ 'button.select_all'|trans({}, translation_domain) }}'}, '{{ id }}');
+            locationsType.init();
+        })();
+    </script>
+{% endblock location_widget %}
+
+{% block channel_widget %}
+    <div class="uk-form-controls">
+        {% set attr = attr|merge({'class': (attr.class|default('') ~ ' uk-grid')|trim}) %}
+        <div {{ block('attributes') }}>
+            {% for category in channel_data %}
+                <div class="channel-category uk-width-1-3 tm-channel-category">
+                    <div class="tm-panel-background">
+                        <div class="uk-h3 uk-margin-bottom uk-text-bold">
+                            {{ category.name }}
+                            <span class="uk-icon-question-circle" data-uk-tooltip="{pos:'bottom'}" title="{{ category.description }}"></span>
+                        </div>
+                        <div class="tm-channel-category-scrollable uk-margin-bottom">
+                            {% for channel in category.channels %}
+                                <div class="uk-form-row">
+                                    {% set channel_id = (channel.data is not null)?channel.data.id:channel.id %}
+                                    <label for="channel_{{ channel_id }}" class="tm-label-row">
+                                         {% if(channel.data) %}
+                                        <input type="hidden" name="{{ prototype.data.vars.full_name|replace({'__name__': 'channel_' ~ channel_id}) }}" value="{{ channel.data|json_encode }}"/>
+                                        {% endif %}
+                                        <input
+                                                type="checkbox"
+                                                name="{{ prototype.channel.vars.full_name|replace({'__name__': 'channel_' ~ channel_id}) }}"
+                                                id="channel_{{ channel_id }}"
+                                                {% if((selected_data[channel_id] is defined) or ((not readonly) and ((channel.predefined) or (channel.mandatory)))) -%}
+                                                checked="checked"
+                                                {%- endif %}
+                                                {% if(channel.mandatory) -%}
+                                                    disabled="disabled"
+                                                {%- endif %}
+                                                value="{{ channel.id }}"
+                                                class="channel ajax-form-init" />
+                                        {% if(channel.mandatory) %}
+                                        <input
+                                                    type="hidden"
+                                                    name="{{ prototype.channel.vars.full_name|replace({'__name__': 'channel_' ~ channel_id}) }}"
+                                                    value="{{ channel.id }}"
+                                                    class="channel ajax-form-init" />
+                                        {% endif %}
+                                        <span class="tm-label-row-txt">
+                                            {% if channel.data is not null %}
+                                                {{ channel.data.title }}
+                                            {% else %}
+                                                {{ channel.title }}
+                                            {% endif %}
+                                            {% if channel.payable %}
+                                                ({{ 'channel_price'|trans({':price':channel.price}, translation_domain) }})
+                                            {% endif %}
+                                        </span>
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="action_btn uk-clearfix">
+                            <span class="uk-button-small uk-button uk-float-left" onclick="$(this).parents('.channel-category').find('input[type=\'checkbox\']').prop('checked', true);">{{ 'button.check_all'|trans({}, translation_domain) }}</span>
+                            <span class="uk-button-small uk-button uk-float-right" onclick="$(this).parents('.channel-category').find('input[type=\'checkbox\']').prop('checked', false);">{{ 'button.uncheck_all'|trans({}, translation_domain) }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock channel_widget %}
+
+{% block form_errors %}
+    {% spaceless %}
+        {% if errors|length > 0 %}
+            <ul class="uk-list">
+                {% for error in errors %}
+                <li>
+                    {{ error.message }}
+                </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endspaceless %}
+{% endblock form_errors %}

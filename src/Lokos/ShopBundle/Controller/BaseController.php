@@ -31,7 +31,7 @@ abstract class BaseController extends Controller
             'errors'    => array(),
             'hasErrors' => false,
         );
-        if ((!$form->count() && ('file' !== $form->getConfig()->getType()->getName())) || empty($baseKey)) {
+        if ((!$form->count() && ('file' !== $form->getConfig()->getType()->getBlockPrefix())) || empty($baseKey)) {
             $result['errors'][$baseKey.$form->getName()] = array();
             foreach ($form->getErrors() as $error) {
                 $result['errors'][$baseKey.$form->getName()][] = $error->getMessage();

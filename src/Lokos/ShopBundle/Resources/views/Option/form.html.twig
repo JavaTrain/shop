@@ -8,22 +8,22 @@
                 <h1>{{ title }}</h1>
             </div>
             <div class="uk-width-5-10">
-                <button class="uk-button uk-button-primary uk-align-right" type="submit">
+                <button class="btn btn-primary uk-align-right" type="submit">
                     <i class="uk-icon-check"></i>
                     {{ 'button.save'|trans }}
                 </button>
             </div>
         </div>
-        <div class="uk-margin-bottom">
-            <label class="uk-form-label" for="{{ form.name.vars.id }}">{{ form.name.vars.label|trans }}</label>
+        <div class="form-group row">
+            <label class="col-xs-2 col-form-label uk-form-label" for="{{ form.name.vars.id }}">{{ form.name.vars.label|trans }}</label>
             {{ form_widget(form.name) }}
         </div>
-        <div class="uk-margin-bottom">
-            <label class="uk-form-label" for="{{ form.description.vars.id }}">{{ form.description.vars.label|trans }}</label>
+        <div class="form-group row">
+            <label class="col-xs-2 col-form-label uk-form-label" for="{{ form.description.vars.id }}">{{ form.description.vars.label|trans }}</label>
             {{ form_widget(form.description) }}
         </div>
-        <div class="uk-margin-bottom">
-            <label class="uk-form-label" for="{{ form.name.vars.id }}">{{ form.name.vars.label|trans }}</label>
+        <div class="form-group row">
+            <label class="col-xs-2 col-form-label uk-form-label" for="{{ form.name.vars.id }}">{{ form.name.vars.label|trans }}</label>
             {{ form_widget(form.category) }}
         </div>
         <div id="optionValues" class="uk-margin-large-bottom" data-prototype="{{ form_widget(form.optionValues.vars.prototype)|e }}">
@@ -36,7 +36,7 @@
         </div>
         <br>
         <div class="uk-form-row ">
-            <a class="uk-button uk-button-success" href="#" id="addOptionValue"><i class="uk-icon-plus"></i> {{ 'button.add_option_value'|trans() }}</a>
+            <a class="btn btn-success uk-button uk-button-success" href="#" id="addOptionValue"><i class="uk-icon-plus"></i> {{ 'button.add_option_value'|trans() }}</a>
         </div>
         <div>
             {{ form_row(form._token) }}

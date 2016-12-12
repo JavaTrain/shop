@@ -4,6 +4,7 @@ namespace Lokos\ShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Product
@@ -23,6 +24,9 @@ class Product
     private $id;
 
     /**
+     *
+     * @Assert\NotBlank()
+     *
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=false)
@@ -30,6 +34,8 @@ class Product
     private $name;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @var string
      *
      * @ORM\Column(name="description", type="text", length=16777215, nullable=false)
@@ -51,6 +57,8 @@ class Product
     private $quantity;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @var \Category
      *
      * @ORM\ManyToOne(targetEntity="Category", inversedBy="products")
