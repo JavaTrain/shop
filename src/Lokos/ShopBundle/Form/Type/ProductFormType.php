@@ -4,11 +4,13 @@ namespace Lokos\ShopBundle\Form\Type;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Lokos\ShopBundle\Entity\OptionValue;
 use Lokos\ShopBundle\Entity\ProductSet;
 use Lokos\ShopBundle\Form\EventListener\AddCategoryFieldSubscriber;
 use Lokos\ShopBundle\Form\EventListener\AddOptionFieldSubscriber;
 use Lokos\ShopBundle\Form\Fields\ExtendedCollectionType;
+use Lokos\ShopBundle\Repositories\BrandRepository;
 use Lokos\ShopBundle\Repositories\OptionValueRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -102,6 +104,7 @@ class ProductFormType extends AbstractType
                 $category = $accessor->getValue($data, 'category');
                 if ($category) {
                     $this->addProductSetForm($form, $data);
+                    $this->addBrandForm($form, $category->getId());
                 } else {
                     $form->remove('productSets');
                 }
@@ -127,6 +130,7 @@ class ProductFormType extends AbstractType
                                          );
                     if ($category) {
                         $product = $form->getData()->setCategory($category);
+                        $this->addBrandForm($form, $data['category']);
                         $this->addProductSetForm($form, $product);
                     } else {
 //                        var_dump('bad');die;
@@ -139,6 +143,31 @@ class ProductFormType extends AbstractType
 
     }
 
+    /**
+     * @param $form
+     * @param $catId
+     */
+    protected function addBrandForm($form, $catId)
+    {
+        $formOptions = array(
+            'class'         => 'LokosShopBundle:Brand',
+            'attr'          => ['class' => 'option-select'],
+            'query_builder' => function (BrandRepository $repository) use ($catId) {
+                return $repository->createQueryBuilder('tbl')
+                                  ->join('tbl.categories', 'c', Join::WITH, 'c.id = :category')
+                                  ->setParameter(':category', $catId)
+                                  ->orderBy('tbl.name', 'ASC');
+            },
+            'placeholder'   => 'Choose a brand',
+        );
+
+        $form->add('brand', EntityType::class, $formOptions);
+    }
+
+    /**
+     * @param $form
+     * @param $data
+     */
     protected function addProductSetForm($form, $data)
     {
         $formOptions = array(
@@ -153,7 +182,7 @@ class ProductFormType extends AbstractType
 //            'prototype_name' => '__prod__'
         );
 
-        $form->add('productSets', CollectionType::class, $formOptions);
+//        $form->add('productSets', CollectionType::class, $formOptions);
     }
 
     /**

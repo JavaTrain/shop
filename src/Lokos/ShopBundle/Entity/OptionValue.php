@@ -2,6 +2,7 @@
 
 namespace Lokos\ShopBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -43,29 +44,12 @@ class OptionValue
      */
     private $price = 0;
 
-//    /**
-//     * @var \Product
-//     *
-//     * @ORM\ManyToOne(targetEntity="Product", inversedBy="optionValues")
-//     * @ORM\JoinColumns({
-//     *   @ORM\JoinColumn(name="product_id", referencedColumnName="id")
-//     * })
-//     */
-//    private $product;
-
-//    /**
-//     * @var \Doctrine\Common\Collections\Collection
-//     *
-//     * @ORM\ManyToMany(targetEntity="OrderDetail", mappedBy="optionValue")
-//     */
-//    private $orderDetail;
-
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->orderDetail = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->orderDetail = new ArrayCollection();
     }
 
 
@@ -110,7 +94,7 @@ class OptionValue
      *
      * @return OptionValue
      */
-    public function setOption(\Lokos\ShopBundle\Entity\Option $option = null)
+    public function setOption(Option $option = null)
     {
         $this->option = $option;
 
@@ -127,64 +111,6 @@ class OptionValue
         return $this->option;
     }
 
-//    /**
-//     * Set product
-//     *
-//     * @param \Lokos\ShopBundle\Entity\Product $product
-//     *
-//     * @return OptionValue
-//     */
-//    public function setProduct(\Lokos\ShopBundle\Entity\Product $product = null)
-//    {
-//        $this->product = $product;
-//
-//        return $this;
-//    }
-//
-//    /**
-//     * Get product
-//     *
-//     * @return \Lokos\ShopBundle\Entity\Product
-//     */
-//    public function getProduct()
-//    {
-//        return $this->product;
-//    }
-//
-//    /**
-//     * Add orderDetail
-//     *
-//     * @param \Lokos\ShopBundle\Entity\OrderDetail $orderDetail
-//     *
-//     * @return OptionValue
-//     */
-//    public function addOrderDetail(\Lokos\ShopBundle\Entity\OrderDetail $orderDetail)
-//    {
-//        $this->orderDetail[] = $orderDetail;
-//
-//        return $this;
-//    }
-//
-//    /**
-//     * Remove orderDetail
-//     *
-//     * @param \Lokos\ShopBundle\Entity\OrderDetail $orderDetail
-//     */
-//    public function removeOrderDetail(\Lokos\ShopBundle\Entity\OrderDetail $orderDetail)
-//    {
-//        $this->orderDetail->removeElement($orderDetail);
-//    }
-
-//    /**
-//     * Get orderDetail
-//     *
-//     * @return \Doctrine\Common\Collections\Collection
-//     */
-//    public function getOrderDetail()
-//    {
-//        return $this->orderDetail;
-//    }
-//
     /**
      * @return int
      */

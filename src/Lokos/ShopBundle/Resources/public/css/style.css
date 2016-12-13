@@ -4,3 +4,12 @@
 .deactive{
     background-color: #a6e1ec;
 }
+span.ajax-error{
+    color: red;
+}
+.tm-form-select{
+    border: 1px solid;
+}
+.cke_textarea_inline{
+    border: 1px solid;
+}

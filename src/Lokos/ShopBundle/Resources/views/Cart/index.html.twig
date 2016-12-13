@@ -12,69 +12,71 @@
 
 {% block content %}
     {{ block('categories') }}
-        <div>
-            {% if cart %}
-                <table id="cart_table" class="table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Options</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                            <th>Remove</th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <td colspan="2">Total:</td>
-                            <td class="total-quantity"></td>
-                            <td colspan="2" class="total-price"></td>
-                        </tr>
-                    </tfoot>
-                    <tbody>
-                        {% for key, item in cart %}
-                            <tr class="item-cart item-{{ key }}" data-cart-item-id="{{ key }}" data-item-id="{{ item.id }}" data-item-price="{{ productData[item.id].product.price }}">
-                                <th scope="row">{{ productData[item.id].product.name }}</th>
-                                <td class="options">
-                                    {% if productData[item.id].product.productSets is not empty %}
-                                        <div>
-                                            {% for key, option in productData[item.id].options.0 %}
-                                                <div>
-                                                    <h5>{{ option.name }}</h5>
-                                                    <div class="option-variants opt{{ option.id }}">
-                                                        <div class="container">
-                                                            <div class="row">
-                                                                {% for value in productData[item.id].options.1[key] %}
-                                                                    <div class="option-value col-sm-1" data-option-price="{{ value.price }}"
-                                                                         data-info='{"optionId":{{ option.id }},"valueId":{{ value.id }}}'>
-                                                                        <b>{{ value.value }}</b>
-                                                                    </div>
-                                                                {% endfor %}
-                                                            </div>
+    <div>
+        {% if cart %}
+            <table id="cart_table" class="table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Options</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <td colspan="2">Total:</td>
+                        <td class="total-quantity"></td>
+                        <td colspan="2" class="total-price"></td>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {% for key, item in cart %}
+                        <tr class="item-cart item-{{ key }}" data-cart-item-id="{{ key }}" data-item-id="{{ item.id }}" data-item-price="{{ productData[item.id].product.price }}">
+                            <th scope="row">{{ productData[item.id].product.name }}</th>
+                            <td class="options">
+                                {% if productData[item.id].product.productSets is not empty %}
+                                    <div>
+                                        {% for key, option in productData[item.id].options.0 %}
+                                            <div>
+                                                <h5>{{ option.name }}</h5>
+                                                <div class="option-variants opt{{ option.id }}">
+                                                    <div class="container">
+                                                        <div class="row">
+                                                            {% for value in productData[item.id].options.1[key] %}
+                                                                <div class="option-value col-sm-1" data-option-price="{{ value.price }}"
+                                                                     data-info='{"optionId":{{ option.id }},"valueId":{{ value.id }}}'>
+                                                                    <b>{{ value.value }}</b>
+                                                                </div>
+                                                            {% endfor %}
                                                         </div>
                                                     </div>
                                                 </div>
-                                            {% endfor %}
-                                            <input class="prod-set" type="hidden" name="prodSet" value="{{ item.productSet }}">
-                                            <input type="hidden" class="available-options" value={{ productData[item.id].availableOptions }}>
-                                        </div>
-                                    {% endif %}
-                                </td>
-                                <td class="quantity">
-                                    <input class="item-quantity" name="quantity" value="{{ item.quantity }}" onchange="updateCart(this)"/>
-                                </td>
-                                <td class="item-price">{{ productData[item.id].product.price }}</td>
-                                <td><span class="delete-item" onclick="deleteCartItem(this)">X</span></td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <h1>Cart is empty</h1>
-            {% endif %}
-        </div>
+                                            </div>
+                                        {% endfor %}
+                                        <input class="prod-set" type="hidden" name="prodSet" value="{{ item.productSet }}">
+                                        <input type="hidden" class="available-options" value={{ productData[item.id].availableOptions }}>
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td class="quantity">
+                                <input class="item-quantity" name="quantity" value="{{ item.quantity }}" onchange="updateCart(this)"/>
+                            </td>
+                            <td class="item-price">{{ productData[item.id].product.price }}</td>
+                            <td><span class="delete-item" onclick="deleteCartItem(this)">X</span></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <h1>Cart is empty</h1>
+        {% endif %}
     </div>
-    <a class="add-item-to-cart btn btn-primary" href="{{ path('lokos_shop_order') }}">Make an order</a>
+
+    {% if cart %}
+        <a class="add-item-to-cart btn btn-primary" href="{{ path('lokos_shop_order') }}">Make an order</a>
+    {% endif %}
 
     <script type="text/javascript">
         _.each($('.prod-set'), function(input){

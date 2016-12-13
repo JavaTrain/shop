@@ -22,27 +22,26 @@ class CartController extends BaseController
      */
     public function indexAction(Request $request)
     {
-        $cart = $request->getSession()->get('cart', array());
-
-        $productIds = [];
-        foreach ($cart as $key => $item){
-            $productIds[] = $item->id;
-        }
-
-        /** @var ProductRepository $productRepository */
-        $productRepository = $this->getDoctrine()->getRepository('LokosShopBundle:Product');
-        $products = $productRepository->reset()
-                                      ->buildQuery(['productIds' => array_unique($productIds)])
-                                      ->getList();
-
+        $cart        = $request->getSession()->get('cart', array());
         $productData = [];
-        /** @var Product $product */
-        foreach ($products as $product){
-            $productData[$product->getId()] = array(
-                'product'          => $product,
-                'availableOptions' => json_encode($productRepository->getAvailableOptions($product)),
-                'options'          => $productRepository->getProductOptions($product),
-            );
+        if(!empty($cart)){
+            $productIds = [];
+            foreach ($cart as $key => $item){
+                $productIds[] = $item->id;
+            }
+            /** @var ProductRepository $productRepository */
+            $productRepository = $this->getDoctrine()->getRepository('LokosShopBundle:Product');
+            $products = $productRepository->reset()
+                                          ->buildQuery(['productIds' => array_unique($productIds)])
+                                          ->getList();
+            /** @var Product $product */
+            foreach ($products as $product){
+                $productData[$product->getId()] = array(
+                    'product'          => $product,
+                    'availableOptions' => json_encode($productRepository->getAvailableOptions($product)),
+                    'options'          => $productRepository->getProductOptions($product),
+                );
+            }
         }
 
         $data = array(
@@ -62,7 +61,8 @@ class CartController extends BaseController
     {
         $item    = $request->get('item', null);
         $session = $request->getSession();
-        $cart    = $session->get('cart', array());
+        $msg     = 'Err';
+//        $cart    = $session->get('cart', array());
         if ($item ) {
             $cartObj = json_decode($item);
             $cart = [];

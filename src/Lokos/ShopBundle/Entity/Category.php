@@ -47,6 +47,21 @@ class Category
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
+     * @ORM\ManyToMany(targetEntity="Brand", inversedBy="categories")
+     * @ORM\JoinTable(name="brand2category",
+     *   joinColumns={
+     *     @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     *   },
+     *   inverseJoinColumns={
+     *     @ORM\JoinColumn(name="brand_id", referencedColumnName="id")
+     *   }
+     * )
+     */
+    private $brands;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
      * @ORM\ManyToMany(targetEntity="Option", mappedBy="category")
      */
     private $option;
@@ -62,6 +77,7 @@ class Category
     public function __construct()
     {
         $this->attribute = new ArrayCollection();
+        $this->brands    = new ArrayCollection();
         $this->option    = new ArrayCollection();
         $this->products  = new ArrayCollection();
     }
@@ -108,7 +124,7 @@ class Category
      *
      * @return Category
      */
-    public function addAttribute(\Lokos\ShopBundle\Entity\Attribute $attribute)
+    public function addAttribute(Attribute $attribute)
     {
         $this->attribute[] = $attribute;
 
@@ -120,7 +136,7 @@ class Category
      *
      * @param \Lokos\ShopBundle\Entity\Attribute $attribute
      */
-    public function removeAttribute(\Lokos\ShopBundle\Entity\Attribute $attribute)
+    public function removeAttribute(Attribute $attribute)
     {
         $this->attribute->removeElement($attribute);
     }
@@ -142,7 +158,7 @@ class Category
      *
      * @return Category
      */
-    public function addOption(\Lokos\ShopBundle\Entity\Option $option)
+    public function addOption(Option $option)
     {
         $this->option[] = $option;
 
@@ -154,7 +170,7 @@ class Category
      *
      * @param \Lokos\ShopBundle\Entity\Option $option
      */
-    public function removeOption(\Lokos\ShopBundle\Entity\Option $option)
+    public function removeOption(Option $option)
     {
         $this->option->removeElement($option);
     }
@@ -185,6 +201,45 @@ class Category
         $this->products = $products;
     }
 
+    /**
+     * @param Brand $brand
+     *
+     * @return $this
+     */
+    public function addBrands(Brand $brand)
+    {
+        if (!$this->brands->contains($brand)) {
+            $this->brands[] = $brand;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Brand $brand
+     *
+     * @return $this
+     */
+    public function removeBrands(Brand $brand)
+    {
+        $this->brands->removeElement($brand);
+
+        return $this;
+    }
+
+    /**
+     * Get attribute
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getBrands()
+    {
+        return $this->brands;
+    }
+
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return $this->name;

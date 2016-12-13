@@ -68,7 +68,7 @@
                             <h4 class="pull-right">${{ item.price }}</h4>
                             <h4><a href="{{ path('lokos_shop_item_detail', {'catId': catId, 'itemId': item.id}) }}">{{ item.name }}</a>
                             </h4>
-                            <p>{{ item.description }}</p>
+                            <p>{{ item.description|raw }}</p>
                         </div>
                         <div>
                             <a class="btn btn-primary add-to-cart" data-item-id="{{ item.id }}" href="#">Add to cart</a>

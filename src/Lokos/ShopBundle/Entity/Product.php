@@ -71,7 +71,7 @@ class Product
     /**
      * @var \Brand
      *
-     * @ORM\ManyToOne(targetEntity="Brand")
+     * @ORM\ManyToOne(targetEntity="Brand", inversedBy="products")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="brand_id", referencedColumnName="id")
      * })

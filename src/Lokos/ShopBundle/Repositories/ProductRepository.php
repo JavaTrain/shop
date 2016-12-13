@@ -66,18 +66,23 @@ class ProductRepository extends BaseRepository
      */
     public function getAvailableOptions(Product $item)
     {
+        if(!$item->getProductSets()){
+            return null;
+        }
+
         $options = [];
+        /** @var ProductSet $ps */
+        /** @var Product2Option $p2o */
         foreach($item->getProductSets() as $ps){
-            foreach ($ps->getProduct2Options() as $po) {
+            foreach ($ps->getProduct2Options() as $p2o) {
                 $options[$ps->getId()][] = [
-                    'optionId'   => $po->getOption()->getId(),
-                    'valueId'    => $po->getOptionValue()->getId(),
+                    'optionId' => $p2o->getOption()->getId(),
+                    'valueId'  => $p2o->getOptionValue()->getId(),
                 ];
             }
         }
 
         //        var_dump($options);die;
-
         return $options;
     }
 
@@ -131,26 +136,5 @@ class ProductRepository extends BaseRepository
     public function remove(ContainerInterface $container, $id)
     {
     }
-
-//    public function getCartCountAndPrice(array $cart)
-//    {
-//        $data = array();
-//        if (!empty($cart)) {
-//            $items = $this->getEntityManager()->getRepository('LokosShopBundle:Product')
-//                          ->reset()
-//                          ->buildQuery(
-//                              array('products' => array_keys($cart))
-//                          )
-//                          ->getList();
-//            $price = 0;
-//            /** @var Product $item */
-//            foreach ($items as $item) {
-//                $price += ($item->getPrice() * $cart[$item->getId()]);
-//            }
-//            $data['sum']   = array_sum($cart);
-//            $data['price'] = $price;
-//        }
-//        return $data;
-//    }
 
 }

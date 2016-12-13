@@ -34,3 +34,14 @@ lokos_shop_admin_product_form:
         id: new
     requirements:
         id: \d+|new
+
+lokos_shop_admin_brands:
+    path:     /brands/
+    defaults: { _controller: LokosShopBundle:Admin:brands }
+lokos_shop_admin_brand_form:
+    path:     /brand/{id}/
+    defaults:
+        _controller: LokosShopBundle:Admin:editBrand
+        id: new
+    requirements:
+        id: \d+|new

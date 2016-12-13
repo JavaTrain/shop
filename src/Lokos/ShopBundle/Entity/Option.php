@@ -3,6 +3,7 @@
 namespace Lokos\ShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Option
@@ -50,13 +51,6 @@ class Option
      */
     private $category;
 
-//    /**
-//     * @var \Doctrine\Common\Collections\Collection
-//     *
-//     * @ORM\ManyToOne(targetEntity="Product2Option", inversedBy="product2Options")
-//     */
-//    private $product2Option;
-
     /**
      * @ORM\OneToMany(targetEntity="OptionValue", mappedBy="option", cascade={"persist", "remove"})
      */
@@ -67,8 +61,8 @@ class Option
      */
     public function __construct()
     {
-        $this->category     = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->optionValues = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->category     = new ArrayCollection();
+        $this->optionValues = new ArrayCollection();
     }
 
 
@@ -137,7 +131,7 @@ class Option
      *
      * @return Option
      */
-    public function addCategory(\Lokos\ShopBundle\Entity\Category $category)
+    public function addCategory(Category $category)
     {
         $this->category[] = $category;
 
@@ -149,7 +143,7 @@ class Option
      *
      * @param \Lokos\ShopBundle\Entity\Category $category
      */
-    public function removeCategory(\Lokos\ShopBundle\Entity\Category $category)
+    public function removeCategory(Category $category)
     {
         $this->category->removeElement($category);
     }
@@ -165,36 +159,6 @@ class Option
     }
 
     /**
-     * @param Product2Option $product2Option
-     *
-     * @return $this
-     */
-    public function setProduct2Option(\Lokos\ShopBundle\Entity\Product2Option $product2Option)
-    {
-        $this->product2Option = $product2Option;
-
-        return $this;
-    }
-
-//    /**
-//     * Remove product
-//     *
-//     * @param \Lokos\ShopBundle\Entity\Product $product
-//     */
-//    public function removeProduct(\Lokos\ShopBundle\Entity\Product $product)
-//    {
-//        $this->product->removeElement($product);
-//    }
-
-    /**
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getProduct2Option()
-    {
-        return $this->product2Option;
-    }
-
-    /**
      * @return mixed
      */
     public function getOptionValues()
@@ -202,24 +166,12 @@ class Option
         return $this->optionValues;
     }
 
-//    /**
-//     * @param $optionValues
-//     *
-//     * @return $this
-//     */
-//    public function setOptionValues($optionValues)
-//    {
-//        $this->optionValues = $optionValues;
-//
-//        return $this;
-//    }
-
     /**
      * @param OptionValue $optionValue
      *
      * @return $this
      */
-    public function addOptionValues(\Lokos\ShopBundle\Entity\OptionValue $optionValue)
+    public function addOptionValues(OptionValue $optionValue)
     {
         $this->optionValues[] = $optionValue;
 
@@ -231,7 +183,7 @@ class Option
      *
      * @return $this
      */
-    public function removeOptionValue(\Lokos\ShopBundle\Entity\OptionValue $optionValue)
+    public function removeOptionValue(OptionValue $optionValue)
     {
         $this->optionValues->removeElement($optionValue);
 
@@ -245,6 +197,5 @@ class Option
     {
         return $this->getName();
     }
-
 
 }

@@ -25,7 +25,7 @@ AjaxForm = {
         afterShowErrorAction: null,
         validateErrorAction: null,
         validateSuccessAction: null,
-        wrapperClass: "uk-form-row",
+        wrapperClass: "input-wrap",
         errorClass: "has-error",
         successClass: "success",
         initClass:"ajax-form-init",

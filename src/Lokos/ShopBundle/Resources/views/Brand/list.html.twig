@@ -1,0 +1,21 @@
+{% trans_default_domain 'general' %}
+{% extends 'LokosShopBundle::admin.layout.html.twig' %}
+
+
+{% block content %}
+    <div>
+        <div>
+            <a class="btn btn-success" href="{{ path('lokos_shop_admin_brand_form', {id:'new'}) }}">Add brand</a>
+        </div>
+        <ul>
+            {% for category in categories %}
+                    <h3>{{ category.name }}</h3>
+                    {% for brand in category.brands %}
+                        <li><a href="{{ path('lokos_shop_admin_brand_form', {id:brand.id}) }}">{{ brand.name }}</a></li>
+                    {% endfor %}
+            {% else %}
+                <li><h2>Nothing found</h2></li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock content  %}

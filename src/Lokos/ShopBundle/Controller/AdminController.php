@@ -2,11 +2,13 @@
 
 namespace Lokos\ShopBundle\Controller;
 
+use Lokos\ShopBundle\Entity\Brand;
 use Lokos\ShopBundle\Entity\Category;
 use Lokos\ShopBundle\Entity\Option;
 use Lokos\ShopBundle\Entity\Product;
 use Lokos\ShopBundle\Entity\Product2Option;
 use Lokos\ShopBundle\Entity\ProductSet;
+use Lokos\ShopBundle\Form\Type\BrandFormType;
 use Lokos\ShopBundle\Form\Type\CategoryFormType;
 use Lokos\ShopBundle\Form\Type\OptionFormType;
 use Lokos\ShopBundle\Form\Type\ProductFormType;
@@ -35,8 +37,8 @@ class AdminController extends BaseController
     public function categoriesAction()
     {
         $categories = $this->getDoctrine()
-             ->getRepository('LokosShopBundle:Category')
-             ->findAll();
+                           ->getRepository('LokosShopBundle:Category')
+                           ->findAll();
         
         return $this->render('LokosShopBundle:Category:list.html.twig', ['categories' => $categories]);
     }
@@ -48,14 +50,13 @@ class AdminController extends BaseController
      */
     public function editCategoriesAction(Request $request)
     {
-        $id      = $request->get('id', null);
         $category = $this->getDoctrine()
-                        ->getRepository('LokosShopBundle:Category')
-                        ->find($id);
+                         ->getRepository('LokosShopBundle:Category')
+                         ->find($request->get('id', null));
 
         if (empty($category)) {
             $category = new Category();
-            $title   = $this->translate('category.add_new_title');
+            $title    = $this->translate('category.add_new_title');
         } else {
             $title = $this->translate('category.edit_title', array(':category' => $category->getName()));
         }
@@ -96,12 +97,17 @@ class AdminController extends BaseController
     public function optionsAction()
     {
         $categories = $this->getDoctrine()
-                        ->getRepository('LokosShopBundle:Category')
-                        ->findAll(array(), array('name' => 'ASC'));
+                           ->getRepository('LokosShopBundle:Category')
+                           ->findAll(array(), array('name' => 'ASC'));
 
         return $this->render('LokosShopBundle:Option:list.html.twig', ['categories' => $categories]);
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function editOptionAction(Request $request)
     {
         $id     = $request->get('id', null);
@@ -169,6 +175,9 @@ class AdminController extends BaseController
         );
     }
 
+    /**
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function productsAction()
     {
         $products = $this->getDoctrine()
@@ -178,7 +187,6 @@ class AdminController extends BaseController
         return $this->render('LokosShopBundle:Product:list.html.twig', ['products' => $products]);
     }
 
-
     /**
      * @param Request $request
      *
@@ -186,12 +194,11 @@ class AdminController extends BaseController
      */
     public function editProductAction(Request $request)
     {
-        $id      = $request->get('id', null);
         /** @var Product $product */
         $product = $this->getDoctrine()
                         ->getRepository('LokosShopBundle:Product')
 //                        ->reset()
-                        ->buildQuery(array('productId' => $id))
+                        ->buildQuery(array('productId' => $request->get('id', null)))
                         ->getSingle();
 
         if (empty($product)) {
@@ -207,7 +214,7 @@ class AdminController extends BaseController
             $beforeSaveProductSets = $currentProductSetIds = array();
             /** @var ProductSet $productSet */
             foreach ($product->getProductSets() as $productSet){
-                $beforeSaveProductSets [$productSet->getId()] = $productSet;
+                $beforeSaveProductSets[$productSet->getId()] = $productSet;
             }
 
             $form->handleRequest($request);
@@ -258,6 +265,79 @@ class AdminController extends BaseController
 
         return $this->render(
             'LokosShopBundle:Product:form.html.twig',
+            array(
+                'form'  => $form->createView(),
+                'title' => $title,
+            )
+        );
+    }
+
+
+
+
+    /**
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function brandsAction()
+    {
+        $categories = $this->getDoctrine()
+                           ->getRepository('LokosShopBundle:Category')
+                           ->findAll(array(), array('name' => 'ASC'));
+
+        return $this->render('LokosShopBundle:Brand:list.html.twig', ['categories' => $categories]);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function editBrandAction(Request $request)
+    {
+        $brand = $this->getDoctrine()
+                       ->getRepository('LokosShopBundle:Brand')
+                       ->find($request->get('id', null));
+
+        if (empty($brand)) {
+            $brand = new Brand();
+            $title  = $this->translate('brand.add_new_title');
+        } else {
+            $title = $this->translate('brand.edit_title', array(':brand' => $brand->getName()));
+        }
+
+        $form = $this->createForm(BrandFormType::class, $brand);
+
+        if ($request->isMethod('POST')) {
+            $form->handleRequest($request);
+
+            if ($form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $sql = "DELETE FROM `brand2category` WHERE `brand_id` = :brand_id";
+
+                $em->getConnection()->executeQuery($sql, [':brand_id' => $brand->getId()]);
+
+                /** @var Category $category */
+                foreach ($brand->getCategories() as $category) {
+                    $brand->addCategories($category);
+                    $category->addBrands($brand);
+//                    $em->persist($category);
+                }
+                $em->persist($brand);
+                $em->flush();
+
+                $this->get('session')->getFlashBag()->add('success', $this->translate('messages.successfully_saved'));
+
+                return $this->redirect($this->generateUrl('lokos_shop_admin_brands'));
+            } else {
+                foreach ($form->getErrors() as $e) {
+                    var_dump($e->getMessage());
+                    die;
+                }
+            }
+        }
+
+        return $this->render(
+            'LokosShopBundle:Brand:form.html.twig',
             array(
                 'form'  => $form->createView(),
                 'title' => $title,

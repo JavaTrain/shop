@@ -23,18 +23,28 @@
             {{ form_widget(form.description) }}
         </div>
         <div class="form-group row">
-            <label class="col-xs-2 col-form-label uk-form-label" for="{{ form.name.vars.id }}">{{ form.name.vars.label|trans }}</label>
+            <label class="col-xs-2 col-form-label uk-form-label" for="{{ form.category.vars.id }}">{{ form.category.vars.label|trans }}</label>
             {{ form_widget(form.category) }}
         </div>
-        <div id="optionValues" class="uk-margin-large-bottom" data-prototype="{{ form_widget(form.optionValues.vars.prototype)|e }}">
-            {% for optionValue in form.optionValues %}
-                <div class="tm-panel-border">
-                    <span class="delete-location-btn uk-close uk-close-alt">X</span>
-                    {{ form_widget(optionValue) }}
-                </div>
-            {% endfor %}
+        <div class="form-group row">
+            <h4>Options:</h4>
+            <div id="optionValues" class="uk-margin-large-bottom" data-prototype="{{ form_widget(form.optionValues.vars.prototype)|e }}">
+                {% for optionValue in form.optionValues %}
+                    {#{{ dump(optionValue.value) }}#}
+                    <div class="tm-panel-border">
+                        <div class="col-xs-2">
+                            <button class="col-xs-6 btn btn-danger delete-location-btn uk-close uk-close-alt">X</button>
+                        </div>
+                        <div class="col-xs-10">
+                            <input type="text" class="form-control" name="{{ optionValue.value.vars.full_name }}" value="{{ optionValue.value.vars.value }}"/>
+                            {#{{ form_widget(optionValue) }}#}
+                        </div>
+                    </div>
+                    <br/>
+                    <br/>
+                {% endfor %}
+            </div>
         </div>
-        <br>
         <div class="uk-form-row ">
             <a class="btn btn-success uk-button uk-button-success" href="#" id="addOptionValue"><i class="uk-icon-plus"></i> {{ 'button.add_option_value'|trans() }}</a>
         </div>
@@ -45,7 +55,7 @@
 
     <script>
         var delLink = function (e) {
-            $(e.target).parent('div').remove();
+            $(e.target).closest('div.tm-panel-border').remove();
 //            saveField(links);
         };
         var valuesCount = '{{ form.optionValues|length }}';
@@ -55,7 +65,11 @@
                 newWidget = optionValueList.attr('data-prototype');
             newWidget = newWidget.replace(/__name__/g, valuesCount);
             valuesCount++;
-            var newDiv = $(newWidget).prepend("<span class='delete-location-btn uk-close uk-close-alt'>X</span>");
+            var newDiv = $(newWidget).prepend(
+                    `<div class="col-xs-2">
+                        <button class="col-xs-6 btn btn-danger delete-location-btn uk-close uk-close-alt">X</button>
+                    </div>`);
+            newDiv.find('label').remove();
             newDiv.addClass('tm-panel-border');
             newDiv.appendTo(optionValueList);
             $(optionValueList).find('.delete-location-btn').click(delLink);
