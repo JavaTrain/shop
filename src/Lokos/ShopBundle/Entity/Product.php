@@ -79,25 +79,23 @@ class Product
     private $brand;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="Attribute", mappedBy="product")
-     */
-    private $attribute;
-
-    /**
      * @ORM\OneToMany(targetEntity="ProductSet", mappedBy="product", cascade={"persist"})
      */
     private $productSets;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Product2Attribute", mappedBy="product", cascade={"persist"})
+     */
+    private $product2Attributes;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->attribute   = new ArrayCollection();
-        $this->productSets = new ArrayCollection();
+        $this->attribute          = new ArrayCollection();
+        $this->productSets        = new ArrayCollection();
+        $this->product2Attributes = new ArrayCollection();
     }
 
 
@@ -255,40 +253,6 @@ class Product
     }
 
     /**
-     * Add attribute
-     *
-     * @param \Lokos\ShopBundle\Entity\Attribute $attribute
-     *
-     * @return Product
-     */
-    public function addAttribute(Attribute $attribute)
-    {
-        $this->attribute[] = $attribute;
-
-        return $this;
-    }
-
-    /**
-     * Remove attribute
-     *
-     * @param \Lokos\ShopBundle\Entity\Attribute $attribute
-     */
-    public function removeAttribute(Attribute $attribute)
-    {
-        $this->attribute->removeElement($attribute);
-    }
-
-    /**
-     * Get attribute
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getAttribute()
-    {
-        return $this->attribute;
-    }
-
-    /**
      * @return mixed
      */
     public function getProductSets()
@@ -304,6 +268,26 @@ class Product
     public function setProductSets($productSets)
     {
         $this->productSets = $productSets;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProduct2Attributes()
+    {
+        return $this->product2Attributes;
+    }
+
+    /**
+     * @param $product2Attributes
+     *
+     * @return $this
+     */
+    public function setProduct2Attributes($product2Attributes)
+    {
+        $this->product2Attributes = $product2Attributes;
 
         return $this;
     }

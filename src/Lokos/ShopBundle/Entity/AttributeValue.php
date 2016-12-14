@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * AttributeValue
  *
  * @ORM\Table(name="attribute_value", indexes={@ORM\Index(name="fk_atribute_detail_atribute1_idx", columns={"attribute_id"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Lokos\ShopBundle\Repositories\AttributeValueRepository")
  */
 class AttributeValue
 {
@@ -31,14 +31,12 @@ class AttributeValue
     /**
      * @var \Attribute
      *
-     * @ORM\ManyToOne(targetEntity="Attribute")
+     * @ORM\ManyToOne(targetEntity="Attribute", inversedBy="attributeValues")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="attribute_id", referencedColumnName="id")
      * })
      */
     private $attribute;
-
-
 
     /**
      * Get id
@@ -89,12 +87,20 @@ class AttributeValue
     }
 
     /**
-     * Get attribute
-     *
-     * @return \Lokos\ShopBundle\Entity\Attribute
+     * @return \Attribute
      */
     public function getAttribute()
     {
         return $this->attribute;
     }
+
+    /**
+     * @return string
+     */
+    function __toString()
+    {
+        return $this->getValue();
+    }
+
+
 }

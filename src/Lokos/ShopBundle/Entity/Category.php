@@ -42,7 +42,7 @@ class Category
      *   }
      * )
      */
-    private $attribute;
+    private $attributes;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -76,10 +76,10 @@ class Category
      */
     public function __construct()
     {
-        $this->attribute = new ArrayCollection();
-        $this->brands    = new ArrayCollection();
-        $this->option    = new ArrayCollection();
-        $this->products  = new ArrayCollection();
+        $this->attributes = new ArrayCollection();
+        $this->brands     = new ArrayCollection();
+        $this->option     = new ArrayCollection();
+        $this->products   = new ArrayCollection();
     }
 
 
@@ -126,7 +126,7 @@ class Category
      */
     public function addAttribute(Attribute $attribute)
     {
-        $this->attribute[] = $attribute;
+        $this->attributes[] = $attribute;
 
         return $this;
     }
@@ -138,7 +138,7 @@ class Category
      */
     public function removeAttribute(Attribute $attribute)
     {
-        $this->attribute->removeElement($attribute);
+        $this->attributes->removeElement($attribute);
     }
 
     /**
@@ -146,9 +146,9 @@ class Category
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getAttribute()
+    public function getAttributes()
     {
-        return $this->attribute;
+        return $this->attributes;
     }
 
     /**

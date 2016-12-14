@@ -1,0 +1,81 @@
+{% extends 'LokosShopBundle::admin.layout.html.twig' %}
+{% trans_default_domain 'general' %}
+
+{% block content %}
+    <form class="ajax-form" method="post" enctype="multipart/form-data" novalidate="novalidate">
+        <div class="uk-grid uk-margin-bottom">
+            <div class="uk-width-5-10">
+                <h1>{{ title }}</h1>
+            </div>
+            <div class="uk-width-5-10">
+                <button class="btn btn-primary uk-align-right" type="submit">
+                    <i class="uk-icon-check"></i>
+                    {{ 'button.save'|trans }}
+                </button>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-xs-2 col-form-label uk-form-label" for="{{ form.name.vars.id }}">{{ form.name.vars.label|trans }}</label>
+            {{ form_widget(form.name) }}
+        </div>
+        <div class="form-group row">
+            <label class="col-xs-2 col-form-label uk-form-label" for="{{ form.description.vars.id }}">{{ form.description.vars.label|trans }}</label>
+            {{ form_widget(form.description) }}
+        </div>
+        <div class="form-group row">
+            <label class="col-xs-2 col-form-label uk-form-label" for="{{ form.category.vars.id }}">{{ form.category.vars.label|trans }}</label>
+            {{ form_widget(form.category) }}
+        </div>
+        <div class="form-group row">
+            <h4>Attribute Values:</h4>
+            <div id="attributeValues" class="uk-margin-large-bottom" data-prototype="{{ form_widget(form.attributeValues.vars.prototype)|e }}">
+                {% for attributeValue in form.attributeValues %}
+                    <div class="tm-panel-border">
+                        <div class="col-xs-2">
+                            <button class="col-xs-6 btn btn-danger delete-location-btn uk-close uk-close-alt">X</button>
+                        </div>
+                        <div class="col-xs-10">
+                            <input type="text" class="form-control" name="{{ attributeValue.value.vars.full_name }}" value="{{ attributeValue.value.vars.value }}"/>
+                            {#{{ form_widget(optionValue) }}#}
+                        </div>
+                    </div>
+                    <br/>
+                    <br/>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="uk-form-row ">
+            <a class="btn btn-success uk-button uk-button-success" href="#" id="addAttributeValue"><i class="uk-icon-plus"></i> {{ 'button.add_option_value'|trans() }}</a>
+        </div>
+
+        <div>
+            {{ form_row(form._token) }}
+        </div>
+    </form>
+
+    <script>
+        var delLink = function (e) {
+            $(e.target).closest('div.tm-panel-border').remove();
+        };
+        var valuesCount = '{{ form.attributeValues|length }}';
+        $('#addAttributeValue').click(function (e) {
+            e.preventDefault();
+            var attributeValueList = $('#attributeValues'),
+                newWidget = attributeValueList.attr('data-prototype');
+            newWidget = newWidget.replace(/__name__/g, valuesCount);
+            valuesCount++;
+            var newDiv = $(newWidget).prepend(
+                    `<div class="col-xs-2">
+                        <button class="col-xs-6 btn btn-danger delete-location-btn uk-close uk-close-alt">X</button>
+                    </div>`);
+            newDiv.find('label').remove();
+            newDiv.addClass('tm-panel-border');
+            newDiv.appendTo(attributeValueList);
+            $(attributeValueList).find('.delete-location-btn').click(delLink);
+//            $.each($('.ajax-form'), function () {
+//                AjaxForm.init(this)
+//            });
+        });
+        $('.delete-location-btn').on('click', delLink);
+    </script>
+{% endblock content  %}

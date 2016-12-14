@@ -105,6 +105,7 @@ class ProductFormType extends AbstractType
                 if ($category) {
                     $this->addProductSetForm($form, $data);
                     $this->addBrandForm($form, $category->getId());
+                    $this->addProduct2AttributeForm($form, $category->getId());
                 } else {
                     $form->remove('productSets');
                 }
@@ -132,6 +133,7 @@ class ProductFormType extends AbstractType
                         $product = $form->getData()->setCategory($category);
                         $this->addBrandForm($form, $data['category']);
                         $this->addProductSetForm($form, $product);
+                        $this->addProduct2AttributeForm($form, $product);
                     } else {
 //                        var_dump('bad');die;
                         $form->remove('productSets');
@@ -179,10 +181,29 @@ class ProductFormType extends AbstractType
             'allow_add'     => true,
             'allow_delete'  => true,
             'required'      => false,
-//            'prototype_name' => '__prod__'
         );
 
-//        $form->add('productSets', CollectionType::class, $formOptions);
+        $form->add('productSets', CollectionType::class, $formOptions);
+    }
+
+    /**
+     * @param $form
+     * @param $data
+     */
+    protected function addProduct2AttributeForm($form, $data)
+    {
+        $formOptions = array(
+            'entry_type'    => Product2AttributeFormType::class,
+            'entry_options' => array(
+                'attr' => ['product' => $data]
+            ),
+            'prototype'     => true,
+            'allow_add'     => true,
+            'allow_delete'  => true,
+            'required'      => false,
+        );
+
+        $form->add('product2Attributes', CollectionType::class, $formOptions);
     }
 
     /**

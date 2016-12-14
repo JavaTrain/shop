@@ -45,3 +45,14 @@ lokos_shop_admin_brand_form:
         id: new
     requirements:
         id: \d+|new
+
+lokos_shop_admin_attributes:
+    path:     /attributes/
+    defaults: { _controller: LokosShopBundle:Admin:attributes }
+lokos_shop_admin_attribute_form:
+    path:     /attributes/{id}/
+    defaults:
+        _controller: LokosShopBundle:Admin:editAttribute
+        id: new
+    requirements:
+        id: \d+|new

@@ -2,12 +2,15 @@
 
 namespace Lokos\ShopBundle\Controller;
 
+use Lokos\ShopBundle\Entity\Attribute;
+use Lokos\ShopBundle\Entity\AttributeValue;
 use Lokos\ShopBundle\Entity\Brand;
 use Lokos\ShopBundle\Entity\Category;
 use Lokos\ShopBundle\Entity\Option;
 use Lokos\ShopBundle\Entity\Product;
 use Lokos\ShopBundle\Entity\Product2Option;
 use Lokos\ShopBundle\Entity\ProductSet;
+use Lokos\ShopBundle\Form\Type\AttributeFormType;
 use Lokos\ShopBundle\Form\Type\BrandFormType;
 use Lokos\ShopBundle\Form\Type\CategoryFormType;
 use Lokos\ShopBundle\Form\Type\OptionFormType;
@@ -141,7 +144,6 @@ class AdminController extends BaseController
                 $em->persist($option);
                 foreach ($option->getOptionValues() as $optionValue) {
                     $optionValue->setOption($option);
-
                     if ($optionValue->getId()) {
                         $currentOptionValuesIds[] = $optionValue->getId();
                     }
@@ -272,9 +274,6 @@ class AdminController extends BaseController
         );
     }
 
-
-
-
     /**
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -338,6 +337,85 @@ class AdminController extends BaseController
 
         return $this->render(
             'LokosShopBundle:Brand:form.html.twig',
+            array(
+                'form'  => $form->createView(),
+                'title' => $title,
+            )
+        );
+    }
+
+    /**
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function attributesAction()
+    {
+        $categories = $this->getDoctrine()
+                           ->getRepository('LokosShopBundle:Category')
+                           ->findAll(array(), array('name' => 'ASC'));
+
+        return $this->render('LokosShopBundle:Attribute:list.html.twig', ['categories' => $categories]);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function editAttributeAction(Request $request)
+    {
+        /** @var Attribute $attribute */
+        $attribute = $this->getDoctrine()
+                          ->getRepository('LokosShopBundle:Attribute')
+                          ->find($request->get('id', null));
+
+        if (empty($attribute)) {
+            $attribute = new Attribute();
+            $title  = $this->translate('attribute.add_new_title');
+        } else {
+            $title = $this->translate('attribute.edit_title', array(':attribute' => $attribute->getName()));
+        }
+
+        $form = $this->createForm(AttributeFormType::class, $attribute);
+
+        if ($request->isMethod('POST')) {
+            $beforeSaveAttributeValues = $currentAttributeValuesIds = array();
+            /** @var AttributeValue $attributeValue */
+            foreach ($attribute->getAttributeValues() as $attributeValue)
+                $beforeSaveAttributeValues [$attributeValue->getId()] = $attributeValue;
+
+            $form->handleRequest($request);
+
+            if ($form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($attribute);
+                foreach ($attribute->getAttributeValues() as $attributeValue) {
+                    $attributeValue->setAttribute($attribute);
+                    if ($attributeValue->getId()) {
+                        $currentAttributeValuesIds[] = $attributeValue->getId();
+                    }
+                }
+                $em->persist($attribute);
+                foreach ($beforeSaveAttributeValues as $attributeValueId => $attributeValue) {
+                    if (!in_array($attributeValueId, $currentAttributeValuesIds)) {
+                        $em->remove($attributeValue);
+                    }
+                }
+
+                $em->flush();
+
+                $this->get('session')->getFlashBag()->add('success', $this->translate('messages.successfully_saved'));
+
+                    return $this->redirect($this->generateUrl('lokos_shop_admin_attributes'));
+            } else {
+                foreach ($form->getErrors() as $e) {
+                    var_dump($e->getMessage());
+                    die;
+                }
+            }
+        }
+
+        return $this->render(
+            'LokosShopBundle:Attribute:form.html.twig',
             array(
                 'form'  => $form->createView(),
                 'title' => $title,

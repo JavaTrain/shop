@@ -2,13 +2,14 @@
 
 namespace Lokos\ShopBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Attribute
  *
  * @ORM\Table(name="attribute")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Lokos\ShopBundle\Repositories\AttributeRepository")
  */
 class Attribute
 {
@@ -38,32 +39,22 @@ class Attribute
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="Category", mappedBy="attribute")
+     * @ORM\ManyToMany(targetEntity="Category", mappedBy="attributes")
      */
     private $category;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="Product", inversedBy="attribute")
-     * @ORM\JoinTable(name="product2attribute",
-     *   joinColumns={
-     *     @ORM\JoinColumn(name="attribute_id", referencedColumnName="id")
-     *   },
-     *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="product_id", referencedColumnName="id")
-     *   }
-     * )
+     * @ORM\OneToMany(targetEntity="AttributeValue", mappedBy="attribute", cascade={"persist", "remove"})
      */
-    private $product;
+    private $attributeValues;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->category = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->product = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->category        = new ArrayCollection();
+        $this->attributeValues = new ArrayCollection();
     }
 
 
@@ -132,7 +123,7 @@ class Attribute
      *
      * @return Attribute
      */
-    public function addCategory(\Lokos\ShopBundle\Entity\Category $category)
+    public function addCategory(Category $category)
     {
         $this->category[] = $category;
 
@@ -144,7 +135,7 @@ class Attribute
      *
      * @param \Lokos\ShopBundle\Entity\Category $category
      */
-    public function removeCategory(\Lokos\ShopBundle\Entity\Category $category)
+    public function removeCategory(Category $category)
     {
         $this->category->removeElement($category);
     }
@@ -160,36 +151,42 @@ class Attribute
     }
 
     /**
-     * Add product
-     *
-     * @param \Lokos\ShopBundle\Entity\Product $product
-     *
-     * @return Attribute
+     * @return mixed
      */
-    public function addProduct(\Lokos\ShopBundle\Entity\Product $product)
+    public function getAttributeValues()
     {
-        $this->product[] = $product;
+        return $this->attributeValues;
+    }
+
+    /**
+     * @param AttributeValue $attributeValue
+     *
+     * @return $this
+     */
+    public function addAttributeValues(AttributeValue $attributeValue)
+    {
+        $this->attributeValues[] = $attributeValue;
 
         return $this;
     }
 
     /**
-     * Remove product
+     * @param AttributeValue $attributeValue
      *
-     * @param \Lokos\ShopBundle\Entity\Product $product
+     * @return $this
      */
-    public function removeProduct(\Lokos\ShopBundle\Entity\Product $product)
+    public function removeAttributeValue(AttributeValue $attributeValue)
     {
-        $this->product->removeElement($product);
+        $this->attributeValues->removeElement($attributeValue);
+
+        return $this;
     }
 
     /**
-     * Get product
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return string
      */
-    public function getProduct()
+    function __toString()
     {
-        return $this->product;
+        return $this->getName();
     }
 }

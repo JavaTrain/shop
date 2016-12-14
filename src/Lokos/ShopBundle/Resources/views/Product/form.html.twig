@@ -35,9 +35,9 @@
             {{ form_row(form.category) }}
         </div>
 
-        {% if form.category.vars.value %}
-            <div class="form-group row block-categories">
-                <label class="col-xs-2 col-form-label" for="{{ form.category.vars.id }}">{{ form.category.vars.label|trans }}</label>
+        {% if form.brand is defined %}
+            <div class="form-group row block-brand">
+                {#<label class="col-xs-2 col-form-label" for="{{ form.brand.vars.id }}">{{ form.brand.vars.label|trans }}</label>#}
                 {{ form_row(form.brand) }}
             </div>
         {% endif %}
@@ -45,7 +45,7 @@
 
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#sets2product">Product Sets</a></li>
-            <li><a data-toggle="tab" href="#menu1">Product Attributes</a></li>
+            <li><a data-toggle="tab" href="#attibutes2product">Product Attributes</a></li>
         </ul>
 
         <div class="tab-content">
@@ -59,8 +59,7 @@
                                     <div class="panel-body">
                                         {{ form_row(productSet.name) }}
                                         {{ form_row(productSet.quantity) }}
-                                        <div class="product-2-options tm-panel-border"
-                                             data-prototype="{{ form_widget(productSet.product2Options.vars.prototype)|e }}">
+                                        <div class="product-2-options tm-panel-border" data-prototype="{{ form_widget(productSet.product2Options.vars.prototype)|e }}">
                                             {% for product2Option in productSet.product2Options %}
                                                 <div id="option" class="tm-panel-border">
                                                     <button class="btn btn-danger delete-btn">X</button>
@@ -90,10 +89,36 @@
                     </div>
                 {% endif %}
             </div>
-            <div id="menu1" class="tab-pane fade">
-                <h3>Menu 1</h3>
-                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat.</p>
+            <div id="attibutes2product" class="tab-pane fade">
+                {% if form.product2Attributes is defined %}
+                    <div id="product_attributes_block" class="jumbotron" data-prototype="{{ form_widget(form.product2Attributes.vars.prototype)|e }}">
+                        {% if form.product2Attributes is not empty %}
+                            {% for product2Attribute in form.product2Attributes %}
+                                <div id="{{ product2Attribute.vars.id }}" class="tm-panel-border panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="product-2-attributes tm-panel-border">
+                                            <div id="attribute" class="tm-panel-border">
+                                                <button class="btn btn-danger delete-btn">X</button>
+                                                <br>
+                                                <div data-block-id="{{ product2Attribute.vars.id }}">
+                                                    {{ form_row(product2Attribute.attribute) }}
+                                                    <div id="attributeValues">
+                                                        {{ form_row(product2Attribute.attributeValue) }}
+                                                    </div>
+                                                    <br>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <br>
+                        <div class="uk-form-row">
+                            <a class="btn btn-success addProduct2Attributes" href="#"><i class="uk-icon-plus"></i> {{ 'button.add_product_2_attributes'|trans }}</a>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
 
@@ -113,6 +138,7 @@
         };
         var valuesCount;
         var prodSetCount = {% if form.productSets is defined %}{{ form.productSets|length }}{% else %}{{ 0 }}{% endif %};
+        var prod2AttrCount = {% if form.product2Attributes is defined %}{{ form.product2Attributes|length }}{% else %}{{ 0 }}{% endif %};
         var addOption = function (e) {
             var form = $(this).closest('form'),
                     data = {"update": true},
@@ -139,6 +165,39 @@
                 }
             });
         };
+        var addAttributeValue = function(e){
+            var form = $(this).closest('form'),
+                    data = {"update": true},
+                    attrName = $(this).attr('name');
+
+            var id = attrName.replace(/\[|\]/g, '\_');
+            id = id.replace(/\_\_/g, '\_');
+
+            console.log(id);return;
+            data[$(this).attr('name')] = $(this).val();
+            data[$('#lokos_shop_product_category').find('select').attr('name')] = $('#lokos_shop_product_category').find('select').val();
+            $.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                data: data,
+                success: function (html) {
+                    console.log(html);return;
+                    var id = attrName.replace(/\[|\]/g, '\_');
+                    id = id.replace(/\_\_/g, '\_');
+                    if (id[id.length - 1] == '_') {
+                        id = id.slice(0, -11);
+                    }
+                    var optionId = id + '_attributeValue';
+                    console.log($(html).find('#'+optionId));return;
+                    var div = $(html).find('#' + optionId).parent().parent().parent();
+                    div.find('.option-select').parent().remove();
+                    var optionSelect = $('#' + id);
+                    optionSelect.nextAll('div').remove();
+                    optionSelect.parent().append(div);
+                    optionSelect.parent().find('.delete-btn').click(delLink);
+                }
+            });
+        };
 
 
         $('.delete-btn').click(function (e) {
@@ -153,6 +212,34 @@
             var product2OptionList = $(e.target).parent().parent().find('.product-2-options'),
                 newWidget = product2OptionList.attr('data-prototype');
             newWidget = newWidget.replace(/__prod_set__/g, valuesCount);
+            valuesCount++;
+            var newDiv = $(newWidget).prepend("<button class='btn btn-danger delete-btn'>X</button>");
+            newDiv.addClass('tm-panel-border');
+            newDiv.find('.delete-btn').siblings('label').remove();
+            newDiv.appendTo(product2OptionList);
+            $(product2OptionList).find('.delete-btn').click(delLink);
+            $('.option-select').change(addOption)
+        };
+
+        var addProduct2Attribute = function (e) {
+            e.preventDefault();
+            //prod2AttrCount
+            var wrapDiv = $(e.target).closest('#product_attributes_block');
+            var newWidget = wrapDiv.attr('data-prototype');
+            newWidget = newWidget.replace(/__name__/g, prod2AttrCount);
+            prod2AttrCount++;
+            wrapDiv.append(newWidget);
+            wrapDiv.find('.option-select').change(addAttributeValue);
+//            console.log(newWidget);
+
+
+            return;
+            var blockDiv = $(e.target).parent().parent();
+            var cnt = blockDiv.find('.option-select').length;
+            valuesCount = cnt?cnt:0;
+            var product2OptionList = $(e.target).parent().parent().find('.product-2-options'),
+                newWidget = product2OptionList.attr('data-prototype');
+            newWidget = newWidget.replace(/__name__/g, valuesCount);
             valuesCount++;
             var newDiv = $(newWidget).prepend("<button class='btn btn-danger delete-btn'>X</button>");
             newDiv.addClass('tm-panel-border');
@@ -209,10 +296,15 @@
                 type: form.attr('method'),
                 data: data,
                 success: function (html) {
+                    $('.block-brand').remove();
                     $('#sets2product').empty();
                     $('#sets2product').append($(html).find('#product_sets_block'));
+                    $('.block-categories').after($(html).find('.block-brand'));
                     $('#addProductSet').click(addProductSet);
                     $('.addProduct2Options button').click(addProduct2Option);
+
+                    $('#attibutes2product').append($(html).find('#product_attributes_block'));
+                    $('.addProduct2Attributes').click(addProduct2Attribute);
                 }
             });
         });
