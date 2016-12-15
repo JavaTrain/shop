@@ -63,10 +63,10 @@
             {% for item in items %}
                 <div class="col-sm-4 col-lg-4 col-md-4">
                     <div class="thumbnail">
-                        <a href="{{ path('lokos_shop_item_detail', {'catId': catId, 'itemId': item.id}) }}"><img src="http://placehold.it/320x150" alt=""></a>
+                        <a href="{{ path('lokos_shop_item_detail', {'catId': itemCategory.id, 'itemId': item.id}) }}"><img src="http://placehold.it/320x150" alt=""></a>
                         <div class="caption">
                             <h4 class="pull-right">${{ item.price }}</h4>
-                            <h4><a href="{{ path('lokos_shop_item_detail', {'catId': catId, 'itemId': item.id}) }}">{{ item.name }}</a>
+                            <h4><a href="{{ path('lokos_shop_item_detail', {'catId': itemCategory.id, 'itemId': item.id}) }}">{{ item.name }}</a>
                             </h4>
                             <p>{{ item.description|raw }}</p>
                         </div>
@@ -88,12 +88,59 @@
             {% else %}
                 <h2>Nothing to show</h2>
             {% endfor %}
-                        <div class="col-sm-4 col-lg-4 col-md-4">
-                <h4><a href="#">Like this template?</a>
-                </h4>
-                <p>If you like this template, then check out <a target="_blank" href="http://maxoffsky.com/code-blog/laravel-shop-tutorial-1-building-a-review-system/">this tutorial</a> on how to build a working review system for your online store!</p>
-                <a class="btn btn-primary" target="_blank" href="http://maxoffsky.com/code-blog/laravel-shop-tutorial-1-building-a-review-system/">View Tutorial</a>
-            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div>
+            <form>
+                <div>
+                    <h4>Brand:</h4>
+                    {% for brand in itemCategory.brands %}
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" {% if brand.id in filterBrand %} checked {% endif %} type="checkbox" name="brand[]" value="{{ brand.id }}" onchange="this.form.submit();">
+                                {{ brand.name }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div>
+                    <h4>Attributes:</h4>
+                    {% for attribute in itemCategory.attributes %}
+                        <div>
+                            <h6>{{ attribute.name }}</h6>
+                            {% for attrValue in attribute.attributeValues %}
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input type="checkbox" class="form-check-input"
+                                        {% if filterAttribute[attribute.id] is defined %}{% if attrValue.id in filterAttribute[attribute.id] %} checked {% endif %}{% endif %}
+                                        name="attribute[{{ attribute.id }}][]" value="{{ attrValue.id }}" onchange="this.form.submit();">
+                                        {{ attrValue.value }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div>
+                    <h4>Options:</h4>
+                    {% for option in itemCategory.option %}
+                        <div>
+                            <h6>{{ option.name }}</h6>
+                            {% for optionValue in option.optionValues %}
+                                <div class="form-check">
+                                    <label class="form-check-label">
+                                        <input type="checkbox" class="form-check-input"
+                                                {% if filterOption[option.id] is defined %}{% if optionValue.id in filterOption[option.id] %} checked {% endif %}{% endif %}
+                                               name="attribute[{{ optionValue.id }}][]" value="{{ optionValue.id }}" onchange="this.form.submit();">
+                                        {{ optionValue.value }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </form>
         </div>
     </div>
 
@@ -150,7 +197,7 @@
         $('.add-to-cart').click(function(e){
             e.preventDefault();
             e.stopPropagation();
-            var url = '{{ path('lokos_shop_item_detail', {'catId':catId, 'itemId':'000'}) }}'.replace('000',$(this).attr('data-item-id'));
+            var url = '{{ path('lokos_shop_item_detail', {'catId':itemCategory.id, 'itemId':'000'}) }}'.replace('000',$(this).attr('data-item-id'));
             $.ajax({
                 url: url,
                 type: 'post',

@@ -143,7 +143,7 @@ abstract class BaseController extends Controller
      * @param array   $params         additional parameters for search
      * @param string  $orderBy        name of field for ordering. Default 'name'
      * @param string  $orderDir       sort direction. Default 'asc'
-     * @param string  $hesh           unique hesh for save valee in the session
+     * @param string  $hesh           unique hesh for save value in the session
      *
      * @return array
      */

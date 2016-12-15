@@ -2,7 +2,6 @@
 
 namespace Lokos\ShopBundle\Repositories;
 
-use Lokos\ShopBundle\Entity\Product;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 
@@ -20,17 +19,18 @@ class CategoryRepository extends BaseRepository
     {
         parent::buildQuery();
 
-//        $this->query->select(array('tbl'));
-//        if (!empty($params[':'])) {
-//            $this->query
-//                ->addSelect('o_val')
-//                ->join('tbl.optionValues', 'o_val')
-//                ->addSelect('p2o_val')
-//                ->join('o_val.product2optionValues', 'p2o_val')
-//                ->where('p2o_val.product = :product_id')
-//                ->setParameter(':product_id', $params['product'])
-//            ;
-//        }
+        if (!empty($params['id'])) {
+            $this->query
+                ->addSelect('b')
+                ->join('tbl.brands', 'b')
+                ->addSelect('a')
+                ->join('tbl.attributes', 'a')
+                ->where('tbl.id = :id')
+                ->addSelect('o')
+                ->join('tbl.option', 'o')
+                ->setParameter(':id', $params['id'])
+            ;
+        }
         
 
         return $this;

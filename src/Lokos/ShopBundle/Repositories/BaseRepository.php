@@ -89,6 +89,7 @@ abstract class BaseRepository extends EntityRepository
                 }
             }
         }
+//        print_r($this->query->getQuery()->getSQL());var_dump($this->query->getQuery()->getParameters());die;
         return $this->query
             ->getQuery()
             ->getResult();

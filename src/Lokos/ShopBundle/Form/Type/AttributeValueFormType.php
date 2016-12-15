@@ -2,13 +2,9 @@
 
 namespace Lokos\ShopBundle\Form\Type;
 
-use Lokos\ShopBundle\Entity\OptionValue;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 class AttributeValueFormType extends AbstractType
 {
@@ -39,6 +35,6 @@ class AttributeValueFormType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'lokos_shop_option_value';
+        return 'lokos_shop_attribute_value';
     }
 }

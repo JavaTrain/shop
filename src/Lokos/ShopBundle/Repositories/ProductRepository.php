@@ -31,7 +31,14 @@ class ProductRepository extends BaseRepository
             ->addSelect('o')
             ->leftJoin('p2o.option', 'o')
             ->addSelect('ov')
-            ->leftJoin('p2o.optionValue', 'ov');
+            ->leftJoin('p2o.optionValue', 'ov')
+            ->addSelect('p2a')
+            ->leftJoin('tbl.product2Attributes', 'p2a')
+//            ->addSelect('a')
+//            ->leftJoin('p2a.attribute', 'a')
+//            ->addSelect('av')
+//            ->leftJoin('p2a.attributeValue', 'av')
+        ;
         if (!empty($params['categoryId'])) {
             $this->query
                 ->andWhere('tbl.category = :category')
@@ -54,6 +61,35 @@ class ProductRepository extends BaseRepository
                 ->andWhere('ps.id = :psId')
                 ->setParameter(':psId', $params['productSet']);
             ;
+        }
+        if (!empty($params['filterBrand'])) {
+            $this->query
+                ->andWhere($this->query->expr()->in('tbl.brand', ':brandIds'))
+                ->setParameter(':brandIds', $params['filterBrand']);
+            ;
+        }
+        if (!empty($params['filterAttribute'])) {
+            $i=0;
+            foreach($params['filterAttribute'] as $attrId => $attrValuesIds){
+                $i++;
+                $this->query
+                    ->andWhere('a.id = :attrId'.$i)
+                    ->setParameter(':attrId'.$i, $attrId)
+                    ->andWhere($this->query->expr()->in('av.id', ':attrValuesIds'.$i))
+                    ->setParameter(':attrValuesIds'.$i, $attrValuesIds);
+            }
+
+        }
+        if (!empty($params['filterOption'])) {
+            $i=0;
+            foreach($params['filterOption'] as $optionId => $optionValuesIds){
+                $i++;
+                $this->query
+                    ->andWhere('o.id = :optionId'.$i)
+                    ->setParameter(':optionId'.$i, $optionId)
+                    ->andWhere($this->query->expr()->in('ov.id', ':optionValuesIds'.$i))
+                    ->setParameter(':optionValuesIds'.$i, $optionValuesIds);
+            }
         }
         
         return $this;

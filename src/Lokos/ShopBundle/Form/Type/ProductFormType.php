@@ -105,7 +105,7 @@ class ProductFormType extends AbstractType
                 if ($category) {
                     $this->addProductSetForm($form, $data);
                     $this->addBrandForm($form, $category->getId());
-                    $this->addProduct2AttributeForm($form, $category->getId());
+                    $this->addProduct2AttributeForm($form, $data);
                 } else {
                     $form->remove('productSets');
                 }

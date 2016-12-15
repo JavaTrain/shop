@@ -3,6 +3,7 @@
 namespace Lokos\ShopBundle\Controller;
 
 use Lokos\ShopBundle\Repositories\CartRepository;
+use Lokos\ShopBundle\Repositories\CategoryRepository;
 use Lokos\ShopBundle\Repositories\ProductRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -42,21 +43,40 @@ class ProductController extends BaseController
      */
     public function overviewAction(Request $request, $id)
     {
+        /** @var CartRepository $cartRepository */
+        $cartRepository     = $this->get('lokos.shop.cart_repository');
+        $categoryRepository = $this->getDoctrine()->getRepository('LokosShopBundle:Category');
+
+        $filterBrand     = $request->get('brand', array());
+        $filterAttribute = $request->get('attribute', array());
+        $filterOption    = $request->get('option', array());
+
+//        var_dump($filterAttribute);die;
+
         $data = $this->getListData(
             $request,
             'LokosShopBundle:Product',
-            array('categoryId' => $id),
+            array(
+                'categoryId'      => $id,
+                'filterBrand'     => $filterBrand,
+                'filterAttribute' => $filterAttribute,
+                'filterOption'    => $filterOption
+            ),
             'id',
             'desc'
             );
 
-        $data['categories'] = $this->getDoctrine()
-                                   ->getRepository('LokosShopBundle:Category')->findAll();
-        $cartItems          = $this->get('lokos.shop.cart_repository')
-                                   ->getCartItems($request->getSession()->get('cart', array()));
-        $data['cartResume'] = $this->get('lokos.shop.cart_repository')
-                                   ->getCartItemsCountAndPrice($cartItems);
-        $data['catId']      = $id;
+        $itemCategory = $categoryRepository->reset()
+                                           ->buildQuery(['id' => $id])
+                                           ->getSingle();
+
+        $cartItems               = $cartRepository->getCartItems($request->getSession()->get('cart', array()));
+        $data['categories']      = $categoryRepository->findAll();
+        $data['cartResume']      = $cartRepository->getCartItemsCountAndPrice($cartItems);
+        $data['itemCategory']    = $itemCategory;
+        $data['filterBrand']     = $filterBrand;
+        $data['filterAttribute'] = $filterAttribute;
+        $data['filterOption']    = $filterOption;
 
         return $this->render('LokosShopBundle:Product:overview.html.twig', $data);
 
@@ -75,15 +95,18 @@ class ProductController extends BaseController
 //        }
         /** @var ProductRepository $productRepository */
         /** @var CartRepository $cartRepository */
-        $productRepository = $this->getDoctrine()->getRepository('LokosShopBundle:Product');
-        $cartRepository    = $this->get('lokos.shop.cart_repository');//repository without entity
+        /** @var CategoryRepository $categoryRepository */
+        $productRepository  = $this->getDoctrine()->getRepository('LokosShopBundle:Product');
+        $cartRepository     = $this->get('lokos.shop.cart_repository');//repository without entity
+        $categoryRepository = $this->getDoctrine()->getRepository('LokosShopBundle:Category');
+
 
         $item = $productRepository
                      ->reset()
                      ->buildQuery(array('productId' => $itemId))
                      ->getSingle();
         if (!$item) {
-            throw new NotFoundHttpException('Item "'.$itemId.'" not found');
+            throw new NotFoundHttpException('Item: "'.$itemId.'" not found');
         }
 //        var_dump($request->getSession()->get('cart', array()));die;
 //        var_dump($request->getSession()->set('cart', array()));die;
@@ -93,7 +116,7 @@ class ProductController extends BaseController
             'item'             => $item,
             'options'          => $productRepository->getProductOptions($item),
             'cartResume'       => $cartRepository->getCartItemsCountAndPrice($cartItems),
-            'categories'       => $this->getDoctrine()->getRepository('LokosShopBundle:Category')->findAll(),
+            'categories'       => $categoryRepository->findAll(),
             'availableOptions' => json_encode($productRepository->getAvailableOptions($item)),
         );
 

@@ -7,7 +7,9 @@ use Lokos\ShopBundle\Entity\AttributeValue;
 use Lokos\ShopBundle\Entity\Brand;
 use Lokos\ShopBundle\Entity\Category;
 use Lokos\ShopBundle\Entity\Option;
+use Lokos\ShopBundle\Entity\OptionValue;
 use Lokos\ShopBundle\Entity\Product;
+use Lokos\ShopBundle\Entity\Product2Attribute;
 use Lokos\ShopBundle\Entity\Product2Option;
 use Lokos\ShopBundle\Entity\ProductSet;
 use Lokos\ShopBundle\Form\Type\AttributeFormType;
@@ -142,6 +144,7 @@ class AdminController extends BaseController
             if ($form->isValid()) {
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($option);
+                /** @var OptionValue $optionValue */
                 foreach ($option->getOptionValues() as $optionValue) {
                     $optionValue->setOption($option);
                     if ($optionValue->getId()) {
@@ -214,9 +217,14 @@ class AdminController extends BaseController
 
         if ($request->isMethod('POST')) {
             $beforeSaveProductSets = $currentProductSetIds = array();
+            $beforeSaveAttributes = $currentProductAttributes = array();
             /** @var ProductSet $productSet */
             foreach ($product->getProductSets() as $productSet){
                 $beforeSaveProductSets[$productSet->getId()] = $productSet;
+            }
+            /** @var Product2Attribute $p2a */
+            foreach ($product->getProduct2Attributes() as $p2a){
+                $beforeSaveAttributes[$p2a->getId()] = $p2a;
             }
 
             $form->handleRequest($request);
@@ -245,14 +253,22 @@ class AdminController extends BaseController
                             $em->remove($productSet);
                         }
                     }
+                    foreach ($product->getProduct2Attributes() as $p2a) {
+                        $p2a->setProduct($product);
+                        if ($p2a->getId()) {
+                            $currentProductAttributes[] = $p2a->getId();
+                        }
+                    }
+                    foreach ($beforeSaveAttributes as $productAttrId => $productAttr) {
+                        if (!in_array($productAttrId, $currentProductAttributes)) {
+                            $em->remove($productAttr);
+                        }
+                    }
 
                     $em->persist($product);
                     $em->flush();
 
-                    $this->get('session')->getFlashBag()->add(
-                        'success',
-                        $this->translate('messages.successfully_saved')
-                    );
+                    $this->get('session')->getFlashBag()->add('success', $this->translate('messages.successfully_saved'));
 
                     return $this->redirect($this->generateUrl('lokos_shop_admin_products'));
                 } else {
@@ -294,8 +310,8 @@ class AdminController extends BaseController
     public function editBrandAction(Request $request)
     {
         $brand = $this->getDoctrine()
-                       ->getRepository('LokosShopBundle:Brand')
-                       ->find($request->get('id', null));
+                      ->getRepository('LokosShopBundle:Brand')
+                      ->find($request->get('id', null));
 
         if (empty($brand)) {
             $brand = new Brand();
@@ -311,8 +327,8 @@ class AdminController extends BaseController
 
             if ($form->isValid()) {
                 $em = $this->getDoctrine()->getManager();
-                $sql = "DELETE FROM `brand2category` WHERE `brand_id` = :brand_id";
 
+                $sql = "DELETE FROM `brand2category` WHERE `brand_id` = :brand_id";
                 $em->getConnection()->executeQuery($sql, [':brand_id' => $brand->getId()]);
 
                 /** @var Category $category */
@@ -384,28 +400,32 @@ class AdminController extends BaseController
                 $beforeSaveAttributeValues [$attributeValue->getId()] = $attributeValue;
 
             $form->handleRequest($request);
+//            var_dump($attribute->getCategory());die;
+
 
             if ($form->isValid()) {
                 $em = $this->getDoctrine()->getManager();
+
+//                foreach ($attribute->getAttributeValues() as $attributeValue) {
+//                    $attributeValue->setAttribute($attribute);
+//                    if ($attributeValue->getId()) {
+//                        $currentAttributeValuesIds[] = $attributeValue->getId();
+//                    }
+//                }
+
                 $em->persist($attribute);
-                foreach ($attribute->getAttributeValues() as $attributeValue) {
-                    $attributeValue->setAttribute($attribute);
-                    if ($attributeValue->getId()) {
-                        $currentAttributeValuesIds[] = $attributeValue->getId();
-                    }
-                }
-                $em->persist($attribute);
-                foreach ($beforeSaveAttributeValues as $attributeValueId => $attributeValue) {
-                    if (!in_array($attributeValueId, $currentAttributeValuesIds)) {
-                        $em->remove($attributeValue);
-                    }
-                }
+
+//                foreach ($beforeSaveAttributeValues as $attributeValueId => $attributeValue) {
+//                    if (!in_array($attributeValueId, $currentAttributeValuesIds)) {
+//                        $em->remove($attributeValue);
+//                    }
+//                }
 
                 $em->flush();
 
                 $this->get('session')->getFlashBag()->add('success', $this->translate('messages.successfully_saved'));
 
-                    return $this->redirect($this->generateUrl('lokos_shop_admin_attributes'));
+                return $this->redirect($this->generateUrl('lokos_shop_admin_attributes'));
             } else {
                 foreach ($form->getErrors() as $e) {
                     var_dump($e->getMessage());
