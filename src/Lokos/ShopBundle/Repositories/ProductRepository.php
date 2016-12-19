@@ -24,20 +24,20 @@ class ProductRepository extends BaseRepository
         parent::buildQuery();
 
         $this->query->select(array('tbl'))
-            ->addSelect('ps')
-            ->leftJoin('tbl.productSets', 'ps')
-            ->addSelect('p2o')
-            ->leftJoin('ps.product2Options', 'p2o')
-            ->addSelect('o')
-            ->leftJoin('p2o.option', 'o')
-            ->addSelect('ov')
-            ->leftJoin('p2o.optionValue', 'ov')
+//            ->addSelect('ps')
+//            ->leftJoin('tbl.productSets', 'ps')
+//            ->addSelect('p2o')
+//            ->leftJoin('ps.product2Options', 'p2o')
+//            ->addSelect('o')
+//            ->leftJoin('p2o.option', 'o')
+//            ->addSelect('ov')
+//            ->leftJoin('p2o.optionValue', 'ov')
             ->addSelect('p2a')
             ->leftJoin('tbl.product2Attributes', 'p2a')
-//            ->addSelect('a')
-//            ->leftJoin('p2a.attribute', 'a')
-//            ->addSelect('av')
-//            ->leftJoin('p2a.attributeValue', 'av')
+            ->addSelect('a')
+            ->leftJoin('p2a.attribute', 'a')
+            ->addSelect('av')
+            ->leftJoin('p2a.attributeValue', 'av')
         ;
         if (!empty($params['categoryId'])) {
             $this->query
@@ -46,7 +46,7 @@ class ProductRepository extends BaseRepository
         }
         if (!empty($params['productIds'])) {
             $this->query
-                ->andWhere('tbl.id IN (:ids)')
+                ->andWhere($this->query->expr()->in('tbl.id', ':ids'))
                 ->setParameter(':ids', $params['productIds'])
             ;
         }
@@ -69,27 +69,50 @@ class ProductRepository extends BaseRepository
             ;
         }
         if (!empty($params['filterAttribute'])) {
-            $i=0;
-            foreach($params['filterAttribute'] as $attrId => $attrValuesIds){
-                $i++;
-                $this->query
-                    ->andWhere('a.id = :attrId'.$i)
-                    ->setParameter(':attrId'.$i, $attrId)
-                    ->andWhere($this->query->expr()->in('av.id', ':attrValuesIds'.$i))
-                    ->setParameter(':attrValuesIds'.$i, $attrValuesIds);
+            $attrValuesIds = [];
+            foreach ($params['filterAttribute'] as $attrId => $valuesIds) {
+                foreach ($valuesIds as $id) {
+                    array_push($attrValuesIds, $id);
+                }
             }
+
+            $cnt = count($params['filterAttribute']);//*2;
+
+            $this->query
+                ->andWhere($this->query->expr()->in('av.id', ':attrValuesIds'))
+                ->setParameter(':attrValuesIds', $attrValuesIds)
+                ->addGroupBy('tbl.id')
+                ->andHaving($this->query->expr()->eq($this->query->expr()->count('tbl.id'), ':cnt'))
+                ->setParameter(':cnt', $cnt)
+                ;
 
         }
         if (!empty($params['filterOption'])) {
-            $i=0;
-            foreach($params['filterOption'] as $optionId => $optionValuesIds){
-                $i++;
-                $this->query
-                    ->andWhere('o.id = :optionId'.$i)
-                    ->setParameter(':optionId'.$i, $optionId)
-                    ->andWhere($this->query->expr()->in('ov.id', ':optionValuesIds'.$i))
-                    ->setParameter(':optionValuesIds'.$i, $optionValuesIds);
-            }
+//            $optionValuesIds = [];
+//            foreach ($params['filterOption'] as $optionId => $valuesIds) {
+//                foreach ($valuesIds as $id) {
+//                    array_push($optionValuesIds, $id);
+//                }
+//            }
+//
+//            $this->query
+//                ->andWhere( $this->query->expr()->andX($this->query->expr()->in('ov.id', ':optionValuesIds')))
+//                ->setParameter(':optionValuesIds', $optionValuesIds)
+//                ->addGroupBy('tbl.id')
+//                ->andHaving('count(tbl.id) = :cnt')
+//                ->setParameter(':cnt', count($params['filterOption']))
+//            ;
+
+
+//            $i=0;
+//            foreach($params['filterOption'] as $optionId => $optionValuesIds){
+//                $i++;
+//                $this->query
+//                    ->andWhere('o.id = :optionId'.$i)
+//                    ->setParameter(':optionId'.$i, $optionId)
+//                    ->andWhere($this->query->expr()->in('ov.id', ':optionValuesIds'.$i))
+//                    ->setParameter(':optionValuesIds'.$i, $optionValuesIds);
+//            }
         }
         
         return $this;

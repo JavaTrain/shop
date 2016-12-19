@@ -68,8 +68,22 @@
                             <h4 class="pull-right">${{ item.price }}</h4>
                             <h4><a href="{{ path('lokos_shop_item_detail', {'catId': itemCategory.id, 'itemId': item.id}) }}">{{ item.name }}</a>
                             </h4>
+                            {% for pr2attr in item.product2Attributes %}
+                                <h5>{{ pr2attr.attribute.name }}</h5>
+                                <h6>{{ pr2attr.attributeValue.value }}</h6>
+                            {% endfor %}
+                            <hr>
                             <p>{{ item.description|raw }}</p>
                         </div>
+                        <hr>
+                        {#{% for prodSets in item.productSets %}#}
+                            {#{% for set in prodSets %}#}
+                                {#{% for pr2opt in set %}#}
+                                    {#<h5>{{ pr2opt.option.name }}</h5>#}
+                                    {#<h6>{{ pr2opt.optionValue.value }}</h6>#}
+                                {#{% endfor %}#}
+                            {#{% endfor %}#}
+                        {#{% endfor %}#}
                         <div>
                             <a class="btn btn-primary add-to-cart" data-item-id="{{ item.id }}" href="#">Add to cart</a>
                         </div>

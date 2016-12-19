@@ -111,7 +111,7 @@ class Product2AttributeFormType extends AbstractType
                     );
 //                    $form->add('price');
                 } else {
-                    var_dump('Very bad');die;
+//                    var_dump('Very bad');die;
 //                    $form->remove('productSets');
                 }
             }

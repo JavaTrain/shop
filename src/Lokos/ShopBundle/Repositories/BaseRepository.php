@@ -89,7 +89,7 @@ abstract class BaseRepository extends EntityRepository
                 }
             }
         }
-//        print_r($this->query->getQuery()->getSQL());var_dump($this->query->getQuery()->getParameters());die;
+//        print_r($this->query->getQuery()->getSQL());?><!--<pre>--><?php //print_r($this->query->getQuery()->getParameters());die;
         return $this->query
             ->getQuery()
             ->getResult();
@@ -115,15 +115,15 @@ abstract class BaseRepository extends EntityRepository
      */
     public function getCount()
     {
-        $query = clone $this->query;
-        $result = $query
-            ->select(array('COUNT(tbl.id)'))
-            ->setFirstResult(null)
-            ->setMaxResults(null)
-            ->getQuery()
-            ->getOneOrNullResult();
-
-        return $result?current($result):0;
+//        $query = clone $this->query;
+//        $result = $query
+//            ->select(array('COUNT(tbl.id)'))
+//            ->setFirstResult(null)
+//            ->setMaxResults(null)
+//            ->getQuery()
+//            ->getOneOrNullResult();
+//
+//        return $result?current($result):0;
     }
 
     /**

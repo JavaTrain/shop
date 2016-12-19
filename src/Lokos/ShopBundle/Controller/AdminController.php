@@ -202,7 +202,6 @@ class AdminController extends BaseController
         /** @var Product $product */
         $product = $this->getDoctrine()
                         ->getRepository('LokosShopBundle:Product')
-//                        ->reset()
                         ->buildQuery(array('productId' => $request->get('id', null)))
                         ->getSingle();
 
@@ -230,7 +229,7 @@ class AdminController extends BaseController
             $form->handleRequest($request);
 
             if ($request->isXmlHttpRequest()) {
-                if(!$request->get('update')){
+                if (!$request->get('update')) {
                     return $this->jsonResponse($this->getErrorMessages($form));
                 }
             }
