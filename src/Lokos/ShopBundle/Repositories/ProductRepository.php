@@ -24,14 +24,14 @@ class ProductRepository extends BaseRepository
         parent::buildQuery();
 
         $this->query->select(array('tbl'))
-//            ->addSelect('ps')
-//            ->leftJoin('tbl.productSets', 'ps')
-//            ->addSelect('p2o')
-//            ->leftJoin('ps.product2Options', 'p2o')
-//            ->addSelect('o')
-//            ->leftJoin('p2o.option', 'o')
-//            ->addSelect('ov')
-//            ->leftJoin('p2o.optionValue', 'ov')
+            ->addSelect('ps')
+            ->leftJoin('tbl.productSets', 'ps')
+            ->addSelect('p2o')
+            ->leftJoin('ps.product2Options', 'p2o')
+            ->addSelect('o')
+            ->leftJoin('p2o.option', 'o')
+            ->addSelect('ov')
+            ->leftJoin('p2o.optionValue', 'ov')
             ->addSelect('p2a')
             ->leftJoin('tbl.product2Attributes', 'p2a')
             ->addSelect('a')
@@ -41,7 +41,7 @@ class ProductRepository extends BaseRepository
         ;
         if (!empty($params['categoryId'])) {
             $this->query
-                ->andWhere('tbl.category = :category')
+                ->andWhere($this->query->expr()->eq('tbl.category' ,':category'))
                 ->setParameter(':category', $params['categoryId']);
         }
         if (!empty($params['productIds'])) {
@@ -52,13 +52,13 @@ class ProductRepository extends BaseRepository
         }
         if (!empty($params['productId'])) {
             $this->query
-                ->where('tbl.id = :productId')
+                ->where($this->query->expr()->eq('tbl.id', ':productId'))
                 ->setParameter(':productId', $params['productId']);
             ;
         }
         if (!empty($params['productSet'])) {
             $this->query
-                ->andWhere('ps.id = :psId')
+                ->andWhere($this->query->expr()->eq('ps.id', ':psId'))
                 ->setParameter(':psId', $params['productSet']);
             ;
         }
@@ -68,54 +68,84 @@ class ProductRepository extends BaseRepository
                 ->setParameter(':brandIds', $params['filterBrand']);
             ;
         }
-        if (!empty($params['filterAttribute'])) {
-            $attrValuesIds = [];
-            foreach ($params['filterAttribute'] as $attrId => $valuesIds) {
-                foreach ($valuesIds as $id) {
-                    array_push($attrValuesIds, $id);
-                }
-            }
-
-            $cnt = count($params['filterAttribute']);//*2;
-
-            $this->query
-                ->andWhere($this->query->expr()->in('av.id', ':attrValuesIds'))
-                ->setParameter(':attrValuesIds', $attrValuesIds)
-                ->addGroupBy('tbl.id')
-                ->andHaving($this->query->expr()->eq($this->query->expr()->count('tbl.id'), ':cnt'))
-                ->setParameter(':cnt', $cnt)
-                ;
-
-        }
-        if (!empty($params['filterOption'])) {
-//            $optionValuesIds = [];
-//            foreach ($params['filterOption'] as $optionId => $valuesIds) {
-//                foreach ($valuesIds as $id) {
-//                    array_push($optionValuesIds, $id);
-//                }
-//            }
-//
-//            $this->query
-//                ->andWhere( $this->query->expr()->andX($this->query->expr()->in('ov.id', ':optionValuesIds')))
-//                ->setParameter(':optionValuesIds', $optionValuesIds)
-//                ->addGroupBy('tbl.id')
-//                ->andHaving('count(tbl.id) = :cnt')
-//                ->setParameter(':cnt', count($params['filterOption']))
-//            ;
-
-
-//            $i=0;
-//            foreach($params['filterOption'] as $optionId => $optionValuesIds){
-//                $i++;
-//                $this->query
-//                    ->andWhere('o.id = :optionId'.$i)
-//                    ->setParameter(':optionId'.$i, $optionId)
-//                    ->andWhere($this->query->expr()->in('ov.id', ':optionValuesIds'.$i))
-//                    ->setParameter(':optionValuesIds'.$i, $optionValuesIds);
-//            }
-        }
         
         return $this;
+    }
+
+    /**
+     * @param       $catId
+     * @param array $filterBrand
+     * @param array $filterAttributes
+     *
+     * @return array
+     */
+    public function getIdsByFilterAttributes($catId, array $filterBrand, array $filterAttributes)
+    {
+        $attributeValuesIds = array();
+        foreach ($filterAttributes as $attr) {
+            foreach ($attr as $v) {
+                array_push($attributeValuesIds, $v);
+            }
+        }
+
+        $qb  = $this->createQueryBuilder('tbl');
+        $res = $qb->select('tbl.id')
+                  ->leftJoin('tbl.product2Attributes', 'p2a')
+                  ->leftJoin('p2a.attributeValue', 'av')
+                  ->where($qb->expr()->eq('tbl.category', ':category'))
+                  ->andWhere($qb->expr()->in('av.id', ':attributeValuesIds'))
+                  ->setParameter(':category', $catId)
+                  ->setParameter(':attributeValuesIds', $attributeValuesIds)
+                  ->groupBy('tbl.id')
+                  ->andHaving($qb->expr()->eq($qb->expr()->count('tbl.id'), ':productCount'))
+                  ->setParameter(':productCount', count($filterAttributes));
+        if (!empty($filterBrand)) {
+            $res = $res->andWhere($qb->expr()->in('tbl.brand', ':brandIds'))
+                       ->setParameter(':brandIds', $filterBrand);
+        }
+
+        $res = $res->getQuery()->getResult();
+
+        return array_map('current', $res);
+    }
+
+
+    /**
+     * @param       $catId
+     * @param array $filterBrand
+     * @param array $filterOptions
+     *
+     * @return array
+     */
+    public function getIdsByFilterOptions($catId, array $filterBrand, array $filterOptions)
+    {
+        $optionValuesIds = array();
+        foreach ($filterOptions as $option) {
+            foreach ($option as $v) {
+                array_push($optionValuesIds, $v);
+            }
+        }
+
+        $qb  = $this->createQueryBuilder('tbl');
+        $res = $qb->select('tbl.id')
+                  ->leftJoin('tbl.productSets', 'ps')
+                  ->leftJoin('ps.product2Options', 'p2o')
+                  ->leftJoin('p2o.optionValue', 'ov')
+                  ->where($qb->expr()->eq('tbl.category', ':category'))
+                  ->andWhere($qb->expr()->in('ov.id', ':optionValuesIds'))
+                  ->setParameter(':category', $catId)
+                  ->setParameter(':optionValuesIds', $optionValuesIds)
+                  ->groupBy('tbl.id')
+                  ->andHaving($qb->expr()->eq($qb->expr()->count('tbl.id'), ':productCount'))
+                  ->setParameter(':productCount', count($filterOptions));
+        if (!empty($filterBrand)) {
+            $res = $res->andWhere($qb->expr()->in('tbl.brand', ':brandIds'))
+                       ->setParameter(':brandIds', $filterBrand);
+        }
+
+        $res = $res->getQuery()->getResult();
+
+        return array_map('current', $res);
     }
 
     /**

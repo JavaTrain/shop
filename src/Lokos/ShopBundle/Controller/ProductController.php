@@ -44,42 +44,53 @@ class ProductController extends BaseController
     public function overviewAction(Request $request, $id)
     {
         /** @var CartRepository $cartRepository */
+        /** @var CategoryRepository $categoryRepository */
+        /** @var ProductRepository $productRepository */
         $cartRepository     = $this->get('lokos.shop.cart_repository');
         $categoryRepository = $this->getDoctrine()->getRepository('LokosShopBundle:Category');
+        $productRepository  = $this->getDoctrine()->getRepository('LokosShopBundle:Product');
+        $filterBrand        = $request->get('brand', array());
+        $filterAttribute    = $request->get('attribute', array());
+        $filterOption       = $request->get('option', array());
 
-        $filterBrand     = $request->get('brand', array());
-        $filterAttribute = $request->get('attribute', array());
-        $filterOption    = $request->get('option', array());
-
-//        var_dump($filterAttribute);die;
+        if (!empty($filterAttribute) || !empty($filterOption)) {
+            if (empty($filterAttribute) && !empty($filterOption)) {
+                $productIds = $productRepository->getIdsByFilterOptions($id, $filterBrand, $filterOption);
+                $params     = array('productIds' => $productIds);
+            } elseif (empty($filterOption) && !empty($filterAttribute)) {
+                $productIds = $productRepository->getIdsByFilterAttributes($id, $filterBrand, $filterAttribute);
+                $params     = array('productIds' => $productIds);
+            } else {
+                $productIds = array_intersect(
+                    $productRepository->getIdsByFilterAttributes($id, $filterBrand, $filterAttribute),
+                    $productRepository->getIdsByFilterOptions($id, $filterBrand, $filterOption)
+                );
+                $params     = $productIds?array('productIds' => $productIds):array('productIds' => -1);
+            }
+        } else {
+            $params = array(
+                'categoryId'  => $id,
+                'filterBrand' => $filterBrand
+            );
+        }
 
         $data = $this->getListData(
             $request,
             'LokosShopBundle:Product',
-            array(
-                'categoryId'      => $id,
-                'filterBrand'     => $filterBrand,
-                'filterAttribute' => $filterAttribute,
-                'filterOption'    => $filterOption
-            ),
+            $params,
             'id',
             'desc'
             );
 
-        $itemCategory = $categoryRepository->reset()
-                                           ->buildQuery(['id' => $id])
-                                           ->getSingle();
-
         $cartItems               = $cartRepository->getCartItems($request->getSession()->get('cart', array()));
         $data['categories']      = $categoryRepository->findAll();
         $data['cartResume']      = $cartRepository->getCartItemsCountAndPrice($cartItems);
-        $data['itemCategory']    = $itemCategory;
+        $data['itemCategory']    = $categoryRepository->reset()->buildQuery(['id' => $id])->getSingle();
         $data['filterBrand']     = $filterBrand;
         $data['filterAttribute'] = $filterAttribute;
         $data['filterOption']    = $filterOption;
 
         return $this->render('LokosShopBundle:Product:overview.html.twig', $data);
-
     }
 
     /**
@@ -91,8 +102,6 @@ class ProductController extends BaseController
      */
     public function detailAction(Request $request, $catId, $itemId)
     {
-//        if ($request->isXmlHttpRequest()) {
-//        }
         /** @var ProductRepository $productRepository */
         /** @var CartRepository $cartRepository */
         /** @var CategoryRepository $categoryRepository */

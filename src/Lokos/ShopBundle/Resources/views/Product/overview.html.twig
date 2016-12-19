@@ -68,13 +68,12 @@
                             <h4 class="pull-right">${{ item.price }}</h4>
                             <h4><a href="{{ path('lokos_shop_item_detail', {'catId': itemCategory.id, 'itemId': item.id}) }}">{{ item.name }}</a>
                             </h4>
-                            {% for pr2attr in item.product2Attributes %}
-                                <h5>{{ pr2attr.attribute.name }}</h5>
-                                <h6>{{ pr2attr.attributeValue.value }}</h6>
-                            {% endfor %}
-                            <hr>
                             <p>{{ item.description|raw }}</p>
                         </div>
+                        {% for pr2attr in item.product2Attributes %}
+                            <h5>{{ pr2attr.attribute.name }}</h5>
+                            <h6>{{ pr2attr.attributeValue.value }}</h6>
+                        {% endfor %}
                         <hr>
                         {#{% for prodSets in item.productSets %}#}
                             {#{% for set in prodSets %}#}
@@ -145,8 +144,8 @@
                                 <div class="form-check">
                                     <label class="form-check-label">
                                         <input type="checkbox" class="form-check-input"
-                                                {% if filterOption[option.id] is defined %}{% if optionValue.id in filterOption[option.id] %} checked {% endif %}{% endif %}
-                                               name="attribute[{{ optionValue.id }}][]" value="{{ optionValue.id }}" onchange="this.form.submit();">
+                                            {% if filterOption[option.id] is defined %}{% if optionValue.id in filterOption[option.id] %} checked {% endif %}{% endif %}
+                                           name="option[{{ option.id }}][]" value="{{ optionValue.id }}" onchange="this.form.submit();">
                                         {{ optionValue.value }}
                                     </label>
                                 </div>
