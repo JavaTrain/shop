@@ -1,6 +1,6 @@
 <?php
 
-namespace Lokos\AdminBundle\Controller;
+namespace Lokos\ApiBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -8,6 +8,6 @@ class DefaultController extends Controller
 {
     public function indexAction()
     {
-        return $this->render('LokosAdminBundle:Default:index.html.twig');
+        return $this->render('LokosApiBundle:Default:index.html.twig');
     }
 }

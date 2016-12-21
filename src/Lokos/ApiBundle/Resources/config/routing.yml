@@ -1,0 +1,11 @@
+lokos_api_category:
+    type: rest
+    prefix: /v1
+    name_prefix: api_1
+    resource: LokosApiBundle:Category
+
+lokos_api_product:
+    type: rest
+    name_prefix: api_1
+    parent: lokos_api_category
+    resource: LokosApiBundle:Product

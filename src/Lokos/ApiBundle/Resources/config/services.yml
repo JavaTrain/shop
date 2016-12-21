@@ -1,4 +1,4 @@
 services:
-#    lokos_admin.example:
-#        class: Lokos\AdminBundle\Example
+#    lokos_api.example:
+#        class: Lokos\ApiBundle\Example
 #        arguments: ["@service_id", "plain_value", %parameter%]

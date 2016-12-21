@@ -1,6 +1,7 @@
-lokos_admin:
-    resource: "@LokosAdminBundle/Resources/config/routing.yml"
-    prefix:   /admin/
+lokos_api:
+    type: rest
+    prefix: api
+    resource: "@LokosApiBundle/Resources/config/routing.yml"
 
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"

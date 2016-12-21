@@ -1,0 +1,10 @@
+ Lokos\ShopBundle\Entity\Category:
+    exclusion_policy: ALL
+#    xml_root_name: category
+    properties:
+        id:
+            expose: true
+        title:
+            expose: true
+        name:
+            expose: true

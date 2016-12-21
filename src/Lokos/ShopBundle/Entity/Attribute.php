@@ -4,6 +4,7 @@ namespace Lokos\ShopBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * Attribute
@@ -37,6 +38,7 @@ class Attribute
     private $description;
 
     /**
+     * @Exclude
      * @var \Doctrine\Common\Collections\Collection
      *
      * @ORM\ManyToMany(targetEntity="Category", mappedBy="attributes")
@@ -44,6 +46,7 @@ class Attribute
     private $category;
 
     /**
+     * @Exclude
      * @ORM\OneToMany(targetEntity="AttributeValue", mappedBy="attribute", cascade={"persist", "remove"})
      */
     private $attributeValues;

@@ -4,6 +4,7 @@ namespace Lokos\ShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * Option
@@ -37,6 +38,7 @@ class Option
     private $description;
 
     /**
+     * @Exclude
      * @var \Doctrine\Common\Collections\Collection
      *
      * @ORM\ManyToMany(targetEntity="Category", inversedBy="option")
@@ -52,6 +54,7 @@ class Option
     private $category;
 
     /**
+     * @Exclude
      * @ORM\OneToMany(targetEntity="OptionValue", mappedBy="option", cascade={"persist", "remove"})
      */
     private $optionValues;

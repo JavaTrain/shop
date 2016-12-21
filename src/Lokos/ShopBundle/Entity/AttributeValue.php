@@ -3,6 +3,7 @@
 namespace Lokos\ShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * AttributeValue
@@ -29,6 +30,7 @@ class AttributeValue
     private $value;
 
     /**
+     * @Exclude
      * @var \Attribute
      *
      * @ORM\ManyToOne(targetEntity="Attribute", inversedBy="attributeValues")
@@ -75,11 +77,11 @@ class AttributeValue
     /**
      * Set attribute
      *
-     * @param \Lokos\ShopBundle\Entity\Attribute $attribute
+     * @param Attribute $attribute
      *
      * @return AttributeValue
      */
-    public function setAttribute(\Lokos\ShopBundle\Entity\Attribute $attribute = null)
+    public function setAttribute(Attribute $attribute = null)
     {
         $this->attribute = $attribute;
 
@@ -87,7 +89,7 @@ class AttributeValue
     }
 
     /**
-     * @return \Attribute
+     * @return Attribute
      */
     public function getAttribute()
     {

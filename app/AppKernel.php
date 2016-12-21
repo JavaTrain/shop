@@ -23,7 +23,11 @@ class AppKernel extends Kernel
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
             new Knp\Bundle\MenuBundle\KnpMenuBundle(),
             new Lokos\UserBundle\LokosUserBundle(),
-            new Lokos\AdminBundle\LokosAdminBundle(),
+            new Lokos\ApiBundle\LokosApiBundle(),
+            new FOS\RestBundle\FOSRestBundle(),
+            new JMS\SerializerBundle\JMSSerializerBundle(),
+            new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
+            new Nelmio\CorsBundle\NelmioCorsBundle(),
         ];
        
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

@@ -2,7 +2,9 @@
 
 namespace Lokos\ShopBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * Product
@@ -51,6 +53,7 @@ class ProductSet
     private $quantity;
 
     /**
+     * @Exclude
      * @var \Doctrine\Common\Collections\Collection
      *
      * @ORM\OneToMany(targetEntity="OrderDetail", mappedBy="productSet")
@@ -62,8 +65,8 @@ class ProductSet
      */
     public function __construct()
     {
-        $this->product2Options = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->orderDetails    = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->product2Options = new ArrayCollection();
+        $this->orderDetails    = new ArrayCollection();
     }
 
     /**

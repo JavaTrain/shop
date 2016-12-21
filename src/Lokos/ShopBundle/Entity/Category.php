@@ -4,6 +4,8 @@ namespace Lokos\ShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * Category
@@ -30,6 +32,7 @@ class Category
     private $name;
 
     /**
+     *
      * @var \Doctrine\Common\Collections\Collection
      *
      * @ORM\ManyToMany(targetEntity="Attribute", inversedBy="category")
@@ -45,6 +48,7 @@ class Category
     private $attributes;
 
     /**
+     *
      * @var \Doctrine\Common\Collections\Collection
      *
      * @ORM\ManyToMany(targetEntity="Brand", inversedBy="categories")
@@ -60,6 +64,7 @@ class Category
     private $brands;
 
     /**
+     *
      * @var \Doctrine\Common\Collections\Collection
      *
      * @ORM\ManyToMany(targetEntity="Option", mappedBy="category")
@@ -67,6 +72,7 @@ class Category
     private $option;
 
     /**
+     *
      * @ORM\OneToMany(targetEntity="Product", mappedBy="category")
      */
     protected $products;

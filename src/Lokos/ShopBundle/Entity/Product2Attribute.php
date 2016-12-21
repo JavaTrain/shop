@@ -42,6 +42,7 @@ class Product2Attribute
     private $attributeValue;
 
     /**
+     *
      * @var \Product
      *
      * @ORM\ManyToOne(targetEntity="Product", inversedBy="product2Attributes")

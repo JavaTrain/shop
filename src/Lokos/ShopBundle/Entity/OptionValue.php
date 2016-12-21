@@ -4,6 +4,7 @@ namespace Lokos\ShopBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * OptionValue
@@ -30,6 +31,7 @@ class OptionValue
     private $value;
 
     /**
+     * @Exclude
      * @var \Option
      *
      * @ORM\ManyToOne(targetEntity="Option", inversedBy="optionValues")

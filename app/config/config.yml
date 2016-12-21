@@ -5,7 +5,7 @@ imports:
     - { resource: menu.yml }
     - { resource: "@LokosUserBundle/Resources/config/services.yml" }
     - { resource: "@LokosShopBundle/Resources/config/services.yml" }
-    - { resource: "@LokosAdminBundle/Resources/config/services.yml" }
+    - { resource: "@LokosApiBundle/Resources/config/services.yml" }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
@@ -130,3 +130,69 @@ assetic:
         jquery:
             inputs:
                 - %kernel.root_dir%/../vendor/components/jquery/jquery.js
+
+fos_rest:
+    param_fetcher_listener: true
+    view:
+        view_response_listener: 'force'
+        formats:
+            xml:  false
+            json: true
+        templating_formats:
+            html: false
+    format_listener:
+        rules:
+            - { path: ^/api, priorities: [ json ], fallback_format: ~, prefer_extension: false }
+            - { path: ^/api/doc, priorities: [html], fallback_format: ~, prefer_extension: false }
+            - { path: ^/*, priorities: [html], fallback_format: ~, prefer_extension: false }
+    exception:
+        codes:
+            'Symfony\Component\Routing\Exception\ResourceNotFoundException': 404
+            'Doctrine\ORM\OptimisticLockException': HTTP_CONFLICT
+        messages:
+            'Symfony\Component\Routing\Exception\ResourceNotFoundException': true
+    allowed_methods_listener: true
+#    access_denied_listener:
+#        json: true
+    body_listener: true
+    disable_csrf_role: IS_AUTHENTICATED_ANONYMOUSLY
+#    disable_csrf_role: ROLE_API
+
+#sensio_framework_extra:
+#    view:
+#        annotations: false
+
+nelmio_api_doc:
+    name: Page API
+
+nelmio_cors:
+   defaults:
+       allow_credentials: true
+       allow_origin: []
+       allow_headers: []
+       allow_methods: []
+       expose_headers: []
+       max_age: 0
+       hosts: []
+   paths:
+      '^/':
+          allow_origin: ['*']
+          allow_headers: ['origin', 'content-type', 'authorization', 'apikey', 'x-access-token']
+          allow_methods: ['POST', 'PUT', 'GET', 'DELETE', 'OPTIONS', 'PATCH']
+          max_age: 3600
+
+jms_serializer:
+    metadata:
+#        auto_detection: true
+        directories:
+            someName:
+                namespace_prefix: Lokos\ShopBundle
+                path: "%kernel.root_dir%/config/serializer"
+    handlers:
+        datetime:
+            default_format: "Y-m-d"
+            default_timezone: "UTC"
+#        directories:
+#            FOSUserBundle:
+#                namespace_prefix: FOS\UserBundle
+#                path: "@MindkYachadApiBundle/Resources/config/serializer/fos"
