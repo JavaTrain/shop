@@ -35,15 +35,8 @@ class Category
      *
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="Attribute", inversedBy="category")
-     * @ORM\JoinTable(name="attribute2category",
-     *   joinColumns={
-     *     @ORM\JoinColumn(name="category_id", referencedColumnName="id")
-     *   },
-     *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="attribute_id", referencedColumnName="id")
-     *   }
-     * )
+     * @ORM\ManyToMany(targetEntity="Attribute", mappedBy="category")
+     *
      */
     private $attributes;
 

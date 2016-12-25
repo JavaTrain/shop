@@ -41,7 +41,15 @@ class Attribute
      * @Exclude
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="Category", mappedBy="attributes")
+     * @ORM\ManyToMany(targetEntity="Category", inversedBy="attributes")
+     * @ORM\JoinTable(name="attribute2category",
+     *   joinColumns={
+     *     @ORM\JoinColumn(name="attribute_id", referencedColumnName="id")
+     *   },
+     *   inverseJoinColumns={
+     *     @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     *   }
+     * )
      */
     private $category;
 
