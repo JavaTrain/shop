@@ -1,0 +1,8 @@
+mapping:
+    class: Lokos\ShopBundle\Entity\Category
+    alias: Category
+    aliased_properties:
+        name: name
+    hide_properties: []
+    id_properties:
+        - categoryId

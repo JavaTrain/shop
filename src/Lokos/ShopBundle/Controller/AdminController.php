@@ -399,26 +399,24 @@ class AdminController extends BaseController
                 $beforeSaveAttributeValues [$attributeValue->getId()] = $attributeValue;
 
             $form->handleRequest($request);
-//            var_dump($attribute->getCategory());die;
-
 
             if ($form->isValid()) {
                 $em = $this->getDoctrine()->getManager();
 
-//                foreach ($attribute->getAttributeValues() as $attributeValue) {
-//                    $attributeValue->setAttribute($attribute);
-//                    if ($attributeValue->getId()) {
-//                        $currentAttributeValuesIds[] = $attributeValue->getId();
-//                    }
-//                }
+                foreach ($attribute->getAttributeValues() as $attributeValue) {
+                    $attributeValue->setAttribute($attribute);
+                    if ($attributeValue->getId()) {
+                        $currentAttributeValuesIds[] = $attributeValue->getId();
+                    }
+                }
 
                 $em->persist($attribute);
 
-//                foreach ($beforeSaveAttributeValues as $attributeValueId => $attributeValue) {
-//                    if (!in_array($attributeValueId, $currentAttributeValuesIds)) {
-//                        $em->remove($attributeValue);
-//                    }
-//                }
+                foreach ($beforeSaveAttributeValues as $attributeValueId => $attributeValue) {
+                    if (!in_array($attributeValueId, $currentAttributeValuesIds)) {
+                        $em->remove($attributeValue);
+                    }
+                }
 
                 $em->flush();
 

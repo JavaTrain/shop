@@ -69,7 +69,7 @@ class Product2Option
     }
 
     /**
-     * @return \Option
+     * @return Option
      */
     public function getOption()
     {

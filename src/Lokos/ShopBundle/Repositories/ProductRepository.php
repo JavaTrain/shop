@@ -199,9 +199,11 @@ class ProductRepository extends BaseRepository
                         $options[$entry->getOption()->getId()]      = $entry->getOption();
                         $optionFilter[$entry->getOption()->getId()] = $entry->getOption()->getId();
                         if (!array_key_exists($entry->getOptionValue()->getId(), $valueFilter)) {
+                            $entry->getOptionValue()->setPrice($entry->getPrice());
                             $valueFilter[$entry->getOptionValue()->getId()] = $entry->getOptionValue()->getId();
                             $values[$entry->getOption()->getId()][]         = $entry->getOptionValue();
                         }
+
                         return true;
                     } else {
                         if(!array_key_exists($entry->getOptionValue()->getId(), $valueFilter)){
@@ -209,6 +211,7 @@ class ProductRepository extends BaseRepository
                             $valueFilter[$entry->getOptionValue()->getId()] = $entry->getOptionValue()->getId();
                             $values[$entry->getOption()->getId()][] = $entry->getOptionValue();
                         }
+
                         return false;
                     }
                 }
