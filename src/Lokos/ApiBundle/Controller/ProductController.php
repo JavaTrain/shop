@@ -19,6 +19,12 @@ use FOS\RestBundle\Request\ParamFetcherInterface;
 class ProductController extends FOSRestController
 {
 
+    /**
+     * @param $catId
+     * @param $prodId
+     *
+     * @return array
+     */
     public function getAction($catId, $prodId)
     {
         return [
@@ -26,10 +32,25 @@ class ProductController extends FOSRestController
         ];
     }
 
-    public function cgetAction($catId)
+    /**
+     * @param Request $request
+     * @param         $catId
+     *
+     * @return array
+     */
+    public function cgetAction(Request $request, $catId)
     {
-        return [
-            'products' => $this->getDoctrine()->getRepository('LokosShopBundle:Product')->findBy(['category' => $catId]),
-        ];
+        if($request->query->has('productIds')){
+            $productIds = $request->get('productIds', array());
+            if (empty($productIds)) {
+                $response = array();
+            } else {
+                $response = ['products' => $this->getDoctrine()->getRepository('LokosShopBundle:Product')->findBy(['id' => $productIds])];
+            }
+        } else {
+            $response = ['products' => $this->getDoctrine()->getRepository('LokosShopBundle:Product')->findBy(['category' => $catId])];
+        }
+
+        return $response;
     }
 }
