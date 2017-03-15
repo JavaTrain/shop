@@ -213,6 +213,7 @@ class AdminController extends BaseController
         }
 
         $form = $this->createForm(ProductFormType::class, $product);
+//        var_dump($product);die('454353');
 
         if ($request->isMethod('POST')) {
             $beforeSaveProductSets = $currentProductSetIds = array();
@@ -235,6 +236,7 @@ class AdminController extends BaseController
             }
 
             if (!$request->get('update')) {
+
                 if ($form->isValid()) {
                     $em = $this->getDoctrine()->getManager();
                     foreach ($product->getProductSets() as $productSet) {
@@ -271,6 +273,7 @@ class AdminController extends BaseController
 
                     return $this->redirect($this->generateUrl('lokos_shop_admin_products'));
                 } else {
+
                     $errors = $form->getErrors();
                     foreach ($errors as $e) {
                         var_dump($e->getMessage());

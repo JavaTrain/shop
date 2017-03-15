@@ -29,7 +29,7 @@ class OrderDetail
     private $quantity;
 
     /**
-     * @var \Order
+     * @var Order
      *
      * @ORM\ManyToOne(targetEntity="Order")
      * @ORM\JoinColumns({
@@ -39,7 +39,7 @@ class OrderDetail
     private $order;
 
     /**
-     * @var \Product
+     * @var Product
      *
      * @ORM\ManyToOne(targetEntity="Product")
      * @ORM\JoinColumns({
@@ -105,7 +105,7 @@ class OrderDetail
     }
 
     /**
-     * @return \Order
+     * @return Order
      */
     public function getOrder()
     {
@@ -127,7 +127,7 @@ class OrderDetail
     }
 
     /**
-     * @return \Product
+     * @return Product
      */
     public function getProduct()
     {

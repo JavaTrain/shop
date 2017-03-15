@@ -31,7 +31,7 @@ class ProductSet
     private $name;
 
     /**
-     * @var \Product
+     * @var Product
      *
      * @ORM\ManyToOne(targetEntity="Product", inversedBy="productSets", cascade={"persist", "remove", "detach"})
      * @ORM\JoinColumns({
@@ -41,11 +41,6 @@ class ProductSet
     private $product;
 
     /**
-     * @ORM\OneToMany(targetEntity="Product2Option", mappedBy="productSet", cascade={"persist", "remove", "detach"})
-     */
-    private $product2Options;
-
-    /**
      * @var integer
      *
      * @ORM\Column(name="quantity", type="integer", nullable=true)
@@ -53,12 +48,16 @@ class ProductSet
     private $quantity;
 
     /**
-     * @Exclude
      * @var \Doctrine\Common\Collections\Collection
      *
      * @ORM\OneToMany(targetEntity="OrderDetail", mappedBy="productSet")
      */
     private $orderDetails;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Product2Option", mappedBy="productSet")
+     */
+    private $product2Options;
 
     /**
      * Constructor
@@ -102,7 +101,7 @@ class ProductSet
     }
 
     /**
-     * @return \Product
+     * @return Product
      */
     public function getProduct()
     {

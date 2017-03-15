@@ -22,17 +22,17 @@ class Product2Option
     private $id;
 
     /**
-     * @var \Option
+     * @var Attribute
      *
-     * @ORM\ManyToOne(targetEntity="Option")
+     * @ORM\ManyToOne(targetEntity="Attribute")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="option_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="attribute_id", referencedColumnName="id")
      * })
      */
-    private $option;
+    private $attribute;
 
     /**
-     * @var \ProductSet
+     * @var ProductSet
      *
      * @ORM\ManyToOne(targetEntity="ProductSet", inversedBy="product2Options")
      * @ORM\JoinColumns({
@@ -42,14 +42,14 @@ class Product2Option
     private $productSet;
 
     /**
-     * @var \Option
+     * @var AttributeValue
      *
-     * @ORM\ManyToOne(targetEntity="OptionValue")
+     * @ORM\ManyToOne(targetEntity="AttributeValue")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="option_value_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="attribute_value_id", referencedColumnName="id")
      * })
      */
-    private $optionValue;
+    private $attributeValue;
 
     /**
      * @var float
@@ -69,27 +69,27 @@ class Product2Option
     }
 
     /**
-     * @return Option
+     * @return Attribute
      */
-    public function getOption()
+    public function getAttribute()
     {
-        return $this->option;
+        return $this->attribute;
     }
 
     /**
-     * @param $option
+     * @param Attribute $attribute
      *
      * @return $this
      */
-    public function setOption($option)
+    public function setAttribute(Attribute $attribute)
     {
-        $this->option = $option;
+        $this->attribute = $attribute;
 
         return $this;
     }
 
     /**
-     * @return \ProductSet
+     * @return ProductSet
      */
     public function getProductSet()
     {
@@ -101,7 +101,7 @@ class Product2Option
      *
      * @return $this
      */
-    public function setProductSet($productSet)
+    public function setProductSet(ProductSet $productSet)
     {
         $this->productSet = $productSet;
 
@@ -109,21 +109,21 @@ class Product2Option
     }
 
     /**
-     * @return mixed
+     * @return AttributeValue
      */
-    public function getOptionValue()
+    public function getAttributeValue()
     {
-        return $this->optionValue;
+        return $this->attributeValue;
     }
 
     /**
-     * @param $optionValue
+     * @param AttributeValue $attributeValue
      *
      * @return $this
      */
-    public function setOptionValue($optionValue)
+    public function setAttributeValue(AttributeValue $attributeValue)
     {
-        $this->optionValue = $optionValue;
+        $this->attributeValue = $attributeValue;
 
         return $this;
     }

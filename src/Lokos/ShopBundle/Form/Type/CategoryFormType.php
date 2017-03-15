@@ -31,17 +31,17 @@ class CategoryFormType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add(
-                'option',
-                CollectionType::class,
-                array(
-                    'entry_type'   => OptionFormType::class,
-                    'prototype'    => true,
-                    'allow_add'    => true,
-                    'allow_delete' => true,
-                    'required'     => false
-                )
-            )
+//            ->add(
+//                'option',
+//                CollectionType::class,
+//                array(
+//                    'entry_type'   => OptionFormType::class,
+//                    'prototype'    => true,
+//                    'allow_add'    => true,
+//                    'allow_delete' => true,
+//                    'required'     => false
+//                )
+//            )
             ;
     }
 

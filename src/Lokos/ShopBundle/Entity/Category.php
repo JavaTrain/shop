@@ -58,14 +58,6 @@ class Category
 
     /**
      *
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="Option", mappedBy="category")
-     */
-    private $option;
-
-    /**
-     *
      * @ORM\OneToMany(targetEntity="Product", mappedBy="category")
      */
     protected $products;
@@ -77,7 +69,6 @@ class Category
     {
         $this->attributes = new ArrayCollection();
         $this->brands     = new ArrayCollection();
-        $this->option     = new ArrayCollection();
         $this->products   = new ArrayCollection();
     }
 
@@ -148,40 +139,6 @@ class Category
     public function getAttributes()
     {
         return $this->attributes;
-    }
-
-    /**
-     * Add option
-     *
-     * @param \Lokos\ShopBundle\Entity\Option $option
-     *
-     * @return Category
-     */
-    public function addOption(Option $option)
-    {
-        $this->option[] = $option;
-
-        return $this;
-    }
-
-    /**
-     * Remove option
-     *
-     * @param \Lokos\ShopBundle\Entity\Option $option
-     */
-    public function removeOption(Option $option)
-    {
-        $this->option->removeElement($option);
-    }
-
-    /**
-     * Get option
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getOption()
-    {
-        return $this->option;
     }
 
     /**

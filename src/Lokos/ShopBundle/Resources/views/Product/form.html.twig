@@ -65,9 +65,9 @@
                                                     <button class="btn btn-danger delete-btn">X</button>
                                                     <br>
                                                     <div id="{{ product2Option.vars.id }}">
-                                                        {{ form_row(product2Option.option) }}
+                                                        {{ form_row(product2Option.attribute) }}
                                                         <div id="optionValues">
-                                                            {{ form_row(product2Option.optionValue) }}
+                                                            {{ form_row(product2Option.attributeValue) }}
                                                             {{ form_row(product2Option.price) }}
                                                         </div>
                                                         <br>
@@ -141,7 +141,7 @@
         var prod2AttrCount = {% if form.product2Attributes is defined %}{{ form.product2Attributes|length }}{% else %}{{ 0 }}{% endif %};
         var addOption = function (e) {
             var form = $(this).closest('form'),
-                data = {"update": true},
+                data = {'update': true},
                 attrName = $(this).attr('name');
             data[$(this).attr('name')] = $(this).val();
             data[$('#lokos_shop_product_category').find('select').attr('name')] = $('#lokos_shop_product_category').find('select').val();

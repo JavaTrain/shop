@@ -31,7 +31,7 @@ class AttributeValue
 
     /**
      * @Exclude
-     * @var \Attribute
+     * @var Attribute
      *
      * @ORM\ManyToOne(targetEntity="Attribute", inversedBy="attributeValues")
      * @ORM\JoinColumns({

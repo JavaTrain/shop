@@ -4,7 +4,6 @@ namespace Lokos\ShopBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation\Exclude;
 
 /**
  * Attribute
@@ -38,7 +37,6 @@ class Attribute
     private $description;
 
     /**
-     * @Exclude
      * @var \Doctrine\Common\Collections\Collection
      *
      * @ORM\ManyToMany(targetEntity="Category", inversedBy="attributes")
@@ -54,10 +52,14 @@ class Attribute
     private $category;
 
     /**
-     * @Exclude
      * @ORM\OneToMany(targetEntity="AttributeValue", mappedBy="attribute", cascade={"persist", "remove"})
      */
     private $attributeValues;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Product2Option", mappedBy="productSet", cascade={"persist", "remove", "detach"})
+     */
+    private $product2Options;
 
     /**
      * Constructor
@@ -66,6 +68,7 @@ class Attribute
     {
         $this->category        = new ArrayCollection();
         $this->attributeValues = new ArrayCollection();
+        $this->product2Options = new ArrayCollection();
     }
 
 
@@ -136,7 +139,9 @@ class Attribute
      */
     public function addCategory(Category $category)
     {
-        $this->category[] = $category;
+        if (!$this->category->contains($category)) {
+            $this->category[] = $category;
+        }
 
         return $this;
     }
@@ -176,7 +181,9 @@ class Attribute
      */
     public function addAttributeValues(AttributeValue $attributeValue)
     {
-        $this->attributeValues[] = $attributeValue;
+        if (!$this->attributeValues->contains($attributeValue)) {
+            $this->attributeValues[] = $attributeValue;
+        }
 
         return $this;
     }
@@ -189,6 +196,40 @@ class Attribute
     public function removeAttributeValue(AttributeValue $attributeValue)
     {
         $this->attributeValues->removeElement($attributeValue);
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProduct2Options()
+    {
+        return $this->product2Options;
+    }
+
+    /**
+     * @param Product2Option $product2Option
+     *
+     * @return $this
+     */
+    public function addProduct2Option(Product2Option $product2Option)
+    {
+        if (!$this->product2Options->contains($product2Option)) {
+            $this->product2Options[] = $product2Option;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Product2Option $product2Option
+     *
+     * @return $this
+     */
+    public function removeProduct2Option(Product2Option $product2Option)
+    {
+        $this->product2Options->removeElement($product2Option);
 
         return $this;
     }

@@ -1,7 +1,7 @@
-lokos_api:
-    type: rest
-    prefix: api
-    resource: "@LokosApiBundle/Resources/config/routing.yml"
+#lokos_api:
+#    type: rest
+#    prefix: api
+#    resource: "@LokosApiBundle/Resources/config/routing.yml"
 
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"

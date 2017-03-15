@@ -51,14 +51,8 @@ class ProductSetFormType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-//        var_dump($builder, $options);die;
-//        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-//            $product = $event->getData();
-//            var_dump($event);die;
-//        });
+//        var_dump( $options);die;
 
-//        $builder->addEventSubscriber(new AddCategoryFieldSubscriber('options'));
-//        $builder->addEventSubscriber(new AddOptionFieldSubscriber('options'));
         $builder
             ->add(
                 'name',
