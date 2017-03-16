@@ -85,7 +85,7 @@ class Product
     /**
      * @ORM\OneToMany(targetEntity="ProductSet", mappedBy="product", cascade={"persist"})
      */
-    private $productSets;
+    public $productSets;
 
     /**
      * @ORM\OneToMany(targetEntity="Product2Attribute", mappedBy="product", cascade={"persist"})

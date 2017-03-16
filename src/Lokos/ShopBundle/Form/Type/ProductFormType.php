@@ -103,9 +103,9 @@ class ProductFormType extends AbstractType
                 $accessor = PropertyAccess::createPropertyAccessor();
                 $category = $accessor->getValue($data, 'category');
                 if ($category) {
-//                    $this->addProductSetForm($form, $data);
+                    $this->addProductSetForm($form, $data);
                     $this->addBrandForm($form, $category->getId());
-//                    $this->addProduct2AttributeForm($form, $data);
+                    $this->addProduct2AttributeForm($form, $data);
                 } else {
                     $form->remove('productSets');
                 }

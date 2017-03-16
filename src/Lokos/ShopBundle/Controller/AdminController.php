@@ -212,6 +212,7 @@ class AdminController extends BaseController
             $title = $this->translate('product.edit_title', array(':product' => $product->getName()));
         }
 
+//        var_dump($product->getProductSets());die;
         $form = $this->createForm(ProductFormType::class, $product);
 //        var_dump($product);die('454353');
 

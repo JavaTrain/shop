@@ -55,7 +55,7 @@ class ProductSet
     private $orderDetails;
 
     /**
-     * @ORM\OneToMany(targetEntity="Product2Option", mappedBy="productSet")
+     * @ORM\OneToMany(targetEntity="Product2Option", mappedBy="productSet", cascade={"persist"})
      */
     private $product2Options;
 

@@ -82,18 +82,17 @@ class ProductToOptionFormType extends AbstractType
                     return;
                 }
                 $accessor = PropertyAccess::createPropertyAccessor();
-                var_dump($data);die;
-                $option = $accessor->getValue($data, 'option');
-                if ($option) {
+                $attribute = $accessor->getValue($data, 'attribute');
+                if ($attribute) {
                     $form->add(
-                        'optionValue',
+                        'attributeValue',
                         EntityType::class,
                         array(
-                            'class' => 'LokosShopBundle:OptionValue',
-                            'query_builder' => function (AttributeValueRepository $repository) use ($option) {
+                            'class' => 'LokosShopBundle:AttributeValue',
+                            'query_builder' => function (AttributeValueRepository $repository) use ($attribute) {
                                 return $repository->createQueryBuilder('tbl')
-                                                  ->where('tbl.attribute = :optionId')
-                                                  ->setParameter(':optionId', $option->getId())
+                                                  ->where('tbl.attribute = :attributeId')
+                                                  ->setParameter(':attributeId', $attribute->getId())
                                     ;
                             },
                             'placeholder' => 'Choose a value',
@@ -114,7 +113,6 @@ class ProductToOptionFormType extends AbstractType
                 if (null === $data) {
                     return;
                 }
-//                var_dump($data);die;
                 $attribute = $data['attribute'];
                 if ($attribute) {
                     $form->add(
@@ -133,8 +131,8 @@ class ProductToOptionFormType extends AbstractType
                     );
                     $form->add('price');
                 } else {
+                    $form->remove('productSets');
                     var_dump('Very bad');die;
-//                    $form->remove('productSets');
                 }
             }
         );

@@ -137,21 +137,21 @@
                 </div>
                 <div>
                     <h4>Options:</h4>
-                    {% for option in itemCategory.option %}
-                        <div>
-                            <h6>{{ option.name }}</h6>
-                            {% for optionValue in option.optionValues %}
-                                <div class="form-check">
-                                    <label class="form-check-label">
-                                        <input type="checkbox" class="form-check-input"
-                                            {% if filterOption[option.id] is defined %}{% if optionValue.id in filterOption[option.id] %} checked {% endif %}{% endif %}
-                                           name="option[{{ option.id }}][]" value="{{ optionValue.id }}" onchange="this.form.submit();">
-                                        {{ optionValue.value }}
-                                    </label>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endfor %}
+                    {#{% for option in itemCategory.option %}#}
+                        {#<div>#}
+                            {#<h6>{{ option.name }}</h6>#}
+                            {#{% for optionValue in option.optionValues %}#}
+                                {#<div class="form-check">#}
+                                    {#<label class="form-check-label">#}
+                                        {#<input type="checkbox" class="form-check-input"#}
+                                            {#{% if filterOption[option.id] is defined %}{% if optionValue.id in filterOption[option.id] %} checked {% endif %}{% endif %}#}
+                                           {#name="option[{{ option.id }}][]" value="{{ optionValue.id }}" onchange="this.form.submit();">#}
+                                        {#{{ optionValue.value }}#}
+                                    {#</label>#}
+                                {#</div>#}
+                            {#{% endfor %}#}
+                        {#</div>#}
+                    {#{% endfor %}#}
                 </div>
             </form>
         </div>

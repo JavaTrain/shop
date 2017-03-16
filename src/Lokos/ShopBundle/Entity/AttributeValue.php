@@ -41,6 +41,13 @@ class AttributeValue
     private $attribute;
 
     /**
+     * @var float
+     *
+     * @ORM\Column(name="price", type="float", precision=10, scale=0, nullable=false)
+     */
+    private $price = 0;
+
+    /**
      * Get id
      *
      * @return integer
@@ -94,6 +101,26 @@ class AttributeValue
     public function getAttribute()
     {
         return $this->attribute;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    /**
+     * @param $price
+     *
+     * @return $this
+     */
+    public function setPrice($price)
+    {
+        $this->price = $price;
+
+        return $this;
     }
 
     /**

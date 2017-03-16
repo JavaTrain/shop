@@ -50,6 +50,7 @@
 
         <div class="tab-content">
             <div id="sets2product" class="tab-pane fade in active">
+                {#{{ dump(form.productSets) }}#}
                 {% if form.productSets is defined %}
                     <div id="product_sets_block" class="jumbotron">
                         <div id="productSets" data-prototype="{{ form_widget(form.productSets.vars.prototype)|e }}">
@@ -153,9 +154,9 @@
                     var id = attrName.replace(/\[|\]/g, '\_');
                     id = id.replace(/\_\_/g, '\_');
                     if (id[id.length - 1] == '_') {
-                        id = id.slice(0, -8);
+                        id = id.slice(0, -11);
                     }
-                    var optionId = id + '_optionValue';
+                    var optionId = id + '_attributeValue';
                     var div = $(html).find('#' + optionId).parent().parent().parent();
                     div.find('.option-select').parent().remove();
                     var optionSelect = $('#' + id);

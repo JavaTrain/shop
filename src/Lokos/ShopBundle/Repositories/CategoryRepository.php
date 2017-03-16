@@ -26,8 +26,6 @@ class CategoryRepository extends BaseRepository
                 ->addSelect('a')
                 ->join('tbl.attributes', 'a')
                 ->where('tbl.id = :id')
-                ->addSelect('o')
-                ->join('tbl.option', 'o')
                 ->setParameter(':id', $params['id'])
             ;
         }

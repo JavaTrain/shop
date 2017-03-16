@@ -161,8 +161,8 @@ class ProductRepository extends BaseRepository
         foreach($item->getProductSets() as $ps){
             foreach ($ps->getProduct2Options() as $p2o) {
                 $options[$ps->getId()][] = [
-                    'optionId' => $p2o->getOption()->getId(),
-                    'valueId'  => $p2o->getOptionValue()->getId(),
+                    'optionId' => $p2o->getAttribute()->getId(),
+                    'valueId'  => $p2o->getAttributeValue()->getId(),
                 ];
             }
         }
@@ -191,21 +191,21 @@ class ProductRepository extends BaseRepository
             $ps->getProduct2Options()->filter(
                 function ($entry) use (&$optionFilter, &$options, &$values, &$valueFilter) {
                     /** @var Product2Option $entry */
-                    if (!array_key_exists($entry->getOption()->getId(), $optionFilter)) {
-                        $options[$entry->getOption()->getId()]      = $entry->getOption();
-                        $optionFilter[$entry->getOption()->getId()] = $entry->getOption()->getId();
-                        if (!array_key_exists($entry->getOptionValue()->getId(), $valueFilter)) {
-                            $entry->getOptionValue()->setPrice($entry->getPrice());
-                            $valueFilter[$entry->getOptionValue()->getId()] = $entry->getOptionValue()->getId();
-                            $values[$entry->getOption()->getId()][]         = $entry->getOptionValue();
+                    if (!array_key_exists($entry->getAttribute()->getId(), $optionFilter)) {
+                        $options[$entry->getAttribute()->getId()]      = $entry->getAttribute();
+                        $optionFilter[$entry->getAttribute()->getId()] = $entry->getAttribute()->getId();
+                        if (!array_key_exists($entry->getAttributeValue()->getId(), $valueFilter)) {
+                            $entry->getAttributeValue()->setPrice($entry->getPrice());
+                            $valueFilter[$entry->getAttributeValue()->getId()] = $entry->getAttributeValue()->getId();
+                            $values[$entry->getAttribute()->getId()][]         = $entry->getAttributeValue();
                         }
 
                         return true;
                     } else {
-                        if(!array_key_exists($entry->getOptionValue()->getId(), $valueFilter)){
-                            $entry->getOptionValue()->setPrice($entry->getPrice());
-                            $valueFilter[$entry->getOptionValue()->getId()] = $entry->getOptionValue()->getId();
-                            $values[$entry->getOption()->getId()][] = $entry->getOptionValue();
+                        if(!array_key_exists($entry->getAttributeValue()->getId(), $valueFilter)){
+                            $entry->getAttributeValue()->setPrice($entry->getPrice());
+                            $valueFilter[$entry->getAttributeValue()->getId()] = $entry->getAttributeValue()->getId();
+                            $values[$entry->getAttribute()->getId()][] = $entry->getAttributeValue();
                         }
 
                         return false;

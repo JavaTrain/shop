@@ -14,7 +14,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * Date: 17.04.16
  * Time: 23:34
  */
-
 class ProductController extends BaseController
 {
 
@@ -51,7 +50,10 @@ class ProductController extends BaseController
         $productRepository  = $this->getDoctrine()->getRepository('LokosShopBundle:Product');
         $filterBrand        = $request->get('brand', array());
         $filterAttribute    = $request->get('attribute', array());
-        $filterOption       = $request->get('option', array());
+//        $filterOption       = $request->get('option', array());
+
+//        $all = $request->request->all();
+//        var_dump($request->attributes->all());die;
 
         if (!empty($filterAttribute) || !empty($filterOption)) {
             if (empty($filterAttribute) && !empty($filterOption)) {
