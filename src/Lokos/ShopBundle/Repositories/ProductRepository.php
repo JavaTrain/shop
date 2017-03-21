@@ -8,7 +8,11 @@ use Lokos\ShopBundle\Entity\Product2Option;
 use Lokos\ShopBundle\Entity\ProductSet;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
+/**
+ * Class ProductRepository
+ *
+ * @package Lokos\ShopBundle\Repositories
+ */
 class ProductRepository extends BaseRepository
 {
 
@@ -78,70 +82,88 @@ class ProductRepository extends BaseRepository
     public function getIdsByFilterAttributes($catId, array $filterBrand, array $filterAttributes)
     {
         $attributeValuesIds = array();
-        foreach ($filterAttributes as $attr) {
+        $cnt                = array();
+        foreach ($filterAttributes as $k => $attr) {
             foreach ($attr as $v) {
                 array_push($attributeValuesIds, $v);
+                $cnt[$k] = $v;
+            }
+        }
+        $attrCount = count($cnt);
+
+        $qb         = $this->createQueryBuilder('tbl');
+        $attributes = $qb->select('tbl.id AS product_id', 'COUNT(av.id) AS attr_cnt')
+                         ->leftJoin('tbl.product2Attributes', 'p2a')
+                         ->leftJoin('p2a.attributeValue', 'av')
+                         ->where($qb->expr()->eq('tbl.category', ':category'))
+                         ->andWhere($qb->expr()->in('av.id', ':attributeValuesIds'))
+                         ->groupBy('tbl.id')
+                         ->setParameter(':category', $catId)
+                         ->setParameter(':attributeValuesIds', $attributeValuesIds);
+        if (!empty($filterBrand)) {
+            $attributes = $attributes->andWhere($qb->expr()->in('tbl.brand', ':brandIds'))
+                       ->setParameter(':brandIds', $filterBrand);
+        }
+//        print_r($atrributes->getQuery()->getSQL());
+//        print_r($atrributes->getQuery()->getParameters());
+//        die;
+        $attributes = $attributes->getQuery()->getResult();
+//        var_dump($attributes);//die;
+        $attrs = array();
+        foreach($attributes as $v) {
+            $attrs[$v['product_id']] = $v['attr_cnt'];
+        }
+
+//        var_dump($attrs);//die;
+
+        $qb      = $this->createQueryBuilder('tbl');
+        $options = $qb->select('tbl.id AS product_id', 'COUNT(av.id) AS attr_cnt', 'ps.id AS product_set_id')
+                      ->leftJoin('tbl.productSets', 'ps')
+                      ->leftJoin('ps.product2Options', 'p2o')
+                      ->leftJoin('p2o.attributeValue', 'av')
+                      ->where($qb->expr()->eq('tbl.category', ':category'))
+                      ->andWhere($qb->expr()->in('av.id', ':attributeValuesIds'))
+                      ->setParameter(':category', $catId)
+                      ->setParameter(':attributeValuesIds', $attributeValuesIds)
+                      ->groupBy('ps.id');
+        if (!empty($filterBrand)) {
+            $options = $options->andWhere($qb->expr()->in('tbl.brand', ':brandIds'))
+                               ->setParameter(':brandIds', $filterBrand);
+        }
+//        print_r($options->getQuery()->getSQL());
+//        print_r($options->getQuery()->getParameters());
+//        die;
+        $options = $options->getQuery()->getResult();
+
+//        var_dump($options);die;
+        $result = array();
+        if (!empty($options) && !empty($attrs)) {
+            foreach ($options as $opt) {
+                if (!empty($attrs[$opt['product_id']]) && ($attrs[$opt['product_id']] + $opt['attr_cnt'] == $attrCount)) {
+                    $result[$opt['product_id']] = $opt['product_id'];
+                } else {
+                    if (!empty($attrs[$opt['product_id']]) && $attrs[$opt['product_id']] == $attrCount) {
+                        $result[$opt['product_id']] = $opt['product_id'];
+                    }
+                }
+            }
+        } elseIf (!empty($options) && empty($attrs)) { //if filters only in options
+            foreach ($options as $opt) {
+                if ($opt['attr_cnt'] == $attrCount) {
+                    $result[$opt['product_id']] = $opt['product_id'];
+                }
+            }
+        } elseif (empty($options) && !empty($attrs)) {
+            foreach ($attrs as $productId => $cnt) {
+                if ($cnt == $attrCount) {
+                    $result[$productId] = $productId;
+                }
             }
         }
 
-        $qb  = $this->createQueryBuilder('tbl');
-        $res = $qb->select('tbl.id')
-                  ->leftJoin('tbl.product2Attributes', 'p2a')
-                  ->leftJoin('p2a.attributeValue', 'av')
-                  ->where($qb->expr()->eq('tbl.category', ':category'))
-                  ->andWhere($qb->expr()->in('av.id', ':attributeValuesIds'))
-                  ->setParameter(':category', $catId)
-                  ->setParameter(':attributeValuesIds', $attributeValuesIds)
-                  ->groupBy('tbl.id')
-                  ->andHaving($qb->expr()->eq($qb->expr()->count('tbl.id'), ':productCount'))
-                  ->setParameter(':productCount', count($filterAttributes));
-        if (!empty($filterBrand)) {
-            $res = $res->andWhere($qb->expr()->in('tbl.brand', ':brandIds'))
-                       ->setParameter(':brandIds', $filterBrand);
-        }
+//        var_dump($result);die;
 
-        $res = $res->getQuery()->getResult();
-
-        return array_map('current', $res);
-    }
-
-
-    /**
-     * @param       $catId
-     * @param array $filterBrand
-     * @param array $filterOptions
-     *
-     * @return array
-     */
-    public function getIdsByFilterOptions($catId, array $filterBrand, array $filterOptions)
-    {
-        $optionValuesIds = array();
-        foreach ($filterOptions as $option) {
-            foreach ($option as $v) {
-                array_push($optionValuesIds, $v);
-            }
-        }
-
-        $qb  = $this->createQueryBuilder('tbl');
-        $res = $qb->select('tbl.id')
-                  ->leftJoin('tbl.productSets', 'ps')
-                  ->leftJoin('ps.product2Options', 'p2o')
-                  ->leftJoin('p2o.optionValue', 'ov')
-                  ->where($qb->expr()->eq('tbl.category', ':category'))
-                  ->andWhere($qb->expr()->in('ov.id', ':optionValuesIds'))
-                  ->setParameter(':category', $catId)
-                  ->setParameter(':optionValuesIds', $optionValuesIds)
-                  ->groupBy('tbl.id')
-                  ->andHaving($qb->expr()->eq($qb->expr()->count('tbl.id'), ':productCount'))
-                  ->setParameter(':productCount', count($filterOptions));
-        if (!empty($filterBrand)) {
-            $res = $res->andWhere($qb->expr()->in('tbl.brand', ':brandIds'))
-                       ->setParameter(':brandIds', $filterBrand);
-        }
-
-        $res = $res->getQuery()->getResult();
-
-        return array_map('current', $res);
+        return empty($result)?array('-1'):array_keys($result);
     }
 
     /**

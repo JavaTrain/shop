@@ -9,10 +9,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Created by PhpStorm.
- * User: lamp
- * Date: 17.04.16
- * Time: 23:34
+ * Class ProductController
+ *
+ * @package Lokos\ShopBundle\Controller
  */
 class ProductController extends BaseController
 {
@@ -50,31 +49,17 @@ class ProductController extends BaseController
         $productRepository  = $this->getDoctrine()->getRepository('LokosShopBundle:Product');
         $filterBrand        = $request->get('brand', array());
         $filterAttribute    = $request->get('attribute', array());
-//        $filterOption       = $request->get('option', array());
+        $params             = array();
 
-//        $all = $request->request->all();
-//        var_dump($request->attributes->all());die;
-
-        if (!empty($filterAttribute) || !empty($filterOption)) {
-            if (empty($filterAttribute) && !empty($filterOption)) {
-                $productIds = $productRepository->getIdsByFilterOptions($id, $filterBrand, $filterOption);
-                $params     = array('productIds' => $productIds);
-            } elseif (empty($filterOption) && !empty($filterAttribute)) {
-                $productIds = $productRepository->getIdsByFilterAttributes($id, $filterBrand, $filterAttribute);
-                $params     = array('productIds' => $productIds);
-            } else {
-                $productIds = array_intersect(
-                    $productRepository->getIdsByFilterAttributes($id, $filterBrand, $filterAttribute),
-                    $productRepository->getIdsByFilterOptions($id, $filterBrand, $filterOption)
-                );
-                $params     = $productIds?array('productIds' => $productIds):array('productIds' => -1);
-            }
-        } else {
-            $params = array(
-                'categoryId'  => $id,
-                'filterBrand' => $filterBrand
-            );
+        $params['categoryId'] = $id;
+        if (!empty($filterBrand)) {
+            $params['filterBrand'] = $filterBrand;
         }
+        if (!empty($filterAttribute)) {
+            $productIds           = $productRepository->getIdsByFilterAttributes($id, $filterBrand, $filterAttribute);
+            $params['productIds'] = $productIds;
+        }
+
 
         $data = $this->getListData(
             $request,
@@ -82,7 +67,7 @@ class ProductController extends BaseController
             $params,
             'id',
             'desc'
-            );
+        );
 
         $cartItems               = $cartRepository->getCartItems($request->getSession()->get('cart', array()));
         $data['categories']      = $categoryRepository->findAll();
@@ -90,7 +75,6 @@ class ProductController extends BaseController
         $data['itemCategory']    = $categoryRepository->reset()->buildQuery(['id' => $id])->getSingle();
         $data['filterBrand']     = $filterBrand;
         $data['filterAttribute'] = $filterAttribute;
-        $data['filterOption']    = $filterOption;
 
         return $this->render('LokosShopBundle:Product:overview.html.twig', $data);
     }
