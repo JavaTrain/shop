@@ -1,3 +1,8 @@
+@media (min-width: 767px) {
+    .navbar-nav .dropdown-menu .caret {
+        transform: rotate(-90deg);
+    }
+}
 .active{
     background-color: #66dd66;
 }

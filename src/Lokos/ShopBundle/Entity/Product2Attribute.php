@@ -22,7 +22,7 @@ class Product2Attribute
     private $id;
 
     /**
-     * @var \Attribute
+     * @var Attribute
      *
      * @ORM\ManyToOne(targetEntity="Attribute")
      * @ORM\JoinColumns({
@@ -32,7 +32,7 @@ class Product2Attribute
     private $attribute;
 
     /**
-     * @var \AttributeValue
+     * @var AttributeValue
      *
      * @ORM\ManyToOne(targetEntity="AttributeValue")
      * @ORM\JoinColumns({
@@ -43,7 +43,7 @@ class Product2Attribute
 
     /**
      *
-     * @var \Product
+     * @var Product
      *
      * @ORM\ManyToOne(targetEntity="Product", inversedBy="product2Attributes")
      * @ORM\JoinColumns({
@@ -63,7 +63,7 @@ class Product2Attribute
     }
 
     /**
-     * @return \Option
+     * @return Attribute
      */
     public function getAttribute()
     {
@@ -83,7 +83,7 @@ class Product2Attribute
     }
 
     /**
-     * @return \Option
+     * @return AttributeValue
      */
     public function getAttributeValue()
     {
@@ -103,7 +103,7 @@ class Product2Attribute
     }
 
     /**
-     * @return \Product
+     * @return Product
      */
     public function getProduct()
     {

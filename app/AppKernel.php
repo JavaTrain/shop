@@ -23,6 +23,7 @@ class AppKernel extends Kernel
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
             new Knp\Bundle\MenuBundle\KnpMenuBundle(),
             new Lokos\UserBundle\LokosUserBundle(),
+            new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
 //            new Lokos\ApiBundle\LokosApiBundle(),
 //            new FOS\RestBundle\FOSRestBundle(),
 //            new JMS\SerializerBundle\JMSSerializerBundle(),

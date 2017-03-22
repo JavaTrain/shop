@@ -2,6 +2,8 @@
 
 namespace Lokos\ShopBundle\Controller;
 
+use Doctrine\ORM\EntityManager;
+use Lokos\ShopBundle\Entity\Category;
 use Lokos\ShopBundle\Repositories\CartRepository;
 use Lokos\ShopBundle\Repositories\CategoryRepository;
 use Lokos\ShopBundle\Repositories\ProductRepository;
@@ -23,6 +25,31 @@ class ProductController extends BaseController
      */
     public function indexAction(Request $request)
     {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+//        /** @var $em \Doctrine\ORM\EntityManager */
+//        $root_categories = $em->getRepository('LokosShopBundle:Category')->findBy(array('parentCategory' => null));
+//        var_dump($root_categories);die;
+
+
+
+//
+//        $category = new Category();
+//        $category->setName('Computers and laptops');
+//        $child1 = new Category();
+//        $child1->setName('Computers');
+//        $child1->setParent($category);
+//        $child2 = new Category();
+//        $child2->setName('Laptops');
+//        $child2->setParent($category);
+////
+//        $em->persist($category);
+//        $em->persist($child1);
+//        $em->persist($child2);
+//        $em->flush();
+////
+////
+//        die('rtrtrt');
         $cartItems = $this->get('lokos.shop.cart_repository')
                           ->getCartItems($request->getSession()->get('cart', array()));
         $data      = array(

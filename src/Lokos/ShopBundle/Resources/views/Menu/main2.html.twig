@@ -1,6 +1,6 @@
 {% extends 'knp_menu.html.twig' %}
 {% block list %}
-    {% set listAttributes = listAttributes|merge({'class': (listAttributes.class|default('') ~ ' uk-tab')|trim}) %}
+    {% set listAttributes = listAttributes|merge({'class': (listAttributes.class|default('') ~ ' dropdown-menu')|trim}) %}
     {{ parent() }}
 {% endblock %}
 
