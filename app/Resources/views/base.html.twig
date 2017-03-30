@@ -59,7 +59,6 @@
                             <li><a href="https://github.com/fontenele/bootstrap-navbar-dropdowns" target="_blank">GitHub</a></li>
                             <li>
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Menu 1 <b class="caret"></b></a>
-
                                 <ul class="dropdown-menu">
                                     <li><a href="#">Action [Menu 1.1]</a></li>
                                     <li><a href="#">Another action [Menu 1.1]</a></li>
@@ -140,15 +139,16 @@
                                     </li>
                                 </ul>
                             </li>
+                            {{ knp_menu_render('LokosShopBundle:Builder:mainMenu', {'template': 'LokosShopBundle:Menu:main2.html.twig'}) }}
                         </ul>
                     </div><!--/.nav-collapse -->
                 </div>
             </div>
         {% endblock nav %}
 
-        {#{% block menu %}#}
+        {% block menu %}
             {#{{ knp_menu_render('LokosShopBundle:Builder:mainMenu', {'template': 'LokosShopBundle:Menu:main2.html.twig'}) }}#}
-        {#{% endblock menu %}#}
+        {% endblock menu %}
 
         <div class="container main">
             <!-- Navbar End -->
